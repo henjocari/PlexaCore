@@ -95,6 +95,9 @@
 
                 <div class="container-fluid">
                     <h2 class="text-center mb-4">Gestión de Habitaciones</h2>
+                    {{ now()->format('Y-m-d H:i:s') }}
+ 
+                    
 
                     <!-- Mensajes -->
                     @if (session('success'))
