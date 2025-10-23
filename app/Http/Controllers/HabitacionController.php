@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth; // ✅ Importación para obtener el usuario
 use App\Models\Conductor;
 use App\Models\HistorialHabitacion; // ✅ Importación del nuevo modelo
+use App\Exports\HistorialHabitacionesExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class HabitacionController extends Controller
 {
@@ -106,7 +109,7 @@ class HabitacionController extends Controller
         }
 
     // 5️⃣ Borrar una habitación
-    public function destroy($numero)
+        public function destroy($numero)
     {
         $habitacion = Habitacion::where('numero', $numero)->first(); // Asumo que buscas por 'numero'
         if (!$habitacion) {
@@ -118,4 +121,20 @@ class HabitacionController extends Controller
         return redirect()->back()->with('success', 'Habitación eliminada');
     }
     
+    // 6️⃣ Ver historial de habitaciones
+        public function historial()
+        {
+            // Traer todos los registros más recientes primero
+            $historial = \App\Models\HistorialHabitacion::latest()->get();
+
+            // Retornar la vista (asegúrate que se llama igual)
+            return view('historialhabitaciones', compact('historial'));
+        }
+        public function HistorialHabitacion()
+    {
+        $historial = \App\Models\HistorialHabitacion::latest()->get();
+        return view('historialhabitaciones', compact('historial'));
+    }
 }
+
+    

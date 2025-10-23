@@ -5,6 +5,9 @@ use App\Http\Controllers\ConductorController;
 use App\Http\Controllers\CloudFleet_Conductores;
 use App\Http\Controllers\HabitacionController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\HistorialHabitacionController;
+
+
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -51,4 +54,19 @@ Route::middleware('auth')->group(function () {
 
     // Logout (también requiere sesión)
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // HISTORIAL DE HABITACIONES
+// Dentro de Route::middleware('auth')->group(function () { 
+
+    // HISTORIAL DE HABITACIONES
+    Route::get('/historial-habitaciones/export-csv', [HistorialHabitacionController::class, 'export'])->name('historial.export.csv');
+    Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])->name('historial.export.excel');
+    Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])->name('historial.habitaciones');
+
+    
+
+// });
+
 });
+
+

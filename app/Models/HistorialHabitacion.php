@@ -12,6 +12,7 @@ class HistorialHabitacion extends Model
     protected $table = 'historial_habitaciones';
 
     protected $fillable = [
+        'id',
         'habitacion', 
         'estado', 
         'conductor', 
@@ -28,8 +29,8 @@ class HistorialHabitacion extends Model
     ];
 
     // Relación con Usuario (opcional si tienes tabla de usuarios)
-    public function usuarioRegistro()
-    {
-        return $this->belongsTo(\App\Models\User::class, 'usuario');
-    }
+    //public function usuarioRegistro()
+   // {
+    //    return $this->belongsTo(\App\Models\Us::class, 'usuario');
+    //}
 }
