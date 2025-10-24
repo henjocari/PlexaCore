@@ -9,10 +9,9 @@ class HistorialHabitacion extends Model
 {
     use HasFactory;
     
-    protected $table = 'historial_habitaciones';
+    protected $table = 'habitaciones_historial';
 
     protected $fillable = [
-        'id',
         'habitacion', 
         'estado', 
         'conductor', 
@@ -29,8 +28,8 @@ class HistorialHabitacion extends Model
     ];
 
     // Relación con Usuario (opcional si tienes tabla de usuarios)
-    //public function usuarioRegistro()
-   // {
-    //    return $this->belongsTo(\App\Models\Us::class, 'usuario');
-    //}
+    public function usuarioRegistro()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'usuario');
+    }
 }
