@@ -52,9 +52,11 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Conductores Registrados</h6>
+                            @if(in_array('Actualizar Conductores', session('permisos_permitidos', [])))
                             <a href="{{ route('actualizarconductores') }}" class="btn btn-success btn-circle" title="Actualizar">
                                 <i class="fas fa-check"></i>
                             </a>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

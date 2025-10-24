@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -21,14 +22,43 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        $usuario = Usuario::where('email', $credentials['email'])->first();
+        // 🚨 Carga la relación de Rol
+        $usuario = Usuario::where('email', $credentials['email'])
+                          ->with('role') 
+                          ->first();
 
-        if ($usuario && $usuario->contraseña === $credentials['password']) {
+        // 1️⃣ Verifica si el usuario existe
+        if (!$usuario) {
+            throw ValidationException::withMessages([
+                'email' => ['Correo o contraseña incorrectos.'],
+            ]);
+        }
+
+        // 2️⃣ Verifica si el usuario está bloqueado
+        if ($usuario->estado == 0) {
+            throw ValidationException::withMessages([
+                'email' => ['Usuario bloqueado. Favor comunicarse con el administrador.'],
+            ]);
+        }
+        
+        // 3️⃣ VERIFICACIÓN DE CONTRASEÑA CORREGIDA
+        $passwordMatch = false;
+
+        if ($usuario->contraseña === $credentials['password']) {
+            $passwordMatch = true;
+        } 
+        
+        if ($passwordMatch) {
+            
+            // Inicia sesión
             Auth::login($usuario);
             $request->session()->regenerate();
+
+            // Redirige al inicio
             return redirect()->intended(route('index'));
         }
 
+        // 5️⃣ Si la contraseña no coincide 
         throw ValidationException::withMessages([
             'email' => ['Correo o contraseña incorrectos.'],
         ]);
@@ -39,6 +69,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }

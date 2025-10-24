@@ -21,6 +21,8 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 
 </head>
 
@@ -66,9 +68,30 @@
                                         Iniciar Sesión
                                     </button>
 
-                                    @error('email')
-                                        <div class="alert alert-danger mt-3 small">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('email'))
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Acceso denegado',
+                                                text: {!! json_encode($errors->first('email')) !!},
+                                                imageUrl: '{{ asset("img/Logo_plexa.svg") }}',
+                                                imageWidth: 100,
+                                                imageHeight: 100,
+                                                imageAlt: 'Logo Plexa',
+                                                background: 'linear-gradient(135deg, #ffffff, #e8f0fe)',
+                                                confirmButtonText: 'Aceptar',
+                                                confirmButtonColor: '#4e73df',
+                                                showClass: {
+                                                    popup: 'animate__animated animate__fadeInDown'
+                                                },
+                                                hideClass: {
+                                                    popup: 'animate__animated animate__fadeOutUp'
+                                                }
+                                            });
+                                        });
+                                    </script>
+                                @endif
                                 </form>
                                     {{--<div class="text-center">
                                         <a class="small" href="forgot-password.html">Olvide mi Contraseña</a>
@@ -97,6 +120,7 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 

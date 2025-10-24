@@ -1,3 +1,4 @@
+{{-- <?php dd(session()->all()); ?> --}}
 <!DOCTYPE html>
 <html lang="es">
 
