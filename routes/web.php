@@ -30,6 +30,10 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     });
 
     
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    });
+    
     // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Tabla Conductores"
     Route::get('/tablas', [ConductorController::class, 'tablas'])
         ->middleware(VerificarModulo::class . ':Tabla Conductores')

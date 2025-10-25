@@ -15,9 +15,11 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="{{ url('/index') }}">
+    @if(in_array('Dashboard', session('modulos_permitidos', [])))
+        <a class="nav-link" href="{{ url('/dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
+    @endif
     </li>
 
     <!-- Divider -->
@@ -82,7 +84,6 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Navegacion:</h6>
                 <!--<a class="collapse-item" href="login.html">Inicia Sesion</a>-->
-                <a class="collapse-item" href="register.html">Registrarse</a>
                 <!--<a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                 <div class="collapse-divider"></div>
                 <h6 class="collapse-header">Other Pages:</h6>

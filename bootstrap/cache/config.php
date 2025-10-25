@@ -753,8 +753,8 @@
   'session' => 
   array (
     'driver' => 'database',
-    'lifetime' => 120,
-    'expire_on_close' => false,
+    'lifetime' => 20,
+    'expire_on_close' => true,
     'encrypt' => false,
     'files' => 'C:\\xampp\\htdocs\\PlexaCore\\storage\\framework/sessions',
     'connection' => NULL,
