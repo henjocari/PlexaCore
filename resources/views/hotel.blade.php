@@ -136,12 +136,14 @@
                                                 @endforeach
                                             </div>
                                         </div>
-
-                                        <button type="button" 
-                                            class="btn btn-primary w-100 mt-2 btn-asignar" 
-                                            data-numero="{{ $habitacion->numero }}">
-                                            Asignar Habitación
-                                        </button>
+                                        @if(in_array('Asignar', session('permisos_permitidos', [])))
+                                            <button type="button" 
+                                                class="btn btn-primary w-100 mt-2 btn-asignar" 
+                                                data-numero="{{ $habitacion->numero }}">
+                                                Asignar Habitación
+                                            </button>
+                                        
+                                            @endif
                                     @else
                                         <div class="alert alert-info mt-2">
                                             Ocupada por: <strong>{{ $habitacion->hconductor->nombre ?? '' }} {{ $habitacion->hconductor->apellido ?? '' }}</strong>
@@ -183,10 +185,16 @@
                                         </td>
                                         <td>
                                             @if ($habitacion->estado === 'Ocupada')
-                                                <button class="btn btn-danger btn-sm" 
-                                                    onclick="actualizarEstado('{{ $habitacion->numero }}', 'Disponible')">
-                                                    Desasignar
-                                                </button>
+                                                @if(in_array('Desasignar', session('permisos_permitidos', [])))
+                                                    <button class="btn btn-danger btn-sm" 
+                                                        onclick="actualizarEstado('{{ $habitacion->numero }}', 'Disponible')">
+                                                        Desasignar
+                                                    </button>
+                                                @else
+                                                    <button class="btn btn-danger btn-sm">
+                                                        Desasignar
+                                                    </button>
+                                                    @endif
                                             @else
                                                 <button class="btn btn-secondary btn-sm" disabled>Disponible</button>
                                             @endif

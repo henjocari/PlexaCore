@@ -15,9 +15,18 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="{{ url('/index') }}">
+    @if(in_array('Dashboard', session('modulos_permitidos', [])))
+        <a class="nav-link" href="{{ url('/dashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
+    @endif
+    </li>
+    <li class="nav-item active">
+    @if(in_array('Usuarios', session('modulos_permitidos', [])))
+        <a class="nav-link" href="{{ url('/usuarios') }}">
+            <i class="fas fa-users"></i>
+            <span>Usuarios</span></a>
+    @endif
     </li>
 
     <!-- Divider -->
@@ -71,32 +80,33 @@
         Seccion 
     </div>
 
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Paginas</span>
-            </a>
-            <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Navegacion:</h6>
-                    <!--<a class="collapse-item" href="login.html">Inicia Sesion</a>-->
-                    <a class="collapse-item" href="register.html">Registrarse</a>
-                    <!--<a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                    
-                    <div class="collapse-divider"></div>
-                    <h6 class="collapse-header">Other Pages:</h6>
-                    <a class="collapse-item" href="404.html">404 Page</a>-->
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+            aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Paginas</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Navegacion:</h6>
+                <!--<a class="collapse-item" href="login.html">Inicia Sesion</a>-->
+                <!--<a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                <div class="collapse-divider"></div>
+                <h6 class="collapse-header">Other Pages:</h6>
+                <a class="collapse-item" href="404.html">404 Page</a>-->
+                @if(in_array('Hotel', session('modulos_permitidos', [])))
                     <a class="collapse-item" href="{{ url('/hotel') }}">
-                        <i class="fas fa-bed"></i> Hotel
-                    </a>
-                    <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
+                        <i class="fas fa-bed"></i> Hotel</a>
+                @endif
+                @if(in_array('Historial Habitacion', session('modulos_permitidos', [])))
+				<a class="collapse-item" href="{{ route('historial.habitaciones') }}">
                         <i class="fas fa-history"></i> Historial Habitacion
                     </a>
-                </div>
+                @endif
             </div>
-        </li>
+        </div>
+    </li>
 
     <!-- Nav Item - Charts -->
     <!--<li class="nav-item">
@@ -106,11 +116,13 @@
     </li>-->
 
     <!-- Nav Item - Tables -->
+    @if(in_array('Tabla Conductores', session('modulos_permitidos', [])))
     <li class="nav-item">
         <a class="nav-link" href="{{ url('/tablas') }}">
             <i class="fas fa-fw fa-table"></i>
             <span>Tabla de Conductores</span></a>
     </li>
+    @endif
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

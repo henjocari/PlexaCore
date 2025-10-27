@@ -5,9 +5,10 @@ use App\Http\Controllers\ConductorController;
 use App\Http\Controllers\CloudFleet_Conductores;
 use App\Http\Controllers\HabitacionController;
 use App\Http\Controllers\LoginController;
+use App\Http\Middleware\VerificarModulo;
+use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
-
-
+use App\Http\Controllers\UsuarioController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -18,7 +19,8 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 // ----------------------
 // RUTAS PROTEGIDAS (requieren sesión)
 // ----------------------
-Route::middleware('auth')->group(function () {
+// 🚨 ¡AGREGAMOS RefreshPermissions al grupo 'auth' para que se ejecute en cada recarga!
+Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::get('/', function () {
         return view('index');
@@ -27,9 +29,46 @@ Route::middleware('auth')->group(function () {
     Route::get('/index', function () {
         return view('index');
     });
+    
+    // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Dashboard"
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })
+    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Dashboard')
+    ->name('dashboard');
 
-    Route::get('/tablas', [ConductorController::class, 'tablas'])->name('tablas');
-    Route::get('/hotel', [HabitacionController::class, 'hotel'])->name('hotel');
+    // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Tabla Conductores"
+    Route::get('/tablas', [ConductorController::class, 'tablas'])
+        ->middleware(VerificarModulo::class . ':Tabla Conductores')
+        ->name('tablas');
+
+    // 🚫 Solo visible si el usuario tiene el módulo "Hotel"
+    Route::get('/hotel', [HabitacionController::class, 'hotel'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('hotel');
+
+    //--------------Usuarios------------\\
+    // 🚫 Solo visible si el usuario tiene el módulo "Usuario"
+    Route::get('/usuarios', [UsuarioController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios');
+    
+    // Crear nuevo usuario
+    Route::post('/usuarios', [UsuarioController::class, 'store'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.store');
+
+    // Actualizar usuario existente
+    Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.update');
+
+    // Cambiar estado (activar/inactivar)
+    Route::post('/usuarios/{cedula}/toggle', [UsuarioController::class, 'toggle'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.toggle');
+    //--------------Usuarios------------\\
+
     Route::get('/gestiondehotel', function () {
         return view('gestiondehotel');
     });
@@ -49,23 +88,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/habitaciones/{id}/asignar', [HabitacionController::class, 'asignarConductor'])->name('habitaciones.asignar');
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
 
-    // CloudFleet
-    Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])->name('actualizarconductores');
-
-    // Logout (también requiere sesión)
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-    // HISTORIAL DE HABITACIONES
-// Dentro de Route::middleware('auth')->group(function () { 
-
     // HISTORIAL DE HABITACIONES
     Route::get('/historial-habitaciones/export-csv', [HistorialHabitacionController::class, 'export'])->name('historial.export.csv');
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])->name('historial.export.excel');
     Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])->name('historial.habitaciones');
 
-    
+    // CloudFleet
+    Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])->name('actualizarconductores');
 
-// });
+    // Logout (también requiere sesión)
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 });
 

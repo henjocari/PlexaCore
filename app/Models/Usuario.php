@@ -43,4 +43,10 @@ class Usuario extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'rol');
     }
+
+    public function rolInfo()
+    {
+        return $this->belongsTo(\App\Models\Roles::class, 'rol', 'id');
+    }
+
 }

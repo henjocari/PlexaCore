@@ -21,6 +21,26 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+    .alert {
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+    @media (max-width: 991.98px) {
+        .col-lg-6, .bg-gradient-primary{
+            background: url('{{ asset("img/Logo_plexa.svg") }}') no-repeat center center;
+            background-size: 100%; /* ajusta el tamaño del logo */
+            background-color: #f8f9fc; /* color de fondo suave */
+        }
+    }
+    .bg-gradient-primary{
+            background: url('{{ asset("img/Logo_plexa.svg") }}') no-repeat center center;
+            background-size: 100%; /* ajusta el tamaño del logo */
+            background-color: #f8f9fc; /* color de fondo suave */
+    }
+    </style>
 
 </head>
 
@@ -66,9 +86,11 @@
                                         Iniciar Sesión
                                     </button>
 
-                                    @error('email')
-                                        <div class="alert alert-danger mt-3 small">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('email'))
+                                    <div class="alert alert-danger text-center mt-3" role="alert">
+                                        <strong>Acceso denegado:</strong> {{ $errors->first('email') }}
+                                    </div>
+                                    @endif
                                 </form>
                                     {{--<div class="text-center">
                                         <a class="small" href="forgot-password.html">Olvide mi Contraseña</a>
