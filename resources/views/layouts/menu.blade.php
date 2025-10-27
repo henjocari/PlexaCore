@@ -21,6 +21,13 @@
             <span>Dashboard</span></a>
     @endif
     </li>
+    <li class="nav-item active">
+    @if(in_array('Usuarios', session('modulos_permitidos', [])))
+        <a class="nav-link" href="{{ url('/usuarios') }}">
+            <i class="fas fa-users"></i>
+            <span>Usuarios</span></a>
+    @endif
+    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">

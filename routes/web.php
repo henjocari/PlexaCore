@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Middleware\VerificarModulo;
 use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
+use App\Http\Controllers\UsuarioController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -28,21 +29,45 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/index', function () {
         return view('index');
     });
-
     
+    // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Dashboard"
     Route::get('/dashboard', function () {
         return view('dashboard');
-    });
-    
+    })
+    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Dashboard')
+    ->name('dashboard');
+
     // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Tabla Conductores"
     Route::get('/tablas', [ConductorController::class, 'tablas'])
         ->middleware(VerificarModulo::class . ':Tabla Conductores')
         ->name('tablas');
 
-    // 🚫 Solo visible si el usuario tiene el módulo "Gestión de Hotel"
+    // 🚫 Solo visible si el usuario tiene el módulo "Hotel"
     Route::get('/hotel', [HabitacionController::class, 'hotel'])
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('hotel');
+
+    //--------------Usuarios------------\\
+    // 🚫 Solo visible si el usuario tiene el módulo "Usuario"
+    Route::get('/usuarios', [UsuarioController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios');
+    
+    // Crear nuevo usuario
+    Route::post('/usuarios', [UsuarioController::class, 'store'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.store');
+
+    // Actualizar usuario existente
+    Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.update');
+
+    // Cambiar estado (activar/inactivar)
+    Route::post('/usuarios/{cedula}/toggle', [UsuarioController::class, 'toggle'])
+        ->middleware(VerificarModulo::class . ':Usuarios')
+        ->name('usuarios.toggle');
+    //--------------Usuarios------------\\
 
     Route::get('/gestiondehotel', function () {
         return view('gestiondehotel');

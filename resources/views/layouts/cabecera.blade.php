@@ -6,7 +6,7 @@
         <i class="fa fa-bars"></i>
     </button>
 
-    <!-- Topbar Search -->
+    <!-- Topbar Search
     <form
         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
         <div class="input-group">
@@ -19,17 +19,19 @@
             </div>
         </div>
     </form>
+    Aqui termina el buscador
+    -->
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
-        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+        <!-- Nav Item - Search Dropdown (Visible Only XS) 
         <li class="nav-item dropdown no-arrow d-sm-none">
             <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-search fa-fw"></i>
             </a>
-            <!-- Dropdown - Messages -->
+             Dropdown - Messages 
             <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                 aria-labelledby="searchDropdown">
                 <form class="form-inline mr-auto w-100 navbar-search">
@@ -45,17 +47,17 @@
                     </div>
                 </form>
             </div>
-        </li>
-
+        </li> aqui termina el buscador
+        -->
         <!-- Nav Item - Alerts -->
         <!--<li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell fa-fw"></i>-->
                 <!-- Counter - Alerts -->
-                <!--<span class="badge badge-danger badge-counter">3+</span>-->
+                <!--<span class="badge badge-danger badge-counter">3+</span>
             </a>
-            <!-- Dropdown - Alerts -->
+             Dropdown - Alerts -->
             <!--<div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="alertsDropdown">
                 <h6 class="dropdown-header">
@@ -183,11 +185,13 @@
                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Ajustes
                 </a>-->
+                <!--
                 <a class="dropdown-item" href="#">
                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                     Cambiar Contraseña
                 </a>
                 <div class="dropdown-divider"></div>
+                -->
                 <a class="dropdown-item" href="login" data-toggle="modal" data-target="#logoutModal">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Cerrar Sesion
