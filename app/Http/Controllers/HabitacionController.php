@@ -49,64 +49,107 @@ class HabitacionController extends Controller
 
     // 4️⃣ Actualizar una habitación (asignar o desasignar conductor)
             public function update(Request $request, $numero)
-        {
-            try {
-                $habitacion = Habitacion::where('numero', $numero)->first(); 
+{
+    try {
+        $habitacion = Habitacion::where('numero', $numero)->first(); 
+        
+        if (!$habitacion) {
+            return response()->json([
+                'success' => false, 
+                'error' => 'Habitación no encontrada'
+            ], 404);
+        }
+
+        // Guardamos el conductor anterior (por si se desasigna)
+        $conductor_que_sale = $habitacion->conductor;
+
+        // Validar datos
+        $data = $request->validate([
+            'estado' => 'required|string|in:Disponible,Ocupada',
+            'conductor' => 'nullable|string',
+        ]);
+
+        // Actualizamos habitación
+        $habitacion->estado = $data['estado'];
+        $habitacion->conductor = $data['conductor'];
+        $habitacion->save();
+
+        $accion = empty($data['conductor']) ? 'desasignada' : 'asignada';
+
+        // Obtenemos datos del conductor (nuevo o anterior)
+        $conductor_id = empty($data['conductor']) ? $conductor_que_sale : $data['conductor'];
+        $conductor = Conductor::where('cedula', $conductor_id)->first();
+
+        // 💾 Crear registro en historial según el tipo de acción
+        if ($habitacion->estado == 'Ocupada') {
+            // ===> CHECK-IN
+            HistorialHabitacion::create([
+                'habitacion'         => $habitacion->numero,
+                'estado'             => 'Ocupada',
+                'conductor'          => $conductor_id,
+                'fecha'              => now(),
+                'c_conductor'        => $conductor->cedula ?? 'N/A',
+                'n_conductor'        => $conductor->nombre ?? 'N/A',
+                'usuario'            => Auth::check() ? Auth::id() : 0,
+                'usuario_check_in'   => Auth::check() ? Auth::user()->Nombre : 'Sistema',
+                'check_in'           => now(),
                 
-                if (!$habitacion) {
-                    return response()->json([
-                        'success' => false, 
-                        'error' => 'Habitación no encontrada'
-                    ], 404);
-                }
+            ]);
 
-                // 💡 CAPTURAR LA CÉDULA DEL CONDUCTOR ANTES DE MODIFICAR
-                $conductor_que_sale = $habitacion->conductor;
+        } else {
+            // ===> CHECK-OUT
+            // Buscar el último registro del mismo conductor y habitación SIN check_out
+            $ultimo = HistorialHabitacion::where('habitacion', $habitacion->numero)
+                ->where('conductor', $conductor_que_sale)
+                ->whereNull('check_out')
+                ->latest('check_in')
+                ->first();
 
-                // Validar datos
-                $data = $request->validate([
-                    'estado' => 'required|string|in:Disponible,Ocupada',
-                    'conductor' => 'nullable|string',
+            if ($ultimo) {
+                // Calcular tiempo de uso en horas:minutos
+                $inicio = \Carbon\Carbon::parse($ultimo->check_in);
+                $fin = now();
+                $tiempo_uso = $inicio->diff($fin);
+                $tiempo_formateado = $tiempo_uso->d . 'd ' . $tiempo_uso->h . 'h ' . $tiempo_uso->i . 'm';
+
+                // Actualizamos ese registro con check_out y tiempo de uso
+                $ultimo->update([
+                    'check_out'         => $fin,
+                    'usuario_check_out' => Auth::check() ? Auth::user()->Nombre : 'Sistema',
+                    'tiempo_uso'        => $tiempo_formateado,
                 ]);
-
-                // Actualizar habitación
-                $habitacion->estado = $data['estado'];
-                $habitacion->conductor = $data['conductor'];
-                
-                $accion = empty($data['conductor']) ? 'desasignada' : 'asignada';
-                
-                $habitacion->save();
-
-                // 🔔 REGISTRAR EN HISTORIAL
-                // Si estamos DESASIGNANDO, guardamos quién estaba (conductor_que_sale)
-                // Si estamos ASIGNANDO, guardamos el nuevo conductor
-                $conductor_para_historial = empty($data['conductor']) 
-                    ? $conductor_que_sale  // ✅ Guardamos quien SALIÓ
-                    : $data['conductor'];   // ✅ Guardamos quien ENTRÓ
-
+            } else {
+                // Si no existe un check_in previo, creamos un registro básico
                 HistorialHabitacion::create([
-                    'habitacion' => $habitacion->numero, 
-                    'estado' => $habitacion->estado, 
-                    'conductor' => $conductor_para_historial, // ✅ SIEMPRE tiene valor
-                    'usuario' => Auth::check() ? Auth::id() : 0,
-                    'fecha' => now(),
+                    'habitacion'         => $habitacion->numero,
+                    'estado'             => 'Disponible',
+                    'conductor'          => $conductor_que_sale,
+                    'usuario'            => Auth::check() ? Auth::id() : 0,
+                    'fecha'              => now(),
+                    'c_conductor'        => $conductor->cedula ?? 'N/A',
+                    'n_conductor'        => $conductor->nombre ?? 'N/A',
+                    'check_out'          => now(),
+                    'usuario_check_out'  => Auth::check() ? Auth::user()->Nombre : 'Sistema',
+                    'tiempo_uso'         => 'N/A',
                 ]);
-
-                Log::info("Habitación #{$numero} {$accion}. Conductor en historial: {$conductor_para_historial}");
-
-                return response()->json([
-                    'success' => true,
-                    'message' => "Habitación {$accion} correctamente",
-                ]);
-
-            } catch (\Exception $e) {
-                Log::error("Error al actualizar habitación #{$numero}: " . $e->getMessage());
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Error del servidor: ' . $e->getMessage()
-                ], 500);
             }
         }
+
+        Log::info("Habitación #{$numero} {$accion}. Conductor: {$conductor_id}");
+
+        return response()->json([
+            'success' => true,
+            'message' => "Habitación {$accion} correctamente",
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error("Error al actualizar habitación #{$numero}: " . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => 'Error del servidor: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
     // 5️⃣ Borrar una habitación
         public function destroy($numero)

@@ -95,6 +95,13 @@
                                                 <th>Conductor</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha y Hora</th>
+                                                <th>Cédula Conductor</th>
+                                                <th>Teléfono Conductor</th>
+                                                <th>Check In</th>
+                                                <th>Usuario Check In</th>
+                                                <th>Check Out</th>
+                                                <th>Usuario Check Out</th>
+                                                <th>Tiempo de Uso</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -106,32 +113,47 @@
                                                             {{ $registro->habitacion }}
                                                         </span>
                                                     </td>
+
                                                     <td>
                                                         <span class="badge {{ $registro->estado == 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' }} text-white">
                                                             {{ $registro->estado }}
                                                         </span>
                                                     </td>
+
                                                     <td>
                                                         @php
                                                             $conductor = \App\Models\Conductor::where('cedula', $registro->conductor)->first();
                                                         @endphp
                                                         @if($conductor)
-                                                        <strong>{{ $conductor->nombre }} {{ $conductor->apellido }}</strong>
-                                                    @else
-                                                        <span class="text-muted">{{ $registro->conductor ?? 'N/A' }}</span>
-                                                    @endif
+                                                            <strong>{{ $conductor->nombre }} {{ $conductor->apellido }}</strong>
+                                                        @else
+                                                            <span class="text-muted">{{ $registro->conductor ?? 'N/A' }}</span>
+                                                        @endif
                                                     </td>
-                                                    <td>{{ $registro->usuario }}</td>
+
                                                     <td>
-                                                        <i class="far fa-calendar-alt text-primary"></i>
-                                                        {{ \Carbon\Carbon::parse($registro->fecha)->format('d/m/Y') }}
-                                                        <br>
-                                                        <i class="far fa-clock text-success"></i>
-                                                        {{ \Carbon\Carbon::parse($registro->fecha)->format('h:i A') }}
+                                                        @php
+                                                            $usuario = \App\Models\Usuario::where('cedula', $registro->usuario)->first();
+                                                        @endphp
+                                                        @if($usuario)
+                                                            <strong>{{ $usuario->Nombre }} {{ $usuario->Apellido }}</strong>
+                                                        @else
+                                                            <span class="text-muted">{{ $registro->usuario ?? 'N/A' }}</span>
+                                                        @endif
                                                     </td>
+
+                                                    <td>{{ $registro->fecha ? $registro->fecha->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                    <td>{{ $registro->c_conductor ?? 'N/A' }}</td>
+                                                    <td>{{ $registro->n_conductor ?? 'N/A' }}</td>
+                                                    <td>{{ $registro->check_in ? $registro->check_in->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                    <td>{{ $registro->usuario_check_in ?? 'N/A' }}</td>
+                                                    <td>{{ $registro->check_out ? $registro->check_out->format('d/m/Y H:i') : 'N/A' }}</td>
+                                                    <td>{{ $registro->usuario_check_out ?? 'N/A' }}</td>
+                                                    <td>{{ $registro->tiempo_uso ?? 'N/A' }}</td>
                                                 </tr>
                                             @endforeach
-                                        </tbody>
+                                            </tbody>
+
                                     </table>
                                 </div>
 
