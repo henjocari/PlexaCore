@@ -92,14 +92,16 @@ class HistorialHabitacionController extends Controller
             
             // Encabezados
             echo '<thead>';
-            echo '<tr style="background-color: #4472C4; color: white; font-weight: bold;">';
-            echo '<th>ID</th>';
-            echo '<th>Habitación</th>';
-            echo '<th>Estado</th>';
-            echo '<th>Cédula Conductor</th>';
-            echo '<th>Nombre Conductor</th>';
-            echo '<th>Usuario</th>';
-            echo '<th>Fecha</th>';
+            echo '<tr>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">ID</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Habitación</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Cédula Conductor</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Nombre Conductor</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Check In</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Usuario Check In</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Check Out</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Usuario Check Out</th>';
+            echo '<th style="background-color: #4472C4; color: white; font-weight: bold;">Tiempo Uso</th>';
             echo '</tr>';
             echo '</thead>';
             
@@ -112,11 +114,31 @@ class HistorialHabitacionController extends Controller
                 echo '<tr>';
                 echo '<td>' . $registro->id . '</td>';
                 echo '<td>' . $registro->habitacion . '</td>';
-                echo '<td>' . $registro->estado . '</td>';
                 echo '<td>' . $registro->conductor . '</td>';
                 echo '<td>' . $nombreConductor . '</td>';
-                echo '<td>' . $registro->usuario . '</td>';
-                echo '<td>' . \Carbon\Carbon::parse($registro->fecha)->format('d/m/Y H:i:s') . '</td>';
+                echo '<td>' . ($registro->check_in ? \Carbon\Carbon::parse($registro->check_in)->format('d/m/Y H:i:s') : '') . '</td>';
+                echo '<td>' . $registro->usuario_check_in . '</td>';
+                echo '<td>' . ($registro->check_out ? \Carbon\Carbon::parse($registro->check_out)->format('d/m/Y H:i:s') : '') . '</td>';
+                echo '<td>' . $registro->usuario_check_out . '</td>';
+                echo '<td>';
+                    if ($registro->tiempo_uso) {
+                        $segundos = $registro->tiempo_uso;
+                        
+                        // Calculamos los componentes
+                        $d = floor($segundos / 86400);
+                        $h = floor(($segundos % 86400) / 3600);
+                        $m = floor(($segundos % 3600) / 60);
+                        $s = $segundos % 60;
+
+                        // Si hay días, los mostramos explícitamente para que Excel no se confunda
+                        if ($d > 0) {
+                            echo "{$d}d {$h}h {$m}m {$s}s";
+                        } else {
+                            // Si es menos de un día, usamos un formato que Excel reconoce fácilmente como hora
+                            echo sprintf('%02d:%02d:%02d', $h, $m, $s);
+                        }
+                    }
+                echo '</td>';
                 echo '</tr>';
             }
             echo '</tbody>';

@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3307
--- Tiempo de generación: 21-10-2025 a las 00:03:01
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 29-12-2025 a las 15:47:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -697,35 +697,34 @@ INSERT INTO `habitaciones` (`numero`, `estado`, `conductor`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `historial_habitaciones`
+-- Estructura de tabla para la tabla `habitaciones_historial`
 --
 
-CREATE TABLE `historial_habitaciones` (
+CREATE TABLE `habitaciones_historial` (
   `id` int(11) NOT NULL,
   `habitacion` int(2) NOT NULL,
   `estado` varchar(10) NOT NULL,
   `conductor` int(10) NOT NULL,
   `usuario` int(10) NOT NULL,
-  `fecha` datetime NOT NULL
+  `fecha` datetime NOT NULL,
+  `c_conductor` varchar(255) DEFAULT NULL,
+  `n_conductor` varchar(255) DEFAULT NULL,
+  `check_in` timestamp NULL DEFAULT NULL,
+  `check_out` timestamp NULL DEFAULT NULL,
+  `usuario_check_in` varchar(255) DEFAULT NULL,
+  `usuario_check_out` varchar(255) DEFAULT NULL,
+  `tiempo_uso` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `historial_habitaciones`
+-- Volcado de datos para la tabla `habitaciones_historial`
 --
 
-INSERT INTO `historial_habitaciones` (`id`, `habitacion`, `estado`, `conductor`, `usuario`, `fecha`) VALUES
-(1, 5, 'Ocupada', 91223639, 0, '2025-10-20 00:00:00'),
-(2, 5, 'Disponible', 91223639, 0, '2025-10-20 20:51:36'),
-(3, 6, 'Ocupada', 91236597, 0, '2025-10-20 15:53:05'),
-(4, 6, 'Disponible', 91236597, 0, '2025-10-20 15:53:17'),
-(5, 1, 'Ocupada', 77140085, 0, '2025-10-20 16:50:28'),
-(6, 2, 'Ocupada', 91281887, 0, '2025-10-20 16:50:41'),
-(7, 1, 'Disponible', 77140085, 0, '2025-10-20 16:51:35'),
-(8, 2, 'Disponible', 91281887, 0, '2025-10-20 16:51:41'),
-(9, 1, 'Ocupada', 77140085, 0, '2025-10-20 16:59:59'),
-(10, 10, 'Ocupada', 91277060, 0, '2025-10-20 17:00:10'),
-(11, 1, 'Disponible', 77140085, 0, '2025-10-20 17:00:31'),
-(12, 10, 'Disponible', 91277060, 0, '2025-10-20 17:00:37');
+INSERT INTO `habitaciones_historial` (`id`, `habitacion`, `estado`, `conductor`, `usuario`, `fecha`, `c_conductor`, `n_conductor`, `check_in`, `check_out`, `usuario_check_in`, `usuario_check_out`, `tiempo_uso`) VALUES
+(2, 8, 'Ocupada', 73580643, 1047418839, '2025-12-26 16:38:31', '73580643', 'OSWALDO', '2025-12-26 20:38:31', '2025-12-26 21:40:04', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 3694),
+(3, 2, 'Ocupada', 77140085, 1047418839, '2025-12-26 16:47:41', '77140085', 'ALBEIRO', '2025-12-26 21:47:41', '2025-12-29 13:44:01', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 230180),
+(4, 3, 'Ocupada', 1030592268, 1047418839, '2025-12-26 16:52:25', '1030592268', ' Nelson', '2025-12-26 21:52:25', '2025-12-29 13:44:05', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 229901),
+(5, 6, 'Ocupada', 8012504, 1047418839, '2025-12-26 16:56:09', '8012504', 'César Augusto', '2025-12-26 21:56:09', '2025-12-29 13:44:10', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 229681);
 
 -- --------------------------------------------------------
 
@@ -792,9 +791,11 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1);
+(4, '2025_10_20_133058_add_checkin_checkout_to_habitaciones_table', 2),
+(6, '0001_01_01_000000_create_users_table', 3),
+(7, '0001_01_01_000001_create_cache_table', 3),
+(8, '0001_01_01_000002_create_jobs_table', 3),
+(9, '2025_10_23_083421_create_historial_habitaciones_table', 3);
 
 -- --------------------------------------------------------
 
@@ -816,27 +817,66 @@ CREATE TABLE `password_reset_tokens` (
 
 CREATE TABLE `permisos` (
   `id` int(11) NOT NULL,
-  `rol` int(2) NOT NULL,
+  `paginas` int(11) NOT NULL,
   `permiso` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `paginas`, `permiso`) VALUES
+(3, 3, 'Actualizar Conductores'),
+(4, 7, 'Hotel'),
+(5, 4, 'Desasignar'),
+(6, 4, 'Asignar');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `roles`
+-- Estructura de tabla para la tabla `permisos_modulos`
 --
 
-CREATE TABLE `roles` (
+CREATE TABLE `permisos_modulos` (
+  `id` int(11) NOT NULL,
+  `roles` int(2) NOT NULL,
+  `paginas` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos_modulos`
+--
+
+INSERT INTO `permisos_modulos` (`id`, `roles`, `paginas`) VALUES
+(1, 1, 'Dashboard'),
+(2, 1, 'Páginas'),
+(3, 1, 'Tabla Conductores'),
+(4, 1, 'Hotel'),
+(5, 1, 'Historial Habitacion'),
+(6, 1, 'Usuarios'),
+(7, 2, 'Usuarios'),
+(8, 1, 'Roles'),
+(9, 2, 'Roles');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos_roles`
+--
+
+CREATE TABLE `permisos_roles` (
   `id` int(2) NOT NULL,
   `nombre` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `roles`
+-- Volcado de datos para la tabla `permisos_roles`
 --
 
-INSERT INTO `roles` (`id`, `nombre`) VALUES
-(1, 'Super Administrador');
+INSERT INTO `permisos_roles` (`id`, `nombre`) VALUES
+(1, 'Super Administrador'),
+(2, 'Administradores'),
+(3, 'Despachadores');
 
 -- --------------------------------------------------------
 
@@ -858,16 +898,25 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('3PWbPA3aQtrPP4ig5a1MNBCdDv4mIKUk0so20TqS', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieXlOVXhWdWRjVkc3T2ZSQ01WMFFJbXhsVnpKV0ZSSjFKbGhBMmlzciI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS9ob3RlbCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1760706040),
-('9bO9GKh7PgAUpHRGxWJq2kOpILw7QLhgAJvLqVzC', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRmxwaDMwdnFITlU4MmtidTFaVnBUQTV4eUNzUEtaanhNYXFJWGQwaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS9ob3RlbCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1760713490),
-('9YA4aQDIjMsqOoxsCBFGCxwNARyvdzu0jSsuhaO0', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRE1HUkRzcTVEWFVGMjdtMm1Ya0ZlNEtuR1VkVTFWQ3Y4Ym5TRWZwTSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS9ob3RlbCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1760723471),
-('abfjTrSjQVdh7SgRd7DLWONpHJPPvLJipkWY1tD1', NULL, '172.16.20.42', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWTh0R1Ztb2dNV2RZa1M5OTV0SDR4bGZYWlRoazVVS3ZrdXVuaVhLSCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjU6Imh0dHA6Ly8xNzIuMTYuMjAuMTk2OjgwMDEiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1760974924),
-('FKOjLSOuscFfVYfhJGF4QkZTPi8u054wtaqtBDpb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVmFCaFlTNTMxT01PaW4yVzNpSkZJelMwcjNyNER3YTlibmJmSzRocSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS90YWJsYXMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1760975522),
-('i7XWD4oYZFwcHhM0EGvPZJwZ8fekuMTIanr2ES4N', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicXU1c2oxajdaTmxaY0tGUnNGV3VTNk1WektqWlc1c3RjWmpGaVVDeSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS9ob3RlbCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1760705170),
-('IZ4qxJkg2hEbTkkEOx2BWx9ybt1rZeDIXQZnxZDZ', 0, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiREtiSnpFYWc3RHNLTmxveE9VSmFxN3A5OG1uZjJuSk1pZjcySFdEaCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS90YWJsYXMiO31zOjM6InVybCI7YTowOnt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MDt9', 1760997646),
-('JTO5kdmsutSnGgqUC49WagGdUGnfeUt4ui1eGVYi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOUdIT2FPVFdQbllpWkNNZFJxQ1BOY3RjdTk1WW5Telo4TTBCWm5RRiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMS9ob3RlbCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1760731060),
-('qd8QQBSEPpyVlKDhZR91LYo7rjQ3i17MA6LnmlWg', NULL, '172.16.20.42', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMFZFckNSZlkxZ1VSVFdrYlFXd0ViYWJJZmZRZ01Yamt3QUxGbVZpVCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xNzIuMTYuMjAuMTk2OjgwMDEvaG90ZWwiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1760710111),
-('XNeZlen6WfiSVce2BPOsz1IzztomSSwETrcwrkex', NULL, '172.16.20.42', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQ1lMV242NHJ0QTU2ZTdJSnpKNkRLRXJxMTNFdUJMV09YbmhVOGM3bSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjU6Imh0dHA6Ly8xNzIuMTYuMjAuMTk2OjgwMDEiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1760991581);
+('HH9chWnQOgJgQknBww38AAbFrQXVWD4qDmMr3huf', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoieVljSndqS2pXTGNLVzRwQVRhTldxOFZveVRMdGNRU2JmdDRJSXNjQiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyMToiaHR0cDovL2xvY2FsaG9zdDo4MDAwIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1767015803),
+('KqH3yjXj4vbT5SkYtuHvsRGpGp2fksBRVJ8A1DRT', 1047418839, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoibWk4Q1VSaWo1d0hwcVMwZmdyT3JtbHIzbTJrSDUwNndNeUxtSFU2eCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvaG90ZWwiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMDQ3NDE4ODM5O3M6MTg6Im1vZHVsb3NfcGVybWl0aWRvcyI7YTo3OntpOjA7czo5OiJEYXNoYm9hcmQiO2k6MTtzOjg6IlDDoWdpbmFzIjtpOjI7czoxNzoiVGFibGEgQ29uZHVjdG9yZXMiO2k6MztzOjU6IkhvdGVsIjtpOjQ7czoyMDoiSGlzdG9yaWFsIEhhYml0YWNpb24iO2k6NTtzOjg6IlVzdWFyaW9zIjtpOjY7czo1OiJSb2xlcyI7fXM6MTk6InBlcm1pc29zX3Blcm1pdGlkb3MiO2E6Mzp7aTowO3M6MjI6IkFjdHVhbGl6YXIgQ29uZHVjdG9yZXMiO2k6MTtzOjEwOiJEZXNhc2lnbmFyIjtpOjI7czo3OiJBc2lnbmFyIjt9fQ==', 1767019052);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -883,7 +932,7 @@ CREATE TABLE `usuarios` (
   `cel` varchar(30) DEFAULT NULL,
   `contraseña` varchar(30) NOT NULL,
   `rol` int(2) NOT NULL,
-  `estado` int(1) NOT NULL
+  `estado` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -891,8 +940,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`cedula`, `Nombre`, `Apellido`, `email`, `cel`, `contraseña`, `rol`, `estado`) VALUES
-(0, 'Henry', 'Castro', 'hcastro@plexa.co', NULL, 'Plexa2025', 1, 1),
-(1041972451, 'Roys ', 'Simarra', 'tunometecabra202004@gmail.com', '3245145593', 'lavidaesunasola12', 1, 1);
+(1041972451, 'Roys Mauricio', 'Simarra', 'tunometecabra202004@gmail.com', '3245145599', 'lavidaesunasola12', 1, 1),
+(1047418839, 'Henry Jose', 'Castro Ricardo', 'hcastro@plexa.co', NULL, 'Plexa2025', 1, 1);
 
 --
 -- Índices para tablas volcadas
@@ -930,9 +979,9 @@ ALTER TABLE `habitaciones`
   ADD PRIMARY KEY (`numero`);
 
 --
--- Indices de la tabla `historial_habitaciones`
+-- Indices de la tabla `habitaciones_historial`
 --
-ALTER TABLE `historial_habitaciones`
+ALTER TABLE `habitaciones_historial`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -971,12 +1020,21 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `permisos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `rol` (`rol`);
+  ADD KEY `id` (`id`,`paginas`),
+  ADD KEY `id_2` (`id`),
+  ADD KEY `modulos` (`paginas`);
 
 --
--- Indices de la tabla `roles`
+-- Indices de la tabla `permisos_modulos`
 --
-ALTER TABLE `roles`
+ALTER TABLE `permisos_modulos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `rol` (`roles`);
+
+--
+-- Indices de la tabla `permisos_roles`
+--
+ALTER TABLE `permisos_roles`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -986,6 +1044,13 @@ ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -1005,10 +1070,10 @@ ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `historial_habitaciones`
+-- AUTO_INCREMENT de la tabla `habitaciones_historial`
 --
-ALTER TABLE `historial_habitaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+ALTER TABLE `habitaciones_historial`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -1026,19 +1091,31 @@ ALTER TABLE `logs`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT de la tabla `roles`
+-- AUTO_INCREMENT de la tabla `permisos_modulos`
 --
-ALTER TABLE `roles`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `permisos_modulos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos_roles`
+--
+ALTER TABLE `permisos_roles`
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Restricciones para tablas volcadas
@@ -1048,13 +1125,19 @@ ALTER TABLE `roles`
 -- Filtros para la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  ADD CONSTRAINT `permisos_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `roles` (`id`);
+  ADD CONSTRAINT `permisos_ibfk_1` FOREIGN KEY (`paginas`) REFERENCES `permisos_modulos` (`id`);
+
+--
+-- Filtros para la tabla `permisos_modulos`
+--
+ALTER TABLE `permisos_modulos`
+  ADD CONSTRAINT `permisos_modulos_ibfk_1` FOREIGN KEY (`roles`) REFERENCES `permisos_roles` (`id`);
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `roles` (`id`);
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `permisos_roles` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

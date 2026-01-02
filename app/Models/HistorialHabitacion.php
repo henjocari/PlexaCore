@@ -17,6 +17,13 @@ class HistorialHabitacion extends Model
         'conductor', 
         'usuario', 
         'fecha',
+        'c_conductor',
+        'n_conductor',
+        'check_in',
+        'usuario_check_in',
+        'check_out',
+        'usuario_check_out',
+        'tiempo_uso',
     ];
 
     // ✅ IMPORTANTE: Deshabilitar timestamps porque usas 'fecha' manual
@@ -25,6 +32,8 @@ class HistorialHabitacion extends Model
     // ✅ Castear fecha como datetime
     protected $casts = [
         'fecha' => 'datetime',
+        'check_in' => 'datetime',
+        'check_out' => 'datetime',
     ];
 
     // Relación con Usuario (opcional si tienes tabla de usuarios)

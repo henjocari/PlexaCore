@@ -89,7 +89,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
 
     // HISTORIAL DE HABITACIONES
-    Route::get('/historial-habitaciones/export-csv', [HistorialHabitacionController::class, 'export'])->name('historial.export.csv');
+    // Route::get('/historial-habitaciones/export-csv', [HistorialHabitacionController::class, 'export'])->name('historial.export.csv');
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])->name('historial.export.excel');
     Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])->name('historial.habitaciones');
 
