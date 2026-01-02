@@ -39,9 +39,9 @@ class Usuario extends Authenticatable
     /**
      * Relación con la tabla roles.
      */
-    public function role()  
+    public function role()
     {
-        return $this->belongsTo(\App\Models\Roles::class, 'rol');
+        return $this->belongsTo(Role::class, 'rol');
     }
 
     public function rolInfo()
