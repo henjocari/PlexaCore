@@ -54,9 +54,9 @@
                             <i class="fas fa-history"></i> Historial de Habitaciones
                         </h1>
                         <div class="btn-group" role="group">
-                            <a href="{{ route('historial.export.csv') }}" class="btn btn-success shadow-sm">
+                            {{-- <a href="{{ route('historial.export.csv') }}" class="btn btn-success shadow-sm">
                                 <i class="fas fa-file-csv fa-sm"></i> Exportar CSV
-                            </a>
+                            </a> --}}
                             <a href="{{ route('historial.export.excel') }}" class="btn btn-export shadow-sm">
                                 <i class="fas fa-file-excel fa-sm"></i> Exportar Excel
                             </a>
@@ -91,12 +91,10 @@
                                             <tr class="text-center">
                                                 <th>ID</th>
                                                 <th>Habitación</th>
-                                                <th>Estado</th>
                                                 <th>Conductor</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha y Hora</th>
                                                 <th>Cédula Conductor</th>
-                                                <th>Teléfono Conductor</th>
                                                 <th>Check In</th>
                                                 <th>Usuario Check In</th>
                                                 <th>Check Out</th>
@@ -114,11 +112,7 @@
                                                         </span>
                                                     </td>
 
-                                                    <td>
-                                                        <span class="badge {{ $registro->estado == 'Ocupada' ? 'badge-ocupada' : 'badge-disponible' }} text-white">
-                                                            {{ $registro->estado }}
-                                                        </span>
-                                                    </td>
+    
 
                                                     <td>
                                                         @php
@@ -144,12 +138,24 @@
 
                                                     <td>{{ $registro->fecha ? $registro->fecha->format('d/m/Y H:i') : 'N/A' }}</td>
                                                     <td>{{ $registro->c_conductor ?? 'N/A' }}</td>
-                                                    <td>{{ $registro->n_conductor ?? 'N/A' }}</td>
                                                     <td>{{ $registro->check_in ? $registro->check_in->format('d/m/Y H:i') : 'N/A' }}</td>
                                                     <td>{{ $registro->usuario_check_in ?? 'N/A' }}</td>
                                                     <td>{{ $registro->check_out ? $registro->check_out->format('d/m/Y H:i') : 'N/A' }}</td>
                                                     <td>{{ $registro->usuario_check_out ?? 'N/A' }}</td>
-                                                    <td>{{ $registro->tiempo_uso ?? 'N/A' }}</td>
+                                                    <td>
+                                                        @if($registro->tiempo_uso)
+                                                            @php
+                                                                $segundos = $registro->tiempo_uso;
+                                                                $d = floor($segundos / 86400);
+                                                                $h = floor(($segundos % 86400) / 3600);
+                                                                $m = floor(($segundos % 3600) / 60);
+                                                                $s = $segundos % 60;
+                                                            @endphp
+                                                            {{ ($d > 0 ? $d . 'd ' : '') . $h . 'h ' . $m . 'm ' . $s . 's' }}
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                             </tbody>

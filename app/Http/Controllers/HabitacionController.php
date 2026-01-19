@@ -18,9 +18,16 @@ class HabitacionController extends Controller
     public function hotel()
     {
         $habitaciones = Habitacion::with('hconductor')->orderBy('numero')->get();
-        $conductores = Conductor::orderBy('nombre')->get(); // ✅ Trae todos los conductores
-
-        return view('hotel', compact('habitaciones', 'conductores'));
+        $conductores = Conductor::orderBy('nombre')->get(); 
+    
+        // ✅ Nueva consulta para el historial con el orden solicitado:
+        // 1. Los que tienen check_out NULL (N/A) van primero (IS NULL DESC).
+        // 2. Luego se ordenan por check_in de forma descendente (los más nuevos arriba).
+        $registros = \App\Models\HistorialHabitacion::orderByRaw('check_out IS NULL DESC')
+            ->orderBy('check_in', 'desc')
+            ->get();
+    
+        return view('hotel', compact('habitaciones', 'conductores', 'registros'));
     }
 
     // 2️⃣ Leer una habitación por número
@@ -91,7 +98,7 @@ class HabitacionController extends Controller
                 'c_conductor'        => $conductor->cedula ?? 'N/A',
                 'n_conductor'        => $conductor->nombre ?? 'N/A',
                 'usuario'            => Auth::check() ? Auth::id() : 0,
-                'usuario_check_in'   => Auth::check() ? Auth::user()->Nombre : 'Sistema',
+                'usuario_check_in'   => Auth::check() ? Auth::user()->Nombre.' '.Auth::user()->Apellido  : 'Sistema',
                 'check_in'           => now(),
                 
             ]);
@@ -106,17 +113,16 @@ class HabitacionController extends Controller
                 ->first();
 
             if ($ultimo) {
-                // Calcular tiempo de uso en horas:minutos
                 $inicio = \Carbon\Carbon::parse($ultimo->check_in);
                 $fin = now();
-                $tiempo_uso = $inicio->diff($fin);
-                $tiempo_formateado = $tiempo_uso->d . 'd ' . $tiempo_uso->h . 'h ' . $tiempo_uso->i . 'm';
 
-                // Actualizamos ese registro con check_out y tiempo de uso
+                // Calculamos la diferencia total en segundos (ej: 82 segundos)
+                $segundosTotales = $inicio->diffInSeconds($fin);
+
                 $ultimo->update([
                     'check_out'         => $fin,
-                    'usuario_check_out' => Auth::check() ? Auth::user()->Nombre : 'Sistema',
-                    'tiempo_uso'        => $tiempo_formateado,
+                    'usuario_check_out' => Auth::check() ? Auth::user()->Nombre.' '.Auth::user()->Apellido : 'Sistema',
+                    'tiempo_uso'        => $segundosTotales, // Guardamos el número entero
                 ]);
             } else {
                 // Si no existe un check_in previo, creamos un registro básico
@@ -129,8 +135,8 @@ class HabitacionController extends Controller
                     'c_conductor'        => $conductor->cedula ?? 'N/A',
                     'n_conductor'        => $conductor->nombre ?? 'N/A',
                     'check_out'          => now(),
-                    'usuario_check_out'  => Auth::check() ? Auth::user()->Nombre : 'Sistema',
-                    'tiempo_uso'         => 'N/A',
+                    'usuario_check_out'  => Auth::check() ? Auth::user()->Nombre.' '.Auth::user()->Apellido : 'Sistema',
+                    'tiempo_uso'         => null,
                 ]);
             }
         }
