@@ -9,7 +9,7 @@ use App\Http\Middleware\VerificarModulo;
 use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
 use App\Http\Controllers\UsuarioController;
-
+use App\Http\Controllers\PrecioGlpController;
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
 // ----------------------
@@ -57,6 +57,10 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/usuarios', [UsuarioController::class, 'store'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.store');
+    
+        // Precio GLP
+    Route::get('/precio-glp', [PrecioGlpController::class, 'index'])->name('precio.glp');
+    Route::post('/precio-glp/store', [PrecioGlpController::class, 'store'])->name('precio.store');
 
     // Actualizar usuario existente
     Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update'])

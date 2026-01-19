@@ -82,25 +82,20 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-            aria-expanded="true" aria-controls="collapsePages">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Paginas</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHotel"
+            aria-expanded="true" aria-controls="collapseHotel">
+            <i class="fas fa-fw fa-hotel"></i>
+            <span>Gestión de Hotel</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseHotel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Navegacion:</h6>
-                <!--<a class="collapse-item" href="login.html">Inicia Sesion</a>-->
-                <!--<a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">Other Pages:</h6>
-                <a class="collapse-item" href="404.html">404 Page</a>-->
+                <h6 class="collapse-header">Navegación:</h6>
                 @if(in_array('Hotel', session('modulos_permitidos', [])))
                     <a class="collapse-item" href="{{ url('/hotel') }}">
                         <i class="fas fa-bed"></i> Hotel</a>
                 @endif
                 @if(in_array('Historial Habitacion', session('modulos_permitidos', [])))
-				<a class="collapse-item" href="{{ route('historial.habitaciones') }}">
+                    <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
                         <i class="fas fa-history"></i> Historial Habitacion
                     </a>
                 @endif
@@ -108,19 +103,32 @@
         </div>
     </li>
 
-    <!-- Nav Item - Charts -->
-    <!--<li class="nav-item">
-        <a class="nav-link" href="charts.html">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Graficos</span></a>
-    </li>-->
+    <hr class="sidebar-divider">
 
-    <!-- Nav Item - Tables -->
+    <div class="sidebar-heading">
+        Precios y Multimedia
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/precio-glp') }}">
+            <i class="fas fa-fw fa-gas-pump"></i>
+            <span>Precio GLP</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/carrucel') }}">
+            <i class="fas fa-fw fa-images"></i>
+            <span>Carrucel</span>
+        </a>
+    </li>
+    <hr class="sidebar-divider">
     @if(in_array('Tabla Conductores', session('modulos_permitidos', [])))
     <li class="nav-item">
         <a class="nav-link" href="{{ url('/tablas') }}">
             <i class="fas fa-fw fa-table"></i>
-            <span>Tabla de Conductores</span></a>
+            <span>Tabla de Conductores</span>
+        </a>
     </li>
     @endif
 
