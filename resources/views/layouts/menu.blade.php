@@ -110,16 +110,16 @@
     </div>
 
     <li class="nav-item">
+    @if(in_array('Precio GLP', session('modulos_permitidos', [])))
         <a class="nav-link" href="{{ url('/precio-glp') }}">
             <i class="fas fa-fw fa-gas-pump"></i>
             <span>Precio GLP</span>
         </a>
-    </li>
+    @endif
 
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/carrucel') }}">
+        <a class="nav-link" href="{{ url('/carrusel') }}">
             <i class="fas fa-fw fa-images"></i>
-            <span>Carrucel</span>
+            <span>Carrusel</span>
         </a>
     </li>
     <hr class="sidebar-divider">

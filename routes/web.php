@@ -10,6 +10,8 @@ use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PrecioGlpController;
+use App\Http\Controllers\CarruselController; // <--- AGREGADO: Importamos el controlador
+
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
 // ----------------------
@@ -57,10 +59,6 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/usuarios', [UsuarioController::class, 'store'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.store');
-    
-        // Precio GLP
-    Route::get('/precio-glp', [PrecioGlpController::class, 'index'])->name('precio.glp');
-    Route::post('/precio-glp/store', [PrecioGlpController::class, 'store'])->name('precio.store');
 
     // Actualizar usuario existente
     Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update'])
@@ -72,6 +70,47 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.toggle');
     //--------------Usuarios------------\\
+
+    
+    //--------------Precio GLP------------\\
+    // 🚫 Solo visible si el usuario tiene el módulo "Precio GLP"
+    Route::get('/precio-glp', [PrecioGlpController::class, 'precioglp'])
+        ->middleware(VerificarModulo::class . ':Precio GLP')
+        ->name('precio.glp');
+    
+    Route::post('/precio-glp/store', [PrecioGlpController::class, 'store'])
+        ->middleware(VerificarModulo::class . ':Precio GLP')
+        ->name('precio.store');
+    
+    Route::patch('/precio-glp/{id}/inactivar', [PrecioGlpController::class, 'inactivar'])
+        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Precio GLP')
+        ->name('precio.inactivar');
+    //--------------Precio GLP------------\\
+
+
+    //--------------CARRUSEL (NUEVO)------------\\
+    // 🚫 Solo visible si el usuario tiene el módulo "Carrusel"
+    
+    // 1. Vista Principal
+    Route::get('/carrusel', [CarruselController::class, 'index']) // <--- 'index' en minúscula
+    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+    ->name('carrusel.index');
+
+    // 2. Guardar (Nuevo o Editar)
+    Route::post('/carrusel/guardar', [CarruselController::class, 'store'])
+        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->name('carrusel.store');
+
+    // 3. Inactivar
+    Route::patch('/carrusel/{id}/inactivar', [CarruselController::class, 'inactivar'])
+        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->name('carrusel.inactivar');
+
+    Route::post('/carrusel/{id}/update-imagen', [CarruselController::class, 'updateImagen'])
+    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+    ->name('carrusel.update_imagen');
+    //--------------CARRUSEL (NUEVO)------------\\
+
 
     Route::get('/gestiondehotel', function () {
         return view('gestiondehotel');
@@ -93,7 +132,6 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
 
     // HISTORIAL DE HABITACIONES
-    // Route::get('/historial-habitaciones/export-csv', [HistorialHabitacionController::class, 'export'])->name('historial.export.csv');
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])->name('historial.export.excel');
     Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])->name('historial.habitaciones');
 
@@ -104,5 +142,3 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 });
-
-
