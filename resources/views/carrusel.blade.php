@@ -2,32 +2,73 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Plexa Core - Carrusel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plexa - Carrusel</title>
     <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
 
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* Ajuste para que las imágenes del carrusel siempre llenen el espacio sin deformarse */
-        .carousel-item img {
-            height: 500px; /* Altura fija para uniformidad */
-            object-fit: cover; /* Recorta la imagen si sobra, no la estira */
-            filter: brightness(0.7); /* Un poco oscura para que se lea el texto blanco */
+        /* --- AJUSTES DE PANTALLA --- */
+        .carousel-item {
+            height: calc(100vh - 70px); 
+            min-height: 500px; 
+            position: relative;
+            background: #000;
         }
-        /* Ajustes de texto del template original */
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            opacity: 0.7; /* Oscuridad para resaltar texto */
+        }
+
+        /* --- TEXTOS --- */
         .carousel-caption {
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.3); /* Fondo oscuro suave */
+            z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            bottom: 0; top: 0;
+        }
+        .display-1 { font-size: 4rem; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .subtitulo-plexa { font-size: 1.5rem; letter-spacing: 3px; font-weight: 600; text-warning: #f6c23e; }
+
+        /* --- BOTONES DE ADMIN (Esquina Superior) --- */
+        .admin-controls-corner {
+            position: absolute; top: 20px; right: 20px; z-index: 999;
+            display: flex; gap: 10px;
+        }
+        .btn-mini {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4); color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .btn-mini:hover { background: white; color: black; transform: scale(1.1); }
+        .btn-mini-danger:hover { background: #e74a3b; border-color: #e74a3b; }
+
+        /* --- FLECHAS DE NAVEGACIÓN (Estilo Premium) --- */
+        .carousel-control-prev, .carousel-control-next { width: 60px; opacity: 1; }
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%; width: 50px; height: 50px;
+            background-size: 50%; border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .carousel-control-prev:hover .carousel-control-prev-icon,
+        .carousel-control-next:hover .carousel-control-next-icon {
+            background-color: #4e73df; transform: scale(1.1);
+            border-color: #fff; box-shadow: 0 0 15px rgba(78, 115, 223, 0.5);
+        }
+
+        /* --- BOTÓN FLOTANTE (+) --- */
+        .btn-floating {
+            position: fixed; bottom: 30px; right: 30px; z-index: 99;
+            width: 60px; height: 60px; border-radius: 50%;
+            font-size: 24px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
     </style>
 </head>
@@ -42,56 +83,84 @@
 
                 <div class="container-fluid p-0">
                     
-                    {{-- ======================================================= --}}
-                    {{--  1. EL CARRUSEL (VISUALIZACIÓN PÚBLICA)                 --}}
-                    {{-- ======================================================= --}}
-                    
-                    <div id="header-carousel" class="carousel slide" data-ride="carousel">
+                    <div id="header-carousel" class="carousel slide" data-ride="carousel" data-interval="5000">
                         <div class="carousel-inner">
+                            
                             @forelse($slides as $slide)
-                                {{-- La clase 'active' solo va en el primer elemento --}}
-                                <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                                    <img class="w-100" src="{{ asset('storage/carrusel/' . $slide->imagen) }}" alt="Image">
-                                    <div class="carousel-caption">
-                                        <div class="container">
-                                            <div class="row justify-content-center">
-                                                <div class="col-lg-10 text-center">
-                                                    {{-- Subtítulo --}}
-                                                    @if($slide->subtitulo)
-                                                        <p class="fs-5 fw-medium text-warning text-uppercase animated slideInRight mb-3 font-weight-bold">
-                                                            {{ $slide->subtitulo }}
-                                                        </p>
-                                                    @endif
-                                                    
-                                                    {{-- Título --}}
-                                                    @if($slide->titulo)
-                                                        <h1 class="display-3 text-white mb-5 animated slideInRight font-weight-bold">
-                                                            {{ $slide->titulo }}
-                                                        </h1>
-                                                    @endif
-                                                    
-                                                    {{-- Botón --}}
-                                                    @if($slide->boton)
-                                                        <a href="{{ $slide->url }}" class="btn btn-primary py-3 px-5 animated slideInRight shadow-lg">
-                                                            {{ $slide->boton }}
-                                                        </a>
-                                                    @endif
+                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                
+                                {{-- LÓGICA CORREGIDA: Limpiamos espacios con TRIM() --}}
+                                @php 
+                                    $imagenLimpia = trim($slide->imagen); 
+                                @endphp
+
+                                @if(Str::startsWith($imagenLimpia, ['http://', 'https://']))
+                                    {{-- Link de Internet --}}
+                                    <img src="{{ $imagenLimpia }}" alt="Slide Externo">
+                                @else
+                                    {{-- Archivo Local --}}
+                                    <img src="{{ asset('storage/carrusel/' . $imagenLimpia) }}" alt="Slide Local">
+                                @endif
+
+                                {{-- Controles Admin --}}
+                                @if($esAdmin)
+                                    <div class="admin-controls-corner">
+                                        {{-- Cambiar Foto --}}
+                                        <form action="{{ route('carrusel.update_imagen', $slide->id) }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="file" name="imagen" id="file-{{ $slide->id }}" style="display: none;" accept="image/*" onchange="this.form.submit()">
+                                            <button type="button" class="btn-mini" onclick="document.getElementById('file-{{ $slide->id }}').click()" title="Cambiar Foto">
+                                                <i class="fas fa-camera"></i>
+                                            </button>
+                                        </form>
+
+                                        {{-- Editar Textos --}}
+                                        <button type="button" class="btn-mini" onclick="editarSlide({{ json_encode($slide) }})" title="Editar Textos">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+
+                                        {{-- Eliminar --}}
+                                        <form action="{{ route('carrusel.inactivar', $slide->id) }}" method="POST" class="formInactivar">
+                                            @csrf @method('PATCH')
+                                            <button type="submit" class="btn-mini btn-mini-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                                
+                                <div class="carousel-caption">
+                                    <div class="container">
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-10 text-left">
+                                                <p class="subtitulo-plexa text-warning text-uppercase animate__animated animate__fadeInDown">
+                                                    {{ $slide->subtitulo }}
+                                                </p>
+                                                <h1 class="display-1 text-white mb-4 animate__animated animate__zoomIn">
+                                                    {{ $slide->titulo }}
+                                                </h1>
+                                                <div class="animate__animated animate__fadeInUp">
+                                                    <a href="{{ $slide->url }}" class="btn btn-primary btn-lg px-5 py-3 font-weight-bold shadow">
+                                                        {{ $slide->boton }}
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             @empty
-                                {{-- Slide por defecto si no hay nada en la BD --}}
                                 <div class="carousel-item active">
-                                    <img class="w-100" src="https://via.placeholder.com/1920x600?text=Bienvenido+a+Plexa" alt="Default">
+                                    <div style="width:100%; height:100%; background: linear-gradient(45deg, #1a1a1a, #4e73df);"></div>
                                     <div class="carousel-caption">
-                                        <h1 class="display-3 text-white">Bienvenido a Plexa</h1>
+                                        <h1 class="display-1 text-white">Bienvenido</h1>
+                                        <p class="h4 text-white-50">Sube tu primera imagen con el botón (+)</p>
                                     </div>
                                 </div>
                             @endforelse
                         </div>
                         
+                        {{-- BOTONES SIGUIENTE / ANTERIOR (REDONDOS) --}}
                         <a class="carousel-control-prev" href="#header-carousel" role="button" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
@@ -102,179 +171,93 @@
                         </a>
                     </div>
 
-
-                    {{-- ======================================================= --}}
-                    {{--  2. PANEL DE ADMINISTRACIÓN (SOLO ADMINS)               --}}
-                    {{-- ======================================================= --}}
-                    
                     @if($esAdmin)
-                    <div class="container mt-5 mb-5">
-                        <div class="row">
-                            {{-- Formulario de Carga --}}
-                            <div class="col-lg-4">
-                                <div class="card shadow mb-4">
-                                    <div class="card-header py-3 bg-primary text-white">
-                                        <h6 class="m-0 font-weight-bold"><i class="fas fa-edit"></i> Gestión de Slides</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <form action="{{ route('carrusel.store') }}" method="POST" enctype="multipart/form-data" id="formCarrusel">
-                                            @csrf
-                                            <input type="hidden" name="accion" id="accion" value="nuevo">
-                                            <input type="hidden" name="id_editar" id="id_editar">
-
-                                            <div class="form-group">
-                                                <label>Imagen (Sugerido: 1920x600 px)</label>
-                                                <input type="file" name="imagen" class="form-control-file border p-1" accept="image/*" id="inputImagen">
-                                                <small class="text-muted" id="avisoImagen">* Obligatorio para nuevos</small>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Título</label>
-                                                <input type="text" name="titulo" id="titulo" class="form-control" placeholder="Ej: Energía que avanza">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Subtítulo</label>
-                                                <input type="text" name="subtitulo" id="subtitulo" class="form-control" placeholder="Ej: Soluciones GLP">
-                                            </div>
-
-                                            <div class="form-row">
-                                                <div class="form-group col-md-6">
-                                                    <label>Texto Botón</label>
-                                                    <input type="text" name="boton" id="boton" class="form-control" value="Leer Más">
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label>Orden</label>
-                                                    <input type="number" name="orden" id="orden" class="form-control" value="1">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>URL (Enlace)</label>
-                                                <input type="text" name="url" id="url" class="form-control" value="#">
-                                            </div>
-
-                                            <button type="submit" class="btn btn-success btn-block font-weight-bold" id="btnGuardar">
-                                                <i class="fas fa-save mr-1"></i> GUARDAR SLIDE
-                                            </button>
-                                            
-                                            <button type="button" class="btn btn-secondary btn-block" id="btnCancelar" style="display: none;" onclick="limpiarFormulario()">
-                                                CANCELAR EDICIÓN
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Tabla de Slides --}}
-                            <div class="col-lg-8">
-                                <div class="card shadow mb-4">
-                                    <div class="card-header py-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">Slides Activos</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-sm text-center" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr class="bg-gray-100">
-                                                        <th>Img</th>
-                                                        <th>Info</th>
-                                                        <th>Orden</th>
-                                                        <th>Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @forelse($slides as $slide)
-                                                        <tr>
-                                                            <td style="width: 120px;">
-                                                                <img src="{{ asset('storage/carrusel/' . $slide->imagen) }}" width="100" class="rounded shadow-sm">
-                                                            </td>
-                                                            <td class="text-left small">
-                                                                <strong>T:</strong> {{ $slide->titulo }}<br>
-                                                                <strong>S:</strong> {{ $slide->subtitulo }}<br>
-                                                                <strong>URL:</strong> {{ $slide->url }}
-                                                            </td>
-                                                            <td class="align-middle">{{ $slide->orden }}</td>
-                                                            <td class="align-middle">
-                                                                {{-- Botón Editar (Carga datos al form) --}}
-                                                                <button class="btn btn-warning btn-sm btn-circle" onclick="editarSlide({{ json_encode($slide) }})" title="Editar">
-                                                                    <i class="fas fa-pen"></i>
-                                                                </button>
-
-                                                                {{-- Botón Inactivar --}}
-                                                                <form action="{{ route('carrusel.inactivar', $slide->id) }}" method="POST" class="d-inline formInactivar">
-                                                                    @csrf @method('PATCH')
-                                                                    <button type="submit" class="btn btn-danger btn-sm btn-circle" title="Eliminar">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                    @empty
-                                                        <tr><td colspan="4">No hay slides activos.</td></tr>
-                                                    @endforelse
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        {{-- Botón (+) --}}
+                        <button class="btn btn-primary btn-floating" data-toggle="modal" data-target="#modalNuevoSlide" title="Nuevo Slide">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     @endif
 
-                </div> </div> @include('layouts.pie')
+                </div>
+            </div>
+            @include('layouts.pie')
+        </div>
+    </div>
+
+    {{-- MODAL DE GESTIÓN --}}
+    <div class="modal fade" id="modalNuevoSlide" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title font-weight-bold" id="modalTitulo">Gestionar Slide</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <form action="{{ route('carrusel.store') }}" method="POST" enctype="multipart/form-data" id="formSlide">
+                    @csrf
+                    <input type="hidden" name="accion" id="accion" value="nuevo">
+                    <input type="hidden" name="id_editar" id="id_editar">
+                    <input type="hidden" name="orden" value="10">
+
+                    <div class="modal-body">
+                        <div class="form-group" id="divInputImagen">
+                            <label>Imagen</label>
+                            <div class="custom-file">
+                                <input type="file" name="imagen" class="custom-file-input" id="inputImagen" accept="image/*">
+                                <label class="custom-file-label" for="inputImagen">Elegir archivo...</label>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Título</label><input type="text" name="titulo" id="titulo" class="form-control" placeholder="Título Principal"></div>
+                        <div class="form-group"><label>Subtítulo</label><input type="text" name="subtitulo" id="subtitulo" class="form-control" placeholder="Subtítulo"></div>
+                        <div class="form-row">
+                            <div class="col-6"><label>Texto Botón</label><input type="text" name="boton" id="boton" class="form-control" value="Leer Más"></div>
+                            <div class="col-6"><label>Enlace</label><input type="text" name="url" id="url" class="form-control" value="#"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary font-weight-bold">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Alerta de confirmación para eliminar
-        $('.formInactivar').on('submit', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: '¿Eliminar slide?',
-                text: "Se ocultará del carrusel principal.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74a3b',
-                cancelButtonColor: '#858796',
-                confirmButtonText: 'Sí, eliminar'
-            }).then((result) => { if (result.isConfirmed) this.submit(); });
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
 
-        // Función para cargar datos en el formulario al dar click en Editar
-        function editarSlide(data) {
-            // Llenar inputs
+        $('.formInactivar').on('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({ title: '¿Borrar?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí', confirmButtonColor: '#e74a3b' })
+                .then((r) => { if (r.isConfirmed) this.submit(); });
+        });
+
+        window.editarSlide = function(data) {
+            $('#modalTitulo').text('Editar Textos');
+            $('#accion').val('editar');
             $('#id_editar').val(data.id);
             $('#titulo').val(data.titulo);
             $('#subtitulo').val(data.subtitulo);
             $('#boton').val(data.boton);
             $('#url').val(data.url);
-            $('#orden').val(data.orden);
+            $('#divInputImagen').hide();
+            $('#modalNuevoSlide').modal('show');
+        };
 
-            // Cambiar estado del formulario
-            $('#accion').val('editar');
-            $('#btnGuardar').removeClass('btn-success').addClass('btn-warning').html('<i class="fas fa-sync-alt mr-1"></i> ACTUALIZAR');
-            $('#btnCancelar').show();
-            $('#avisoImagen').text('* Opcional (subir solo si quieres cambiarla)');
-            
-            // Scroll suave hacia el formulario
-            $('html, body').animate({ scrollTop: $("#formCarrusel").offset().top - 100 }, 500);
-        }
-
-        // Función para limpiar el formulario
-        function limpiarFormulario() {
-            $('#formCarrusel')[0].reset();
-            $('#id_editar').val('');
+        $('#modalNuevoSlide').on('hidden.bs.modal', function () {
+            $('#formSlide')[0].reset();
             $('#accion').val('nuevo');
-            $('#btnGuardar').removeClass('btn-warning').addClass('btn-success').html('<i class="fas fa-save mr-1"></i> GUARDAR SLIDE');
-            $('#btnCancelar').hide();
-            $('#avisoImagen').text('* Obligatorio para nuevos');
-        }
+            $('#divInputImagen').show();
+            $('#modalTitulo').text('Nuevo Slide');
+            $('.custom-file-label').html('Elegir archivo...');
+        });
     </script>
 </body>
 </html>

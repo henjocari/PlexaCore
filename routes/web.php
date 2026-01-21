@@ -10,7 +10,7 @@ use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PrecioGlpController;
-use App\Http\Controllers\CarruselController; // <--- AGREGADO: Importamos el controlador
+use App\Http\Controllers\CarruselController; 
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -87,29 +87,29 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->name('precio.inactivar');
     //--------------Precio GLP------------\\
 
+    Route::middleware(['auth', \App\Http\Middleware\RefreshPermissions::class])->group(function () {
 
     //--------------CARRUSEL (NUEVO)------------\\
     // 🚫 Solo visible si el usuario tiene el módulo "Carrusel"
     
-    // 1. Vista Principal
-    Route::get('/carrusel', [CarruselController::class, 'index']) // <--- 'index' en minúscula
-    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
-    ->name('carrusel.index');
+  // --- MÓDULO CARRUSEL ---
+    Route::get('/carrusel', [CarruselController::class, 'carrusel'])
+        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->name('carrusel.index');
 
-    // 2. Guardar (Nuevo o Editar)
     Route::post('/carrusel/guardar', [CarruselController::class, 'store'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
         ->name('carrusel.store');
 
-    // 3. Inactivar
+    Route::post('/carrusel/{id}/update-imagen', [CarruselController::class, 'updateImagen'])
+        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->name('carrusel.update_imagen');
+
     Route::patch('/carrusel/{id}/inactivar', [CarruselController::class, 'inactivar'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
         ->name('carrusel.inactivar');
+    });
 
-    Route::post('/carrusel/{id}/update-imagen', [CarruselController::class, 'updateImagen'])
-    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
-    ->name('carrusel.update_imagen');
-    //--------------CARRUSEL (NUEVO)------------\\
 
 
     Route::get('/gestiondehotel', function () {
@@ -141,4 +141,4 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     // Logout (también requiere sesión)
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-});
+}); 
