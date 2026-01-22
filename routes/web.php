@@ -85,6 +85,9 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::patch('/precio-glp/{id}/inactivar', [PrecioGlpController::class, 'inactivar'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Precio GLP')
         ->name('precio.inactivar');
+    
+    Route::get('/precio-glp/ver/{archivo}', [PrecioGlpController::class, 'verPDF'])
+        ->name('precio.ver');
     //--------------Precio GLP------------\\
 
     Route::middleware(['auth', \App\Http\Middleware\RefreshPermissions::class])->group(function () {
@@ -108,6 +111,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::patch('/carrusel/{id}/inactivar', [CarruselController::class, 'inactivar'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
         ->name('carrusel.inactivar');
+
+    Route::patch('/carrusel/{id}/activar', [CarruselController::class, 'activar'])
+        ->middleware(VerificarModulo::class . ':Carrusel')
+        ->name('carrusel.activar');
+    
     });
 
 
