@@ -35,7 +35,9 @@ class PrecioGlpController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'archivo_pdf' => 'required|file|mimes:pdf|max:20480',
+            // CAMBIO AQUÍ: Aumentado a 100MB (102400 KB)
+            // Antes era 20480 (20MB)
+            'archivo_pdf' => 'required|file|mimes:pdf|max:102400',
         ]);
 
         try {
@@ -45,7 +47,6 @@ class PrecioGlpController extends Controller
                 // 1. OBTENEMOS EL NOMBRE ORIGINAL
                 $nombreOriginal = $file->getClientOriginalName();
                 
-                // --- CAMBIO APLICADO AQUÍ ---
                 // Ya NO reemplazamos espacios por guiones. Se guarda tal cual.
                 $nombreArchivo = $nombreOriginal; 
 

@@ -154,7 +154,7 @@
                 text: "El documento dejará de ser visible.",
                 icon: 'warning', 
                 showCancelButton: true, 
-                confirmButtonColor: '#e74a3b',
+                confirmButtonColor: '#1dc920',
                 confirmButtonText: 'Sí, inactivar' 
             }).then((r) => { if (r.isConfirmed) this.submit(); });
         });

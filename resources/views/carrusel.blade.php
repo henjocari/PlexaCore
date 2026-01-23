@@ -14,7 +14,16 @@
     <style>
         /* Ajustes Visuales */
         .carousel-item { height: calc(100vh - 70px); min-height: 500px; position: relative; background: #000; }
-        .carousel-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        
+        /* CAMBIO AQUÍ: Agregamos ', .carousel-item video' para que el video tenga el mismo estilo */
+        .carousel-item img, 
+        .carousel-item video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.7; 
+        }
+
         .carousel-caption { z-index: 10; display: flex; align-items: center; justify-content: center; bottom: 0; top: 0; }
         .display-1 { font-size: 4rem; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
         .subtitulo-plexa { font-size: 1.5rem; letter-spacing: 3px; font-weight: 600; color: #f6c23e; text-shadow: 1px 1px 5px rgba(0,0,0,0.8); }
@@ -66,22 +75,38 @@
                             @forelse($slides as $slide)
                             <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                                 
-                                {{-- LÓGICA DE IMAGEN: Si es URL externa o Local en carpeta 'imagenes_carrusel' --}}
-                                @php $img = $slide->imagen; @endphp
-                                @if(Str::startsWith($img, 'http'))
-                                    <img src="{{ $img }}" alt="Slide">
+                                {{-- LÓGICA INTELIGENTE FOTO/VIDEO --}}
+                                @php 
+                                    $imgName = $slide->imagen;
+                                    
+                                    // 1. Determinar la URL final (Externa o Local)
+                                    $urlFinal = Str::startsWith($imgName, 'http') 
+                                        ? $imgName 
+                                        : asset('imagenes_carrusel/' . $imgName);
+                                    
+                                    // 2. Detectar si es video
+                                    $esVideo = Str::endsWith(strtolower($imgName), ['.mp4', '.webm', '.mov']);
+                                @endphp
+
+                                @if($esVideo)
+                                    {{-- SI ES VIDEO --}}
+                                    <video autoplay muted loop playsinline>
+                                        <source src="{{ $urlFinal }}" type="video/mp4">
+                                        Tu navegador no soporta videos.
+                                    </video>
                                 @else
-                                    {{-- AQUÍ ESTÁ EL CAMBIO CLAVE --}}
-                                    <img src="{{ asset('imagenes_carrusel/' . $img) }}" alt="Slide Local">
+                                    {{-- SI ES IMAGEN --}}
+                                    <img src="{{ $urlFinal }}" alt="Slide">
                                 @endif
 
                                 @if($esAdmin)
                                     <div class="admin-controls-corner">
-                                        {{-- Cambiar Foto --}}
+                                        {{-- Cambiar Foto/Video --}}
                                         <form action="{{ route('carrusel.update_imagen', $slide->id) }}" method="POST" enctype="multipart/form-data">
                                             @csrf
-                                            <input type="file" name="imagen" id="file-{{ $slide->id }}" style="display: none;" accept="image/*" onchange="this.form.submit()">
-                                            <button type="button" class="btn-mini" title="Cambiar Foto" onclick="document.getElementById('file-{{ $slide->id }}').click()"><i class="fas fa-camera"></i></button>
+                                            {{-- Nota: Aceptamos video e imagen --}}
+                                            <input type="file" name="imagen" id="file-{{ $slide->id }}" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="this.form.submit()">
+                                            <button type="button" class="btn-mini" title="Cambiar Multimedia" onclick="document.getElementById('file-{{ $slide->id }}').click()"><i class="fas fa-camera"></i></button>
                                         </form>
                                         {{-- Editar --}}
                                         <button type="button" class="btn-mini" title="Editar Texto" onclick="editarSlide({{ json_encode($slide) }})"><i class="fas fa-pen"></i></button>
@@ -95,13 +120,13 @@
                                 
                                 <div class="carousel-caption">
                                     <div class="container"><div class="row justify-content-center"><div class="col-lg-10 text-left">
-                                        <p class="subtitulo-plexa text-uppercase animate__animated animate__fadeInDown">{{ $slide->subtitulo }}</p>
-                                        <h1 class="display-1 text-white mb-4 animate__animated animate__zoomIn">{{ $slide->titulo }}</h1>
-                                        @if($slide->boton)
-                                            <div class="animate__animated animate__fadeInUp">
-                                                <a href="{{ $slide->url }}" class="btn btn-primary btn-lg px-5 py-3 font-weight-bold shadow">{{ $slide->boton }}</a>
-                                            </div>
-                                        @endif
+                                            <p class="subtitulo-plexa text-uppercase animate__animated animate__fadeInDown">{{ $slide->subtitulo }}</p>
+                                            <h1 class="display-1 text-white mb-4 animate__animated animate__zoomIn">{{ $slide->titulo }}</h1>
+                                            @if($slide->boton)
+                                                <div class="animate__animated animate__fadeInUp">
+                                                    <a href="{{ $slide->url }}" class="btn btn-primary btn-lg px-5 py-3 font-weight-bold shadow">{{ $slide->boton }}</a>
+                                                </div>
+                                            @endif
                                     </div></div></div>
                                 </div>
                             </div>
@@ -146,8 +171,9 @@
 
                     <div class="modal-body">
                         <div class="form-group" id="divInputImagen">
-                            <label>Imagen <small class="text-danger">*</small></label>
-                            <input type="file" name="imagen" class="form-control" accept="image/*">
+                            <label>Imagen o Video (mp4) <small class="text-danger">*</small></label>
+                            {{-- Permitimos seleccionar video en el input --}}
+                            <input type="file" name="imagen" class="form-control" accept="image/*,video/mp4,video/webm">
                         </div>
                         <div class="form-group"><label>Título</label><input type="text" name="titulo" id="titulo" class="form-control" required></div>
                         <div class="form-group"><label>Subtítulo</label><input type="text" name="subtitulo" id="subtitulo" class="form-control"></div>
