@@ -15,12 +15,13 @@
         .fade-in { animation: fadeIn ease 1.2s; }
         @keyframes fadeIn { 0% { opacity:0; } 100% { opacity:1; } }
         
-        /* ESTILO TIPO "HOJA DE PAPEL" */
+        /* ESTILO LIMPIO "HOJA DE PAPEL" */
         .pdf-paper {
             width: 100%;
-            height: 1150px; /* Altura de una hoja A4 larga para que se vea completa */
+            height: 1150px; /* Altura perfecta para A4 */
             border: none;
             display: block;
+            background-color: #fff; /* Fondo blanco detrás */
         }
     </style>
 </head>
@@ -38,26 +39,21 @@
 
                     <div class="text-center fade-in">
                         
-                        {{-- 1. VISOR TIPO DOCUMENTO (CENTRADO Y ACOTADO) --}}
+                        {{-- 1. VISOR TIPO DOCUMENTO (MODO LIMPIO) --}}
                         @if($ultimoPrecio)
-                            {{-- AQUÍ ESTÁ EL TRUCO: max-width: 850px hace que no se vea gigante --}}
-                            <div class="card shadow mb-4 mx-auto" style="max-width: 850px; border: 1px solid #d1d3e2;">
-                                <div class="card-header py-2 bg-white border-bottom-0">
-                                    <small class="text-muted font-weight-bold text-uppercase">
-                                        <i class="fas fa-file-pdf mr-1"></i> Visualización Oficial
-                                    </small>
-                                </div>
+                            <div class="card shadow-lg mb-4 mx-auto" style="max-width: 900px; border: none;">
                                 <div class="card-body p-0">
                                     {{-- 
-                                        Parámetros PDF:
-                                        #view=FitH  -> Ajustar al ancho del contenedor (850px) = Zoom perfecto.
-                                        #toolbar=0  -> Sin barras negras.
+                                       CAMBIO CLAVE: Usamos <embed> en lugar de <iframe>.
+                                       Esto, junto con view=FitH, elimina las franjas negras laterales.
                                     --}}
-                                    <iframe 
+                                    <embed 
                                         src="{{ asset('archivos_glp/' . $ultimoPrecio->archivo_pdf) }}?v={{ time() }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
-                                        class="pdf-paper"
-                                        title="Visor PDF">
-                                    </iframe>
+                                        type="application/pdf"
+                                        class="pdf-paper">
+                                </div>
+                                <div class="card-footer bg-white border-top-0 text-muted small">
+                                    Visualización oficial del documento cargado.
                                 </div>
                             </div>
                         @else
@@ -88,7 +84,7 @@
 
                         {{-- 3. TABLA HISTÓRICA --}}
                         <div class="row justify-content-center">
-                            <div class="col-lg-10"> {{-- Ajustado a col-lg-10 para que no sea tan ancha --}}
+                            <div class="col-lg-10">
                                 <div class="card shadow mb-4">
                                     <div class="card-header py-3 bg-light">
                                         <h6 class="m-0 font-weight-bold text-primary">Historial de Cargas</h6>
@@ -109,7 +105,8 @@
                                                     @forelse($historico as $archivo)
                                                         <tr>
                                                             <td>{{ $archivo->id }}</td>
-                                                            <td class="text-left pl-3 small">{{ $archivo->archivo_pdf }}</td>
+                                                            {{-- TRUCO VISUAL: Quitamos guiones bajos SOLO en la tabla para que se vea bonito --}}
+                                                            <td class="text-left pl-3 small">{{ str_replace('_', ' ', $archivo->archivo_pdf) }}</td>
                                                             <td class="text-info font-weight-bold">
                                                                 {{ $archivo->nombre_user ?? 'Sistema' }} {{ $archivo->apellido_user ?? '' }}
                                                             </td>
@@ -153,12 +150,12 @@
         $('.formInactivar').on('submit', function(e) {
             e.preventDefault();
             Swal.fire({ 
-                title: '¿Eliminar?', 
+                title: '¿Inactivar?', 
                 text: "El documento dejará de ser visible.",
                 icon: 'warning', 
                 showCancelButton: true, 
                 confirmButtonColor: '#e74a3b',
-                confirmButtonText: 'Sí, eliminar' 
+                confirmButtonText: 'Sí, inactivar' 
             }).then((r) => { if (r.isConfirmed) this.submit(); });
         });
     </script>

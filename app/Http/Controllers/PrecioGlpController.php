@@ -11,55 +11,55 @@ class PrecioGlpController extends Controller
 {
     public function precioglp()
     {
-        // Traemos datos y usuario responsable
+        // 1. Preparamos la consulta
         $query = DB::table('2_precios_glp')
             ->leftJoin('usuarios', '2_precios_glp.user_id', '=', 'usuarios.cedula')
-            ->select(
-                '2_precios_glp.*', 
-                'usuarios.nombre as nombre_user', 
-                'usuarios.apellido as apellido_user'
-            )
+            ->select('2_precios_glp.*', 'usuarios.nombre as nombre_user', 'usuarios.apellido as apellido_user')
             ->where('2_precios_glp.estado', 1)
             ->orderBy('2_precios_glp.id', 'desc');
 
+        // 2. Obtenemos datos
         $ultimoPrecio = $query->first();
         $historico = $query->paginate(5);
-
+        
+        // 3. Verificamos permisos
         $user = Auth::user();
-        $esAdmin = ($user && in_array((int)$user->rol, [1, 2]));
-        $puedeEditar = $esAdmin;
+        
+        // Definimos la variable con el nombre EXACTO que pide la vista ($puedeEditar)
+        $puedeEditar = ($user && in_array((int)$user->rol, [1, 2]));
 
-        return view('preciosglp', compact('ultimoPrecio', 'historico', 'esAdmin', 'puedeEditar'));
+        // 4. Enviamos TODO a la vista
+        return view('preciosglp', compact('ultimoPrecio', 'historico', 'puedeEditar')); 
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'archivo_pdf' => 'required|file|mimes:pdf|max:20480', // Máx 20MB
+            'archivo_pdf' => 'required|file|mimes:pdf|max:20480',
         ]);
 
         try {
             if ($request->hasFile('archivo_pdf')) {
                 $file = $request->file('archivo_pdf');
                 
-                // 1. Nombre limpio y legible
+                // 1. OBTENEMOS EL NOMBRE ORIGINAL
                 $nombreOriginal = $file->getClientOriginalName();
-                $nombreLimpio = preg_replace('/[^A-Za-z0-9.\-_]/', '_', $nombreOriginal);
-                $nombreArchivo = time() . '_' . $nombreLimpio;
+                
+                // --- CAMBIO APLICADO AQUÍ ---
+                // Ya NO reemplazamos espacios por guiones. Se guarda tal cual.
+                $nombreArchivo = $nombreOriginal; 
 
-                // 2. LA SOLUCIÓN DEFINITIVA: Guardar en 'public/archivos_glp'
-                // Esto pone el archivo en una carpeta normal, sin bloqueos.
+                // Ruta de destino
                 $destino = public_path('archivos_glp');
                 
-                // Creamos la carpeta si no existe
-                if (!File::exists($destino)) {
-                    File::makeDirectory($destino, 0755, true);
+                if (!file_exists($destino)) {
+                    @mkdir($destino, 0777, true);
                 }
 
-                // Movemos el archivo físicamente
+                // Guardar archivo
                 $file->move($destino, $nombreArchivo);
                 
-                // 3. Guardar en Base de Datos
+                // Guardar en BD
                 DB::table('2_precios_glp')->insert([
                     'archivo_pdf'  => $nombreArchivo,
                     'fecha_inicio' => now(),
@@ -68,20 +68,22 @@ class PrecioGlpController extends Controller
                     'estado'       => 1
                 ]);
 
-                return back()->with('success', 'PDF subido y visible.');
+                return back()->with('success', 'PDF subido correctamente: ' . $nombreArchivo);
             }
-
-            return back()->with('error', 'No se envió ningún archivo.');
+            return back()->with('error', 'Falta el archivo.');
 
         } catch (\Exception $e) {
+            // En caso de error grave, lo mostramos para depurar
             dd("ERROR: " . $e->getMessage());
         }
     }
 
     public function inactivar($id)
     {
+        // Solo admin o rol 2 pueden borrar
         if (!in_array((int)auth()->user()->rol, [1, 2])) return back();
+        
         DB::table('2_precios_glp')->where('id', $id)->update(['estado' => 0]);
-        return back()->with('success', 'Eliminado.');
+        return back()->with('success', 'Documento eliminado.');
     }
 }
