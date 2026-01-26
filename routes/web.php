@@ -10,7 +10,8 @@ use App\Http\Middleware\RefreshPermissions;
 use App\Http\Controllers\HistorialHabitacionController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PrecioGlpController;
-use App\Http\Controllers\CarruselController; 
+use App\Http\Controllers\CarruselController;
+use App\Http\Controllers\TicketController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -21,7 +22,6 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 // ----------------------
 // RUTAS PROTEGIDAS (requieren sesión)
 // ----------------------
-// 🚨 ¡AGREGAMOS RefreshPermissions al grupo 'auth' para que se ejecute en cada recarga!
 Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::get('/', function () {
@@ -32,40 +32,36 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         return view('index');
     });
     
-    // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Dashboard"
+    // 🚫 Módulo Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
     })
     ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Dashboard')
     ->name('dashboard');
 
-    // 🚫 Esta ruta solo visible si el usuario tiene el módulo "Tabla Conductores"
+    // 🚫 Módulo Tabla Conductores
     Route::get('/tablas', [ConductorController::class, 'tablas'])
         ->middleware(VerificarModulo::class . ':Tabla Conductores')
         ->name('tablas');
 
-    // 🚫 Solo visible si el usuario tiene el módulo "Hotel"
+    // 🚫 Módulo Hotel
     Route::get('/hotel', [HabitacionController::class, 'hotel'])
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('hotel');
 
     //--------------Usuarios------------\\
-    // 🚫 Solo visible si el usuario tiene el módulo "Usuario"
     Route::get('/usuarios', [UsuarioController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios');
     
-    // Crear nuevo usuario
     Route::post('/usuarios', [UsuarioController::class, 'store'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.store');
 
-    // Actualizar usuario existente
     Route::put('/usuarios/{cedula}', [UsuarioController::class, 'update'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.update');
 
-    // Cambiar estado (activar/inactivar)
     Route::post('/usuarios/{cedula}/toggle', [UsuarioController::class, 'toggle'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.toggle');
@@ -73,7 +69,6 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     
     //--------------Precio GLP------------\\
-    // 🚫 Solo visible si el usuario tiene el módulo "Precio GLP"
     Route::get('/precio-glp', [PrecioGlpController::class, 'precioglp'])
         ->middleware(VerificarModulo::class . ':Precio GLP')
         ->name('precio.glp');
@@ -90,12 +85,8 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->name('precio.ver');
     //--------------Precio GLP------------\\
 
-    Route::middleware(['auth', \App\Http\Middleware\RefreshPermissions::class])->group(function () {
 
-    //--------------CARRUSEL (NUEVO)------------\\
-    // 🚫 Solo visible si el usuario tiene el módulo "Carrusel"
-    
-  // --- MÓDULO CARRUSEL ---
+    //--------------CARRUSEL------------\\
     Route::get('/carrusel', [CarruselController::class, 'carrusel'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
         ->name('carrusel.index');
@@ -115,10 +106,22 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::patch('/carrusel/{id}/activar', [CarruselController::class, 'activar'])
         ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.activar');
+    //--------------CARRUSEL------------\\
+
+
+   // ==========================================
+    //       RUTAS DE TICKETS     
+    // ==========================================
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     
-    });
+    // 🚨 RUTA NUEVA: PAPELERA (Ver borrados)
+    Route::get('/tickets/papelera', [TicketController::class, 'papelera'])->name('tickets.papelera');
 
-
+    // Botones de Acción
+    Route::patch('/tickets/{id}/inactivar', [TicketController::class, 'inactivar'])->name('tickets.inactivar');
+    Route::patch('/tickets/{id}/activar', [TicketController::class, 'activar'])->name('tickets.activar');
+    // ==========================================
 
     Route::get('/gestiondehotel', function () {
         return view('gestiondehotel');
@@ -146,7 +149,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     // CloudFleet
     Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])->name('actualizarconductores');
 
-    // Logout (también requiere sesión)
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-}); 
+});
