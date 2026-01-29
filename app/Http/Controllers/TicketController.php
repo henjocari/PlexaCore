@@ -11,6 +11,7 @@ use App\Mail\RespuestaViajeMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
+
 class TicketController extends Controller
 {
     // VISTA 1: SOLICITAR
@@ -129,7 +130,11 @@ class TicketController extends Controller
             ];
             
             try {
-                Mail::to($user->email)->send(new RespuestaViajeMail($datos));
+                // ANTES (Dará error si el usuario no eres tú):
+// Mail::to($user->email)->send(new RespuestaViajeMail($datos));
+
+            // AHORA (Para pruebas):
+            Mail::to('royssimarra@gmail.com')->send(new RespuestaViajeMail($datos));
             } catch (\Exception $e) {
                 // Si falla el correo, no rompemos el proceso
             }
