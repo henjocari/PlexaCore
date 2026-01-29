@@ -85,6 +85,41 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->name('precio.ver');
     //--------------Precio GLP------------\\
 
+    // ==========================================
+    //           MÓDULO DE VIAJES
+    // ==========================================
+    
+    // 1. Vista para SOLICITAR (Empleados y Jefes pueden pedir)
+    Route::get('/solicitar-viaje', [TicketController::class, 'verSolicitar'])->name('tickets.solicitar');
+    
+    // 2. Vista para GESTIONAR (Solo Jefes ven esto)
+    Route::get('/gestion-viajes', [TicketController::class, 'verGestion'])->name('tickets.gestion');
+
+    // Acciones (Guardar y Gestionar)
+    Route::post('/tickets/crear', [TicketController::class, 'store'])->name('tickets.store');
+    Route::post('/tickets/{id}/gestionar', [TicketController::class, 'gestionar'])->name('tickets.gestionar');
+
+    Route::get('/probar-email', function() {
+    try {
+        // REEMPLAZA ESTE CORREO POR EL TUYO DE RESEND
+        $miCorreo = 'royssimarra@gmail.com'; 
+        
+        $datos = [
+            'empleado' => 'Usuario de Prueba',
+            'destino'  => 'Destino Test',
+            'fecha'    => '2026-12-31'
+        ];
+        
+        Illuminate\Support\Facades\Mail::to($miCorreo)
+            ->send(new App\Mail\SolicitudViajeMail($datos));
+            
+        return "✅ ¡ÉXITO! Laravel dice que envió el correo. Revisa tu bandeja de entrada (y Spam).";
+        
+    } catch (\Exception $e) {
+        return "❌ ERROR DETECTADO: " . $e->getMessage();
+    }
+    });
+
 
     //--------------CARRUSEL------------\\
     Route::get('/carrusel', [CarruselController::class, 'carrusel'])

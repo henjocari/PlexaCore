@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('habitaciones_historial', function (Blueprint $table) {
+        // CORRECCIÓN: El nombre correcto es 'historial_habitaciones'
+        Schema::table('historial_habitaciones', function (Blueprint $table) {
             $table->string('c_conductor')->nullable();
             $table->string('n_conductor')->nullable();
             $table->timestamp('check_in')->nullable();
@@ -21,7 +22,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('habitaciones_historial', function (Blueprint $table) {
+        Schema::table('historial_habitaciones', function (Blueprint $table) {
             $table->dropColumn([
                 'c_conductor',
                 'n_conductor',

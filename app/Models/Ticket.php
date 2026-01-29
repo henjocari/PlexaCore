@@ -9,15 +9,18 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    // Nombre exacto de la tabla en tu base de datos
+    // Nombre exacto de tu tabla
     protected $table = '3_tickets';
 
-    // Los campos que permitimos llenar
     protected $fillable = [
         'user_id',
+        'origen',        
+        'destino',       
+        'fecha_viaje',   
+        'descripcion',
         'archivo_tikete',
         'archivo_soporte',
-        'descripcion',
+        'mensaje_admin',
         'estado'
     ];
 }
