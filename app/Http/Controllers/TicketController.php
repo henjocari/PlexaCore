@@ -38,7 +38,6 @@ class TicketController extends Controller
 
         $tickets = DB::table('3_tickets')
             ->join('usuarios', '3_tickets.user_id', '=', 'usuarios.cedula')
-            // OJO AQUÍ: Seleccionamos con las mayúsculas correctas
             ->select('3_tickets.*', 'usuarios.Nombre', 'usuarios.Apellido', 'usuarios.email')
             ->orderBy('3_tickets.created_at', 'desc')
             ->paginate(10);
@@ -46,49 +45,65 @@ class TicketController extends Controller
         return view('gestion_viajes', compact('tickets'));
     }
 
-    // GUARDAR SOLICITUD
+    // GUARDAR SOLICITUD (CORREGIDO PARA "Ida y Vuelta")
     public function store(Request $request)
-{
-    $request->validate(['origen'=>'required', 'destino'=>'required', 'fecha_viaje'=>'required|date']);
+    {
+        // 1. Validación
+        $request->validate([
+            'origen' => 'required', 
+            'destino' => 'required', 
+            'fecha_viaje' => 'required|date',
+            'tipo_viaje' => 'required',
+            'fecha_regreso' => 'nullable|date|after_or_equal:fecha_viaje',
+        ]);
 
-    // 1. Crear el Ticket en la BD
-    $ticket = Ticket::create([
-        'user_id'     => Auth::user()->cedula,
-        'origen'      => $request->origen,
-        'destino'     => $request->destino,
-        'fecha_viaje' => $request->fecha_viaje,
-        'descripcion' => $request->descripcion,
-        'estado'      => 2 
-    ]);
+        // Validación extra: Si dice "Ida y Vuelta", debe tener fecha regreso
+        if ($request->tipo_viaje == 'Ida y Vuelta' && !$request->fecha_regreso) {
+            return back()->withErrors(['fecha_regreso' => 'La fecha de regreso es obligatoria.']);
+        }
 
-    // 2. Preparar datos para el correo
-    $nombreEmpleado = Auth::user()->Nombre . ' ' . Auth::user()->Apellido;
-    
-    // GENERAMOS EL LINK DIRECTO A LA GESTIÓN
-    // Esto crea algo como: http://localhost:8000/gestion-viajes
-    $urlParaAprobar = route('tickets.gestion'); 
+        // 2. Crear el Ticket en la BD
+        $ticket = Ticket::create([
+            'user_id'     => Auth::user()->cedula,
+            'origen'      => $request->origen,
+            'destino'     => $request->destino,
+            'fecha_viaje' => $request->fecha_viaje,
+            
+            // SE GUARDA TEXTUAL "Ida y Vuelta" o "Solo Ida"
+            'tipo_viaje'  => $request->tipo_viaje, 
+            
+            // Si es Ida y Vuelta, guardamos la fecha, si no, NULL
+            'fecha_regreso' => ($request->tipo_viaje == 'Ida y Vuelta') ? $request->fecha_regreso : null,
+            
+            'descripcion' => $request->descripcion,
+            'estado'      => 2 
+        ]);
 
-    $datos = [
-        'empleado' => $nombreEmpleado,
-        'destino'  => $request->destino,
-        'fecha'    => $request->fecha_viaje,
-        'url'      => $urlParaAprobar // <--- Pasamos el link aquí
-    ];
+        // 3. Preparar datos para el correo
+        $nombreEmpleado = Auth::user()->Nombre . ' ' . Auth::user()->Apellido;
+        $urlParaAprobar = route('tickets.gestion'); 
 
-    // 3. ENVIAR LOS DOS CORREOS
-    // IMPORTANTE: Si sigues en modo prueba (sin dominio verificado), 
-    // AMBOS deben ser tu correo personal para que no falle.
-    
-    // --- CORREO 1: PARA EL JEFE (Quien aprueba) ---
-    // En producción sería: Mail::to('jefe@plexa.co')...
-    Mail::to('royssimarra@gmail.com')->send(new SolicitudViajeMail($datos, 'jefe'));
+        $datos = [
+            'empleado' => $nombreEmpleado,
+            'origen'   => $request->origen,
+            'destino'  => $request->destino,
+            'fecha'    => $request->fecha_viaje,
+            'fecha_ida' => $request->fecha_viaje,
+            'fecha_regreso' => $request->fecha_regreso,
+            'tipo'     => $request->tipo_viaje, // Ya viene con el texto correcto
+            'url'      => $urlParaAprobar
+        ];
 
-    // --- CORREO 2: PARA EL EMPLEADO (Confirmación) ---
-    // En producción sería: Mail::to(Auth::user()->email)...
-    Mail::to('royssimarra@gmail.com')->send(new SolicitudViajeMail($datos, 'empleado'));
+        // 4. ENVIAR CORREOS (Usando tu correo para pruebas)
+        try {
+            Mail::to('royssimarra@gmail.com')->send(new SolicitudViajeMail($datos, 'jefe'));
+            Mail::to('royssimarra@gmail.com')->send(new SolicitudViajeMail($datos, 'empleado'));
+        } catch (\Exception $e) {
+            // Ignoramos error de correo para no detener el proceso
+        }
 
-    return back()->with('success', 'Solicitud enviada y notificada al jefe.');
-}
+        return back()->with('success', 'Solicitud enviada y notificada al jefe.');
+    }
 
     // GESTIONAR
     public function gestionar(Request $request, $id)
@@ -119,7 +134,6 @@ class TicketController extends Controller
         $user = DB::table('usuarios')->where('cedula', $ticket->user_id)->first();
         
         if ($user && $user->email) {
-            // CORRECCIÓN: Accedemos a 'Nombre' con mayúscula, tal cual está en tu base de datos
             $nombreUsuario = $user->Nombre; 
 
             $datos = [
@@ -130,13 +144,10 @@ class TicketController extends Controller
             ];
             
             try {
-                // ANTES (Dará error si el usuario no eres tú):
-// Mail::to($user->email)->send(new RespuestaViajeMail($datos));
-
-            // AHORA (Para pruebas):
-            Mail::to('royssimarra@gmail.com')->send(new RespuestaViajeMail($datos));
+                // Forzamos envío a tu correo para pruebas
+                Mail::to('royssimarra@gmail.com')->send(new RespuestaViajeMail($datos));
             } catch (\Exception $e) {
-                // Si falla el correo, no rompemos el proceso
+                // Ignorar error de correo
             }
         }
 
