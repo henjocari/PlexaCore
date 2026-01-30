@@ -22,6 +22,5 @@ class Ticket extends Model
         'descripcion',
         'estado',
         'archivo_tikete',
-        'mensaje_admin'
     ];
 }
