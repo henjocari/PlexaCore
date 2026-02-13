@@ -28,8 +28,7 @@
     </li>
 
     <hr class="sidebar-divider">
-
-    <div class="sidebar-heading">Seccion</div>
+    <div class="sidebar-heading">Sección</div>
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHotel"
@@ -40,14 +39,16 @@
         <div id="collapseHotel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Navegación:</h6>
+                
                 @if(session('modulos_permitidos') && in_array('Hotel', session('modulos_permitidos', [])))
                     <a class="collapse-item" href="{{ url('/hotel') }}">
-                        <i class="fas fa-bed"></i> Hotel
+                        <i class="fas fa-bed mr-2 text-gray-500"></i> Hotel
                     </a>
                 @endif
+
                 @if(session('modulos_permitidos') && in_array('Historial Habitacion', session('modulos_permitidos', [])))
                     <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
-                        <i class="fas fa-history"></i> Historial Habitacion
+                        <i class="fas fa-history mr-2 text-gray-500"></i> Historial
                     </a>
                 @endif
             </div>
@@ -55,52 +56,64 @@
     </li>
 
     <hr class="sidebar-divider">
-
-    <div class="sidebar-heading">Precios y Multimedia</div>
+    <div class="sidebar-heading">Configuración</div>
 
     <li class="nav-item">
-        @if(session('modulos_permitidos') && in_array('Precio GLP', session('modulos_permitidos', [])))
-            <a class="nav-link" href="{{ url('/precio-glp') }}">
-                <i class="fas fa-fw fa-gas-pump"></i>
-                <span>Precio GLP</span>
-            </a>
-        @endif
-
-        <a class="nav-link" href="{{ url('/carrusel') }}">
-            <i class="fas fa-fw fa-images"></i>
-            <span>Carrusel</span>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin"
+            aria-expanded="true" aria-controls="collapseAdmin">
+            <i class="fas fa-fw fa-cogs"></i>
+            <span>Administración</span>
         </a>
+        <div id="collapseAdmin" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Opciones Admin:</h6>
+                
+                @if(session('modulos_permitidos') && in_array('Precio GLP', session('modulos_permitidos', [])))
+                    <a class="collapse-item" href="{{ url('/precio-glp') }}">
+                        <i class="fas fa-gas-pump mr-2 text-gray-500"></i> Precio GLP
+                    </a>
+                @endif
+
+                <a class="collapse-item" href="{{ url('/carrusel') }}">
+                    <i class="fas fa-images mr-2 text-gray-500"></i> Carrusel
+                </a>
+
+                @if(session('modulos_permitidos') && in_array('Tabla Conductores', session('modulos_permitidos', [])))
+                    <a class="collapse-item" href="{{ url('/tablas') }}">
+                        <i class="fas fa-table mr-2 text-gray-500"></i> Conductores
+                    </a>
+                @endif
+            </div>
+        </div>
     </li>
 
     <hr class="sidebar-divider">
-
-    @if(session('modulos_permitidos') && in_array('Tabla Conductores', session('modulos_permitidos', [])))
-        <li class="nav-item">
-            <a class="nav-link" href="{{ url('/tablas') }}">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Tabla de Conductores</span>
-            </a>
-        </li>
-        <hr class="sidebar-divider">
-    @endif
-
-    <div class="sidebar-heading">Gestión de Viajes</div>
+    <div class="sidebar-heading">Logística</div>
 
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('tickets.solicitar') }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseViajes"
+            aria-expanded="true" aria-controls="collapseViajes">
             <i class="fas fa-fw fa-plane-departure"></i>
-            <span>Solicitar Viaje</span>
+            <span>Gestión de Viajes</span>
         </a>
-    </li>
+        <div id="collapseViajes" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Solicitudes:</h6>
+                
+                <a class="collapse-item {{ request()->routeIs('tickets.solicitar') ? 'active' : '' }}" 
+                   href="{{ route('tickets.solicitar') }}">
+                   <i class="fas fa-plus-circle mr-2 text-success"></i> Solicitar Viaje
+                </a>
 
-    @if(Auth::check() && (Auth::user()->rol == 1 || Auth::user()->rol == 2))
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('tickets.gestion') }}">
-                <i class="fas fa-fw fa-clipboard-list"></i>
-                <span>Viajes Solicitados</span>
-            </a>
-        </li>
-    @endif
+                @if(Auth::check() && (Auth::user()->rol == 1 || Auth::user()->rol == 2))
+                    <a class="collapse-item {{ request()->routeIs('tickets.gestion') ? 'active' : '' }}" 
+                       href="{{ route('tickets.gestion') }}">
+                       <i class="fas fa-clipboard-list mr-2 text-primary"></i> Viajes Solicitados
+                    </a>
+                @endif
+            </div>
+        </div>
+    </li>
 
     <hr class="sidebar-divider d-none d-md-block">
 
