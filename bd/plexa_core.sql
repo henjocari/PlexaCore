@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 29-12-2025 a las 15:47:45
+-- Servidor: 127.0.0.1:3307
+-- Tiempo de generación: 20-02-2026 a las 12:32:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,104 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `plexa_core`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `1_carrusel`
+--
+
+CREATE TABLE `1_carrusel` (
+  `id` int(11) NOT NULL,
+  `imagen` text NOT NULL,
+  `titulo` varchar(255) DEFAULT NULL,
+  `subtitulo` varchar(255) DEFAULT NULL,
+  `url` text DEFAULT NULL,
+  `boton` varchar(30) DEFAULT NULL,
+  `orden` int(2) NOT NULL,
+  `estado` tinyint(1) NOT NULL DEFAULT 1,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
+  `cedula` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `1_carrusel`
+--
+
+INSERT INTO `1_carrusel` (`id`, `imagen`, `titulo`, `subtitulo`, `url`, `boton`, `orden`, `estado`, `fecha`, `cedula`) VALUES
+(1, 'http://127.0.0.1:8000/imagenes_carrusel/1769517831_VID_20260122_213015.mp4', 'ENERGÍA QUE AVANZA', 'Mediante una logística oportuna, transportamos los Líquidos y Gases Combustibles que se transforman en la Energía para su proceso productivo.', '#', 'Leer Más', 1, 1, '2025-12-30 09:25:00', 1047418839),
+(2, 'http://plexa.co/wp-content/uploads/2025/04/DJI_0719-scaled.jpg', 'Comercialización', 'En la Comercialización, Plexa brinda la Solución Energética que su negocio necesita. Desde la fuente hasta el punto de entrega.', 'comerci', 'Leer Más', 3, 1, '2025-12-30 11:05:51', 1047418839),
+(3, 'http://plexa.co/wp-content/uploads/2025/04/DJI_0706-scaled.jpg', 'Logística', 'OPERACIÓN LOGÍSTICA La extensa trayectoria en el desarrollo del mercado de Gas Licuado del Petróleo (GLP)', 'logistica', 'Leer Más', 4, 1, '2025-12-30 11:10:17', 1047418839),
+(4, 'http://plexa.co/wp-content/uploads/2025/04/plexaport.jpg', 'Plexaport', 'Capacidad de almacenamiento por 1.080.000 GL de propano, isobutano, butano ', 'plexaport', 'Leer Más', 5, 1, '2025-12-30 11:10:17', 1047418839),
+(5, 'https://yegoecot.com/wp-content/uploads/2024/01/AND09802.jpg', 'Yego Eco-T', 'Yego Ecot es una empresa visionaria dedicada al transporte masivo y semimasivo en Colombia. Con una flota propia de vehículos a GNV, lideramos la transición hacia combustibles amigables con el medio ambiente. Descubre nuestra historia, compromiso y visión', 'https://yegoecot.com/', 'Leer Más', 6, 1, '2025-12-30 11:12:29', 1047418839),
+(6, 'https://yego.com.co/wp-content/uploads/2024/12/DSC01368-1.jpg', 'Yego AutoGLP', 'Beneficios de transformarte a AutoGLP · 35% de ahorro frente al combustible tradicional.', 'https://yego.com.co/', 'Leer Más', 7, 1, '2025-12-30 11:12:29', 1047418839),
+(7, 'http://plexa.co/wp-content/uploads/2026/01/plexachilefondo.png', 'Chile', 'Mediante una logística oportuna, transportamos los Líquidos y Gases Combustibles que se transforman en la Energía para su proceso productivo.', 'chile', 'Leer Más', 2, 1, '2025-12-30 09:25:00', 1047418839),
+(9, 'http://127.0.0.1:8000/imagenes_carrusel/1769175676_imagen__7_.jpg', 'prueba', 'solucion', '#', 'Leer Más', 10, 0, '2026-01-23 08:12:16', 1041972451);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `2_precios_glp`
+--
+
+CREATE TABLE `2_precios_glp` (
+  `id` int(11) NOT NULL,
+  `archivo_pdf` varchar(255) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `estado` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `2_precios_glp`
+--
+
+INSERT INTO `2_precios_glp` (`id`, `archivo_pdf`, `fecha_inicio`, `fecha_fin`, `user_id`, `estado`) VALUES
+(1, '1 Enero de 2026', '2026-01-20', '2026-02-20', 1041972451, 1),
+(26, '1769173397_1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(27, '1769174903_10_Marzo_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(28, '1769175375_1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(29, '10_Marzo_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(30, '1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `3_tickets`
+--
+
+CREATE TABLE `3_tickets` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `beneficiario_nombre` varchar(255) DEFAULT NULL,
+  `beneficiario_cedula` varchar(255) DEFAULT NULL,
+  `beneficiario_fecha_nac` date DEFAULT NULL,
+  `origen` varchar(255) NOT NULL,
+  `destino` varchar(255) NOT NULL,
+  `tipo_viaje` varchar(20) DEFAULT 'ida',
+  `fecha_viaje` date NOT NULL,
+  `fecha_regreso` date DEFAULT NULL,
+  `archivo_tikete` varchar(255) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `estado` int(11) NOT NULL DEFAULT 2,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `3_tickets`
+--
+
+INSERT INTO `3_tickets` (`id`, `user_id`, `beneficiario_nombre`, `beneficiario_cedula`, `beneficiario_fecha_nac`, `origen`, `destino`, `tipo_viaje`, `fecha_viaje`, `fecha_regreso`, `archivo_tikete`, `descripcion`, `estado`, `created_at`, `updated_at`) VALUES
+(30, '1041972451', NULL, NULL, NULL, 'Cartagena', 'Francia', 'Ida y Vuelta', '2026-01-30', '2026-02-06', '1769782822_TIK_30.pdf', '.......', 0, '2026-01-30 13:55:16', '2026-01-30 14:21:01'),
+(31, '1041972451', NULL, NULL, NULL, 'bogotaa', 'alemania', 'Ida y Vuelta', '2026-02-20', '2026-02-26', '1770307978_TIK_31.pdf', 'descanso', 1, '2026-02-05 16:11:59', '2026-02-05 16:12:58'),
+(32, '1041972451', NULL, NULL, NULL, 'bogotaa', 'rusia', 'Ida y Vuelta', '2026-02-02', '2026-02-17', NULL, ',.', 0, '2026-02-09 16:07:52', '2026-02-09 16:55:08'),
+(33, '1041972451', NULL, NULL, NULL, 'Francia', 'PIE DE PEPE', 'Ida y Vuelta', '2026-02-24', '2026-02-27', NULL, 'Prueba', 0, '2026-02-12 17:54:50', '2026-02-13 14:38:59'),
+(34, '1047418839', NULL, NULL, NULL, 'Francia', 'Japon', 'Ida y Vuelta', '2026-02-13', '2026-02-20', NULL, 'Prueba', 0, '2026-02-13 14:18:21', '2026-02-16 13:10:47'),
+(35, '1041972451', NULL, NULL, NULL, 'Cartagena', 'Medellin', 'Solo Ida', '2026-02-20', NULL, NULL, '..', 0, '2026-02-19 17:39:11', '2026-02-19 17:39:37'),
+(36, '1041972451', NULL, NULL, NULL, 'Cartagena', 'Barranca', 'Solo Ida', '2026-02-20', NULL, NULL, '...', 2, '2026-02-19 17:42:08', '2026-02-19 17:42:08'),
+(37, '1041972451', 'JUAN', '45789654123', '2026-02-19', 'Cartagena', 'Barranca', 'Ida y Vuelta', '2026-02-20', '2026-02-23', NULL, 'vacaciones', 2, '2026-02-19 18:07:56', '2026-02-19 18:07:56');
 
 -- --------------------------------------------------------
 
@@ -71,15 +169,18 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (321654, 'LUIS EDUARDO', 'FONSECA OCHOA', NULL, NULL, 'CONDUCTOR', 1),
 (796659, 'MIGUEL ', 'SUAREZ', NULL, NULL, 'CONDUCTOR', 0),
 (2231760, 'PEDRO JAVIER', 'ORTIZ VELASQUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(2746928, 'DIEGO NARVAEZ VERA ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (3090225, 'MIGUEL ARCANGEL', 'MALAVER SANDOVAL ', NULL, NULL, 'CONDUCTOR', 1),
 (3108779, 'Daniel Humberto', 'González gaitá', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (3131731, 'EGLY TOVAR MAHECHA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (3142992, 'GABRIEL ANGEL', 'DIAZ CHACON', NULL, NULL, 'CONDUCTOR', 1),
+(3199802, 'JUAN GEOVANY', 'MARTINEZ MUÑETON', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (3199828, 'JOSE RAUL SARMIENTO GARCIA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (3214467, 'HECTOR MANUEL', 'BEJARANO BEJARANO', NULL, NULL, 'CONDUCTOR', 1),
 (3649478, 'Tulio Mario', 'Hernandez', 'tuliomariohernandez@hotmail.com', NULL, 'CONDUCTOR', 1),
 (3906344, 'EINAR ENRIQUE', 'RUIZ PAJARO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (4234942, 'LUIS ALBERTO', 'RAMIREZ PARRA', NULL, NULL, 'CONDUCTOR', 1),
+(4255448, ' Carlos Arturo Toncon Sepulved', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (4277739, 'Jose Mauricio Corredor Molano', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (4292864, 'Luis Alfredo ', 'Merchan Medina', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (4438199, 'DUVIER ARLEX', 'MOLINA MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -99,6 +200,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (5874457, 'Edwin Ramírez Betancourt', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (6013826, 'RUBEN', 'LOPEZ SALINAS', NULL, '6292026', 'CONDUCTOR', 1),
 (6030613, 'JORGE ENRIQUE PINZON BAQUERO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(6392524, 'Diego Seid Ramirez  Garciaz', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (6776158, 'HERNAN REYES SUAREZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (6801594, 'FERNANDO', 'BEJARANO PULIDO', NULL, NULL, 'CONDUCTOR', 1),
 (6889035, 'ANIBAL MANUEL', 'AYAZOS ORTEGA', NULL, NULL, 'CONDUCTOR', 1),
@@ -137,6 +239,9 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (9293754, 'LUIS CARLOS', 'LAMBIS SALCEDO', NULL, '6292026', 'CONDUCTOR', 1),
 (9295754, 'CHRISTIAN GERONIMO', 'OCHOA CHAMORRO', NULL, NULL, 'CONDUCTOR', 1),
 (9298436, 'CESAR AUGUSTO', 'ELLES TEHERAN', 'CAETJR@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(9434731, 'Carlos  Julio Guzman Rodriguez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9527974, 'Jose Cosme Rodriguez Hernande', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9694292, 'MARIO FERNANDO ALONSO BUSTOS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (9738009, 'Johnatan Caicedo Rojas', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (9876807, 'LISANDER RAFAEL', 'GUERRA GUTIERREZ', NULL, '6292026', 'CONDUCTOR', 1),
 (9976131, 'FABIO NELSON', 'MOSQUERA DUQUE', NULL, NULL, 'CONDUCTOR', 1),
@@ -152,6 +257,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (11304869, 'HECTOR', 'GARRIDO GONZALEZ', NULL, '6292026', 'CONDUCTOR', 1),
 (11342377, 'SANTIAGO ANTONIO ', 'VERDUGO PAEZ', NULL, NULL, 'CONDUCTOR', 1),
 (11348208, 'RAMIRO', 'VARGAS TARAZONA ', 'knegrette@plexa.co', NULL, 'CONDUCTOR', 1),
+(11386412, 'ORLANDO', 'CABALLERO ROMERO', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (11436552, 'WILMER HORACIO', 'BURITICA GARCIA', NULL, NULL, 'CONDUCTOR', 1),
 (11439049, 'JULIO CESAR', 'CHAPARRO SANCHEZ', NULL, NULL, 'CONDUCTOR', 1),
 (11441168, 'FÉLIX ARNALDO', 'ORTIZ BENITEZ', NULL, NULL, 'CONDUCTOR', 1),
@@ -165,6 +271,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (12634026, 'JOSE AMAVIL', 'GUAL MOLINA', NULL, NULL, 'CONDUCTOR', 1),
 (12642656, 'CASTULO MIGUEL CORREA SOTO', NULL, 'correacastulo@gmail.com', NULL, 'CONDUCTOR', 1),
 (12643681, 'EZEQUIEL', 'CONTRERA ENSUNCHU', NULL, NULL, 'CONDUCTOR', 1),
+(12685412, 'Edinson Manuel', 'Jimenez Castillo', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (13175607, 'YAMID ALFONSO ', 'VARGAS CABRALES ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (13443958, 'JOSE DANIEL', 'CARRILLO CONTRERAS', 'jdcc140459@outlook.es', NULL, 'CONDUCTOR', 1),
 (13483232, 'ROQUE JULIO', 'PORTILLA CASTELLANOS', NULL, NULL, 'CONDUCTOR', 1),
@@ -198,17 +305,20 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (13874415, 'ROBERTO', 'RANGEL ROMERO', NULL, '6292026', 'CONDUCTOR', 1),
 (13885218, 'NABOR', 'FORERO DUARTE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (14236171, 'LUIS CARLOS', 'VARON ACOSTA', NULL, NULL, 'CONDUCTOR', 1),
+(14320709, 'Luis Alberto Lozano Rodriguez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (14565310, 'CESAR AUGUSTO', 'PESCADOR RAMIREZ', NULL, NULL, 'CONDUCTOR', 1),
 (14896361, 'JAIRO ALBERTO', 'DIAZ RIAÑO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (15174695, 'JAIDER', 'GARCIA PEÑA', 'jaidergarcia2045@gmail.com', NULL, 'CONDUCTOR', 0),
 (15303242, 'EULICES COBOS MEJIA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (15430439, 'OSCAR', 'RESTREPO GARCIA', NULL, NULL, 'CONDUCTOR', 1),
 (15666607, 'JORGE LUIS ', 'TORRES ARGUELLO', NULL, NULL, 'CONDUCTOR', 1),
+(16076757, 'John Henry maya taborda ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (16266790, 'HOOVER', 'URIBE RIOS', NULL, NULL, 'CONDUCTOR', 1),
 (16268225, 'CARLOS JULIO CORREA SOTO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (16897421, 'MOISES', 'GONZALEZ', 'Moises850429@gmail.com', NULL, 'CONDUCTOR', 1),
 (17324520, 'JOSE ALVARO', 'RODRIGUEZ CASALLAS', NULL, NULL, 'CONDUCTOR', 1),
 (17339134, 'EDGAR', 'RODRIGUEZ FLOREZ', NULL, NULL, 'CONDUCTOR', 1),
+(17339853, 'Jesus  Ivan Ramirez Alturo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (17354768, 'JOSE FIDEL', 'SARAY GONZALEZ', 'f.gonzaper11@gmail.com', '6292026', 'CONDUCTOR', 1),
 (17356497, 'NORBEY ', 'MARIN JUANIAS', NULL, NULL, 'CONDUCTOR', 1),
 (17390108, 'WILFRED', 'ROJAS ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -219,6 +329,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (18904331, 'Edgar Alfonso Ramírez Suárez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (18922620, 'JAIME RAFAEL', 'GAVIRIA CHINCHILLA', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
 (18923068, 'EDGAR ', 'CALDERON ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18925833, 'Fernández Vega', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (18929486, 'FERNANDO', 'GUTIERREZ CHONA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
 (18971324, 'LIBARDO DE JESUS ', 'MENESES MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (18972875, 'ALVARO MENESES', NULL, '2PDW32E4D@GMAIL.COM', NULL, 'CONDUCTOR', 1),
@@ -275,6 +386,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (73594998, 'JULIO CESAR', 'BUSTOS ALVARADO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (74083857, 'Oscar Preciado Alarcon', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (74183130, 'Jorge alberto', 'Orrego', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74352373, 'Humberto  Dueñas Rojas', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (74359139, 'JOSE GELVER', 'GOMEZ', 'jogego26711@gmail.com', NULL, 'CONDUCTOR', 1),
 (74362121, 'GERMAN PRECIADO', NULL, NULL, NULL, 'CONDUCTOR', 1),
 (74369596, 'NELSON', 'RINCON BASTIDAS', NULL, NULL, 'CONDUCTOR', 1),
@@ -313,11 +425,15 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (79245525, 'MARIO', 'BOHORQUEZ RODRIGUEZ', NULL, NULL, 'CONDUCTOR', 1),
 (79296744, 'JUAN MANUEL', 'ZAMBRANO', NULL, NULL, 'CONDUCTOR', 1),
 (79325954, 'PEDRO FERNANDO', 'GALVIS BELTRAN', NULL, '6292026', 'CONDUCTOR', 1),
+(79355197, ' LUIS ANTONIO', 'DIAZ LANCHEROS', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(79374847, 'Ricardo Sanchez Morales', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (79383042, 'OSCAR RUBEN', 'ALVAREZ YATE', NULL, NULL, 'CONDUCTOR', 1),
 (79411298, 'WILLIAM ERNESTO', 'GUERRERO LOPEZ', NULL, NULL, 'CONDUCTOR', 1),
 (79415582, 'OMAR AUGUSTO', 'SANCHEZ LEON', NULL, NULL, 'CONDUCTOR', 1),
+(79424601, 'Jose Neftalí   ', 'Gonzalez García', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (79428688, 'Uriel Duarte Sierra', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (79443609, 'RIGOBERTO', 'AREVALO VILLARRAGA', NULL, NULL, 'CONDUCTOR', 1),
+(79447853, 'LUIS  ALFREDO ', 'GOMEZ BALESTERO', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (79458457, 'JAIRO MONTAÑA GONZALES ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (79464381, 'JOSE FERNANDO PRADA ', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
 (79470752, 'Jabier Danilo ', 'Rodriguez  Villamizar', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -332,6 +448,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (79529769, 'DIEGO EFREY', 'SALAZAR PORTILIA', 'diegoefreys@gmail.com ', NULL, 'CONDUCTOR', 1),
 (79560893, 'JOSE LUIS', 'CAMPOS RUIZ', NULL, NULL, 'CONDUCTOR', 1),
 (79575373, 'MIGUEL ANTONIO', 'ROBAYO ARIAS', NULL, '6292026', 'CONDUCTOR', 1),
+(79575575, 'William Monroy Cortes', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (79617112, 'MILTON  CESAR', 'SALAZAR AHUMADA', NULL, NULL, 'CONDUCTOR', 1),
 (79636714, 'JUAN', 'RODRIGUEZ MOLINA', NULL, '6292026', 'CONDUCTOR', 1),
 (79697145, 'WILLIAM', 'MARTINEZ AVILA', NULL, '6292026', 'CONDUCTOR', 1),
@@ -351,6 +468,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (79906571, 'LUIS ALEJADRO', 'LEMUS FORERO', 'alejolefo2877@gmail.com', NULL, 'CONDUCTOR', 1),
 (79959886, 'JHON ALEXANDER', 'MARTIN COLLAZOS', NULL, NULL, 'CONDUCTOR', 1),
 (79960022, 'YHON', 'MENDOZA', NULL, NULL, 'CONDUCTOR', 1),
+(79974348, 'LUIS  FERNANDO', 'PARRADO BELTRAN', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (80000557, 'Yonh Marlon ', 'Durán Durán', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (80004718, 'HAROLD ORLANDO', 'MEDINA MANCILLA', NULL, NULL, 'CONDUCTOR', 1),
 (80020639, 'Andres  Salamanca ', NULL, 'Analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -373,6 +491,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (80365109, 'José Ricardo Rodríguez Ñustes', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (80384510, 'RAUL ISNARDO', 'MAYORGA GONZALEZ', NULL, NULL, 'CONDUCTOR', 1),
 (80400664, 'CARLOS', 'DE LA TORRE MELGAREJO', NULL, '6292026', 'CONDUCTOR', 1),
+(80405598, 'Daniel Camacho', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (80406808, 'Nelson Arcadio', 'Ramos Jurado', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (80421996, 'JOSE', 'GONZALEZ GONZALEZ', NULL, '6292026', 'CONDUCTOR', 1),
 (80422451, 'RICHARD', 'REYES SOLER', 'PORTCHIPS@HOTMAIL.COM', '6292026', 'CONDUCTOR', 1),
@@ -396,8 +515,10 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (86056340, 'JADER ALBERTO', 'SARMIENTO RIVERA', NULL, NULL, 'CONDUCTOR', 1),
 (87067276, 'FREDY ', 'BENAVIDES CHALPARTAR', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (88191901, 'edgar dueñez blanco', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88203302, 'LUIS EDU  VILLADA VELEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (88227900, 'LUIWEN EDUARDO', 'RODRIGUEZ SALAZAR', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
-(88236928, 'WILMAN OSWALDO ', 'GRISALES SERNA', 'WOGSER1979@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(88232456, 'José Julian Mora Castro ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88236928, 'WILMAN OSWALDO ', 'GRISALES SERNA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (88240010, 'DIEGO DIAZ CONTRERAS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (88252176, 'MARCOS MAURICIO', 'SUAREZ FLOREZ', NULL, '6292026', 'CONDUCTOR', 1),
 (89007560, 'JAMES LEONARDO', 'FERNANDEZ ARANGO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -406,6 +527,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (91014312, 'NILSON ROLANDO', 'MATEUS ARIZA', NULL, NULL, 'CONDUCTOR', 1),
 (91045207, 'EDISON MAURICIO', 'BAUTISTA ACELAS', NULL, NULL, 'CONDUCTOR', 1),
 (91046158, 'Javier Reinaldo ', 'Rodriguez Niño', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91046706, 'ENOC GOMEZ ALMEYDA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91069407, 'JOSE JOAQUIN', 'VELASQUEZ MUÑOS', 'joaquinvelasquez64@hotmail.com', NULL, 'CONDUCTOR', 1),
 (91070038, 'OMAR', 'CHACON GOMEZ', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
 (91072575, 'EDUARDO', 'ANGEL ESPINOSA', NULL, NULL, 'CONDUCTOR', 1),
@@ -440,6 +562,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (91255211, 'Wilson Ernesto ', 'Alza Herrera', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91257823, 'HERNAN', 'MEDINA CASTAÑO', NULL, NULL, 'CONDUCTOR', 1),
 (91260148, 'JESUS', 'HURTADO GAVIRIA', NULL, NULL, 'CONDUCTOR', 1),
+(91260421, 'Jaime Santamaría Robayo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91260978, 'JAMES', 'DUCON CHACON', NULL, NULL, 'CONDUCTOR', 1),
 (91261965, 'RICARDO ', 'SARMIENTO ORDUZ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
 (91262713, 'GUILLERMO', 'GONZALEZ CORTES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -469,6 +592,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (91299453, 'WILIMTON', 'ORTIZ', 'Wilimtonortizflorez@gmail.com', NULL, 'CONDUCTOR', 1),
 (91341363, 'HUMBERTO', 'ARIAS', NULL, NULL, 'CONDUCTOR', 1),
 (91342872, 'CAYETANO', 'MEJIA HERNANDEZ', NULL, NULL, 'CONDUCTOR', 1),
+(91343162, 'ALONSO SERRANO DURAN', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91344921, 'MANUEL', 'OVIEDO HERNANDEz', NULL, NULL, 'CONDUCTOR', 1),
 (91349176, 'JHON ALEXANDER', 'DIAZ MONSALVE', NULL, NULL, 'CONDUCTOR', 1),
 (91349276, 'NELSON ALIRIO', 'PARDO MUÑOZ', NULL, NULL, 'CONDUCTOR', 1),
@@ -491,8 +615,9 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (91442896, 'RAUL', 'PAEZ GARCIA', 'raul.0702@outlook.com', NULL, 'CONDUCTOR', 1),
 (91445774, 'ELKIS', 'CRUZ SOLORZANO', 'apoyologistico@plexa.co', '6292026', 'CONDUCTOR', 1),
 (91446328, 'JAVIER ANTONIO', 'TORRES GARCIA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
-(91447264, 'WILFREDO', 'TORRES SANABRIA ', NULL, NULL, 'CONDUCTOR', 1),
+(91447264, 'WILFREDO', 'TORRES SANABRIA ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91449304, 'JHON EDWIN', 'SAENZ', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91457430, 'Misael Jerez Martinez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91461157, 'CRISTIAN', 'RUEDA GARZON', NULL, '6292026', 'CONDUCTOR', 1),
 (91464227, 'CARLOS DANIEL', 'ILLERAS GARCIA', NULL, NULL, 'CONDUCTOR', 1),
 (91470636, 'GERARDO', 'ARDILA FUENTES', NULL, NULL, 'CONDUCTOR', 1),
@@ -510,29 +635,34 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (91516849, 'Edwin Javier ', 'Osorio Rincón', NULL, NULL, 'CONDUCTOR', 1),
 (91518503, 'JORGE ARMANDO', 'DURAN GALVIS', NULL, NULL, 'CONDUCTOR', 1),
 (91519336, 'RAFAEL ANTONIO', 'SERRANO CACERES', NULL, '6292026', 'CONDUCTOR', 1),
+(91519643, 'Alexis Arguello oviedo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91525490, 'JOSE ORLEY', 'DEVIA VILLALOBOS', NULL, NULL, 'CONDUCTOR', 1),
 (91533742, 'HENRY', 'SOLANO BARBOSA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91536815, 'RAFAEL ERNESTO', 'PORTILLA RODRIGUEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (91539182, 'FERNEY', 'BENITEZ BARRAGAN', 'ferneybenitezconductor@outlook.com', NULL, 'CONDUCTOR', 1),
 (91540491, 'OSCAR FABIAN', 'MENDEZ BASTIDAS', NULL, NULL, 'CONDUCTOR', 1),
 (92032962, 'JESUS DAVID', 'DE LA OSSA PEREZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
-(93134673, 'JUAN CARLOS', 'ORTIZ VARGAS', 'juancarlosortizvargas1978@gmail.com ', NULL, 'CONDUCTOR', 1),
+(93134673, 'JUAN CARLOS', 'ORTIZ VARGAS', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (93335275, 'RODRIGO', 'OSPITIA', NULL, NULL, 'CONDUCTOR', 1),
 (93359965, 'EDGAR', 'GARCIA MORENO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (93386917, 'LUIS', 'MUÑOZ TIQUE', NULL, '6292026', 'CONDUCTOR', 1),
+(93395124, 'IVAN MAURICIO', 'RODRIGUEZ PINILLA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (93438956, 'RUBEN DARIO', 'MARTINEZ ARANA', NULL, NULL, 'CONDUCTOR', 1),
 (93461482, 'SAMUEL ANGEL', 'CASTIBLANCO NIETO', NULL, NULL, 'CONDUCTOR', 1),
+(93472260, 'Carlos Augusto Chavarro Gomez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (94268231, 'EFRAIN', 'SHUWERY PINEDA', NULL, NULL, 'CONDUCTOR', 1),
 (94312847, 'Javier Pérez Correa', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (94456108, 'EDUIN ALBERTO', 'PASTAS VILLEGAS', NULL, NULL, 'CONDUCTOR', 1),
 (94461759, 'ALEXANDER', 'GONZALEZ GARCIA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (94463985, 'NODIER', 'VELASQUEZ ', NULL, NULL, 'CONDUCTOR', 1),
 (94506942, 'Edgar Patricio', 'Cortes Arismendy', NULL, NULL, 'CONDUCTOR', 1),
+(96354319, 'Solim ', 'Sanchez Gonzales', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (97446969, 'Angel Antonio', 'Diaz Osorio', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (98341657, 'JOSE ELISEO', 'AGUIRRE AGUIRRE', 'marceci70@hotmail.es ', NULL, 'CONDUCTOR', 1),
 (98342148, 'DIEGO RAMON', 'AGUIRRE AGUIRRE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (98395137, 'ARMANDO', 'VALLEJO VILLOTA', NULL, '6292026', 'CONDUCTOR', 1),
 (98658389, 'ANDRES', 'HERNANDEZ SANCHEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(98658993, 'CESAR ANÍBAL RAMÍREZ ARANGO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (552434444, 'HERNANDO', 'ESCANIO MORENO', NULL, NULL, 'CONDUCTOR', 1),
 (1001876577, 'SAMUEL ', 'HERNANDEZ CALDERON', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1002193788, 'GUSTAVO', 'JIMENEZ RAMOS', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -541,6 +671,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1005564911, 'Edinson', 'Hernandez Herrera ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1010167900, 'JEFFERSON', 'CHARRY MESA', NULL, NULL, 'CONDUCTOR', 1),
 (1010171581, 'DIEGO MAURICIO BELTRAN RODRIGU', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1012332772, 'JEISSON  DAVID ', 'GONZALEZ GARCIA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (1015468580, 'JUAN SEBASTIAN ', 'ORDUÑA MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1016021585, 'GUSTAVO ADOLFO CAMARGO HERRERA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1018442233, 'CAMILO ALEJANDRO', 'CASTAÑEDA SUAREZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -549,6 +680,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1022344021, 'Pedro Luis Sarmiento', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1022931976, 'Sergio Antonio', 'Ramírez Triana', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1022982388, 'OSCAR YAIR', 'SALAMANCA MEDINA', NULL, '6292026', 'CONDUCTOR', 1),
+(1023971452, 'LUIS  FERNANDO', 'PARRADO  MORENA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
 (1024484842, 'Wilson Alfredo Ayala Jiménez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1030592268, ' Nelson', ' Sanabria Padilla', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1030600618, 'RAFAEL LEONARDO ', 'PAEZ AVILA ', 'rpaez@yegoecot.com', NULL, 'CONDUCTOR', 1),
@@ -589,12 +721,14 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1082880903, 'JOSE LUIS', 'RUEDA OLARTE', NULL, NULL, 'CONDUCTOR', 1),
 (1082957105, 'ESNEIDER', 'QUINTERO GRAJALES', 'Esneider1992@outlook.es', NULL, 'CONDUCTOR', 1),
 (1087486110, 'Giovanny Andres Ramírez Gutiér', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1091533627, 'Ronald Salvador Santana Parra', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1091666946, 'GEINER CONTRERAS PEDROZA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1093781759, 'DUVAN ALBERTO', 'CADENA GARCIA', NULL, NULL, 'CONDUCTOR', 1),
 (1094268778, 'RAFAEL ', 'PABON PORTILLA ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1095817194, 'MARLON', 'PAEZ OSORIO', 'PAEZ9404@HOTMAIL.COM', NULL, 'CONDUCTOR', 1),
 (1095915587, 'JOSE ANTONIO', 'JIMENEZ DUARTE', NULL, NULL, 'CONDUCTOR', 1),
 (1095919238, 'JHON JAIRO CASTAÑEDA PINZON', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1095942121, 'Ricardo Pedraza serrano ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1095956841, 'CRISTHIAN ALBERTO', 'CENTENO GARCIA', NULL, NULL, 'CONDUCTOR', 1),
 (1096208600, 'CARLOS EDUARDO', 'BRAND MORALES', NULL, NULL, 'CONDUCTOR', 1),
 (1096211790, 'JONATAN CALED ', 'MENDOZA GUEVARA', NULL, NULL, 'CONDUCTOR', 1),
@@ -602,7 +736,7 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1096231722, 'Rodrigo ', 'Alvarez Alvarez', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1096243624, 'LEONARDO ', 'CELIS MEJIA', 'LEONARDOCELISMEJIA2@GMAIL.COM', NULL, 'CONDUCTOR', 1),
 (1097389198, 'JORGE BLANCO ORTIZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
-(1097393811, 'CARLOS CRUZ HURTADO', NULL, 'kbautista@plexa.co', NULL, 'CONDUCTOR', 1),
+(1097393811, 'CARLOS CRUZ HURTADO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1098612904, 'ANDRES REYNALDO', 'ROBLES JAIMES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1098617468, 'JHON JAIRO', 'MELGAREJO MORA', NULL, NULL, 'CONDUCTOR', 1),
 (1098618348, 'HERNADO ', 'MENDOZA ROJAS ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -621,6 +755,8 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1098706937, 'YEELSIHT FERNEY', 'GOMEZ CASTILLO', NULL, NULL, 'CONDUCTOR', 1),
 (1098718114, 'JAVIER', 'RANGEL', NULL, NULL, 'CONDUCTOR', 1),
 (1098756694, 'Miguel Angel Gallo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098799570, 'Yan Carlos Merchan Narvaez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1099205638, 'Armando Moreno Aguilera', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1100952092, 'Felipe Antonio', 'Garzon Moreno', 'kbautista@plexa.co', NULL, 'CONDUCTOR', 1),
 (1101546215, 'JOSE ', 'SANCHEZ AGREDO', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
 (1102351650, 'Elkin Fabian', 'Gonzalez Bueno', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -630,7 +766,8 @@ INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `
 (1102548711, 'Edgar Eduardo Buitrago Olarte ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1102549046, 'CESAR AUGUSTO', 'BUITRAGO OLARTE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1102715085, 'FREDY ALBEIRO', 'VARGAS CASTRO', NULL, '6292026', 'CONDUCTOR', 1),
-(1104127540, 'LUIS', 'JAIMES VASQUEZ', 'luishernando1810@gmail.com', NULL, 'CONDUCTOR', 1),
+(1104127540, 'LUIS', 'JAIMES VASQUEZ', 'luishernando1810@gmail.com', NULL, 'CONDUCTOR', 1);
+INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `tipo`, `estado`) VALUES
 (1104129723, 'HUGHES', 'QUINTERO VILLAR', NULL, NULL, 'CONDUCTOR', 1),
 (1109415393, 'JUAN CAMILO ENCISO ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
 (1109417886, 'OBEIMAR MONTOYA MOGOLLON', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
@@ -723,8 +860,50 @@ CREATE TABLE `habitaciones_historial` (
 INSERT INTO `habitaciones_historial` (`id`, `habitacion`, `estado`, `conductor`, `usuario`, `fecha`, `c_conductor`, `n_conductor`, `check_in`, `check_out`, `usuario_check_in`, `usuario_check_out`, `tiempo_uso`) VALUES
 (2, 8, 'Ocupada', 73580643, 1047418839, '2025-12-26 16:38:31', '73580643', 'OSWALDO', '2025-12-26 20:38:31', '2025-12-26 21:40:04', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 3694),
 (3, 2, 'Ocupada', 77140085, 1047418839, '2025-12-26 16:47:41', '77140085', 'ALBEIRO', '2025-12-26 21:47:41', '2025-12-29 13:44:01', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 230180),
-(4, 3, 'Ocupada', 1030592268, 1047418839, '2025-12-26 16:52:25', '1030592268', ' Nelson', '2025-12-26 21:52:25', '2025-12-29 13:44:05', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 229901),
-(5, 6, 'Ocupada', 8012504, 1047418839, '2025-12-26 16:56:09', '8012504', 'César Augusto', '2025-12-26 21:56:09', '2025-12-29 13:44:10', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 229681);
+(6, 10, 'Ocupada', 1065873175, 1041972451, '2026-02-20 07:44:13', '1065873175', 'Andrey fernando ', '2026-02-20 12:44:13', '2026-02-20 12:46:09', 'Roys Rafael Simarra Gomez', 'Roys Rafael Simarra Gomez', 117),
+(7, 1, 'Ocupada', 4255448, 1041972451, '2026-02-20 07:44:23', '4255448', ' Carlos Arturo Toncon Sepulved', '2026-02-20 12:44:23', '2026-02-20 12:46:01', 'Roys Rafael Simarra Gomez', 'Roys Rafael Simarra Gomez', 99);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `indicadores`
+--
+
+CREATE TABLE `indicadores` (
+  `id` int(11) NOT NULL,
+  `codigo` varchar(10) DEFAULT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `valor` decimal(10,2) DEFAULT NULL,
+  `valor_anterior` decimal(10,2) DEFAULT 0.00,
+  `tendencia` varchar(10) DEFAULT 'igual',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `indicadores`
+--
+
+INSERT INTO `indicadores` (`id`, `codigo`, `nombre`, `valor`, `valor_anterior`, `tendencia`, `updated_at`) VALUES
+(1, 'dolar', 'Dólar TRM', 3652.89, 3670.47, 'baja', '2026-02-16 12:59:33'),
+(2, 'euro', 'Euro', 4353.66, 4353.66, 'igual', '2026-02-16 12:59:33'),
+(3, 'glp', 'GLP (Gal)', 1800.00, 1750.00, 'sube', '2026-01-28 17:16:21'),
+(4, 'gnc', 'GNC (m3)', 1200.00, 1150.00, 'sube', '2026-01-28 17:16:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `indicadors`
+--
+
+CREATE TABLE `indicadors` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `codigo` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `valor` decimal(10,2) NOT NULL,
+  `tendencia` varchar(255) NOT NULL DEFAULT 'igual',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -795,7 +974,11 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (6, '0001_01_01_000000_create_users_table', 3),
 (7, '0001_01_01_000001_create_cache_table', 3),
 (8, '0001_01_01_000002_create_jobs_table', 3),
-(9, '2025_10_23_083421_create_historial_habitaciones_table', 3);
+(9, '2025_10_23_083421_create_historial_habitaciones_table', 3),
+(10, '2025_10_28_104352_add_campos_detalle_to_habitaciones_historial', 3),
+(11, '2026_01_26_105706_create_3_tickets_table', 4),
+(13, '2026_01_28_102619_create_indicadors_table', 5),
+(14, '2026_02_19_130055_add_datos_viajero_to_3_tickets_table', 5);
 
 -- --------------------------------------------------------
 
@@ -829,7 +1012,8 @@ INSERT INTO `permisos` (`id`, `paginas`, `permiso`) VALUES
 (3, 3, 'Actualizar Conductores'),
 (4, 7, 'Hotel'),
 (5, 4, 'Desasignar'),
-(6, 4, 'Asignar');
+(6, 4, 'Asignar'),
+(7, 14, 'Aprobar Viajes');
 
 -- --------------------------------------------------------
 
@@ -853,10 +1037,16 @@ INSERT INTO `permisos_modulos` (`id`, `roles`, `paginas`) VALUES
 (3, 1, 'Tabla Conductores'),
 (4, 1, 'Hotel'),
 (5, 1, 'Historial Habitacion'),
-(6, 1, 'Usuarios'),
-(7, 2, 'Usuarios'),
+(6, 4, 'Usuarios'),
+(7, 1, 'Usuarios'),
 (8, 1, 'Roles'),
-(9, 2, 'Roles');
+(9, 2, 'Roles'),
+(12, 1, 'Precio GLP'),
+(13, 1, 'Carrusel'),
+(14, 1, 'Solicitar Viaje'),
+(15, 1, 'Gestion Viajes'),
+(16, 1, 'Solicitar Viaje'),
+(17, 2, 'Gestion Viajes');
 
 -- --------------------------------------------------------
 
@@ -876,7 +1066,8 @@ CREATE TABLE `permisos_roles` (
 INSERT INTO `permisos_roles` (`id`, `nombre`) VALUES
 (1, 'Super Administrador'),
 (2, 'Administradores'),
-(3, 'Despachadores');
+(3, 'Despachadores'),
+(4, 'Trafico');
 
 -- --------------------------------------------------------
 
@@ -898,8 +1089,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('HH9chWnQOgJgQknBww38AAbFrQXVWD4qDmMr3huf', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoieVljSndqS2pXTGNLVzRwQVRhTldxOFZveVRMdGNRU2JmdDRJSXNjQiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyMToiaHR0cDovL2xvY2FsaG9zdDo4MDAwIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1767015803),
-('KqH3yjXj4vbT5SkYtuHvsRGpGp2fksBRVJ8A1DRT', 1047418839, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoibWk4Q1VSaWo1d0hwcVMwZmdyT3JtbHIzbTJrSDUwNndNeUxtSFU2eCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvaG90ZWwiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMDQ3NDE4ODM5O3M6MTg6Im1vZHVsb3NfcGVybWl0aWRvcyI7YTo3OntpOjA7czo5OiJEYXNoYm9hcmQiO2k6MTtzOjg6IlDDoWdpbmFzIjtpOjI7czoxNzoiVGFibGEgQ29uZHVjdG9yZXMiO2k6MztzOjU6IkhvdGVsIjtpOjQ7czoyMDoiSGlzdG9yaWFsIEhhYml0YWNpb24iO2k6NTtzOjg6IlVzdWFyaW9zIjtpOjY7czo1OiJSb2xlcyI7fXM6MTk6InBlcm1pc29zX3Blcm1pdGlkb3MiO2E6Mzp7aTowO3M6MjI6IkFjdHVhbGl6YXIgQ29uZHVjdG9yZXMiO2k6MTtzOjEwOiJEZXNhc2lnbmFyIjtpOjI7czo3OiJBc2lnbmFyIjt9fQ==', 1767019052);
+('fvbYM44nfGtp6dtVdzbW67AYPHjC4NVX5xkSlZ30', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoia3FmZHRQeWY2Qlo2WVRhQVQ3RG1WMklOQ29MQUpXbW05QVJwaUZuUCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c3VhcmlvcyI7czo1OiJyb3V0ZSI7czo4OiJ1c3VhcmlvcyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjEwNDE5NzI0NTE7czoxODoibW9kdWxvc19wZXJtaXRpZG9zIjthOjEyOntpOjA7czo5OiJEYXNoYm9hcmQiO2k6MTtzOjg6IlDDoWdpbmFzIjtpOjI7czoxNzoiVGFibGEgQ29uZHVjdG9yZXMiO2k6MztzOjU6IkhvdGVsIjtpOjQ7czoyMDoiSGlzdG9yaWFsIEhhYml0YWNpb24iO2k6NTtzOjg6IlVzdWFyaW9zIjtpOjY7czo1OiJSb2xlcyI7aTo3O3M6MTA6IlByZWNpbyBHTFAiO2k6ODtzOjg6IkNhcnJ1c2VsIjtpOjk7czoxNToiU29saWNpdGFyIFZpYWplIjtpOjEwO3M6MTQ6Ikdlc3Rpb24gVmlhamVzIjtpOjExO3M6MTU6IlNvbGljaXRhciBWaWFqZSI7fXM6MTk6InBlcm1pc29zX3Blcm1pdGlkb3MiO2E6NTp7aTowO3M6MjI6IkFjdHVhbGl6YXIgQ29uZHVjdG9yZXMiO2k6MTtzOjU6IkhvdGVsIjtpOjI7czoxMDoiRGVzYXNpZ25hciI7aTozO3M6NzoiQXNpZ25hciI7aTo0O3M6MTQ6IkFwcm9iYXIgVmlhamVzIjt9fQ==', 1771605944);
 
 -- --------------------------------------------------------
 
@@ -925,12 +1115,12 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `usuarios` (
-  `cedula` int(10) NOT NULL,
+  `cedula` int(20) NOT NULL,
   `Nombre` varchar(50) NOT NULL,
   `Apellido` varchar(50) NOT NULL,
   `email` varchar(250) DEFAULT NULL,
   `cel` varchar(30) DEFAULT NULL,
-  `contraseña` varchar(30) NOT NULL,
+  `contraseña` varchar(255) NOT NULL,
   `rol` int(2) NOT NULL,
   `estado` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -940,12 +1130,31 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`cedula`, `Nombre`, `Apellido`, `email`, `cel`, `contraseña`, `rol`, `estado`) VALUES
-(1041972451, 'Roys Mauricio', 'Simarra', 'tunometecabra202004@gmail.com', '3245145599', 'lavidaesunasola12', 1, 1),
+(1041972451, 'Roys Rafael', 'Simarra Gomez', 'roisroisomg@gmail.com', '3245145599', 'Plexa2025', 1, 1),
+(1042975487, 'plexa_core', 'aja', 'bueno@gmail.com', NULL, 'Plexa2025', 1, 1),
 (1047418839, 'Henry Jose', 'Castro Ricardo', 'hcastro@plexa.co', NULL, 'Plexa2025', 1, 1);
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `1_carrusel`
+--
+ALTER TABLE `1_carrusel`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `2_precios_glp`
+--
+ALTER TABLE `2_precios_glp`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `3_tickets`
+--
+ALTER TABLE `3_tickets`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `cache`
@@ -983,6 +1192,20 @@ ALTER TABLE `habitaciones`
 --
 ALTER TABLE `habitaciones_historial`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `indicadores`
+--
+ALTER TABLE `indicadores`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codigo` (`codigo`);
+
+--
+-- Indices de la tabla `indicadors`
+--
+ALTER TABLE `indicadors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `indicadors_codigo_unique` (`codigo`);
 
 --
 -- Indices de la tabla `jobs`
@@ -1064,6 +1287,24 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `1_carrusel`
+--
+ALTER TABLE `1_carrusel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT de la tabla `2_precios_glp`
+--
+ALTER TABLE `2_precios_glp`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT de la tabla `3_tickets`
+--
+ALTER TABLE `3_tickets`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
 -- AUTO_INCREMENT de la tabla `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -1073,7 +1314,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT de la tabla `habitaciones_historial`
 --
 ALTER TABLE `habitaciones_historial`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT de la tabla `indicadores`
+--
+ALTER TABLE `indicadores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `indicadors`
+--
+ALTER TABLE `indicadors`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -1091,25 +1344,25 @@ ALTER TABLE `logs`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos_modulos`
 --
 ALTER TABLE `permisos_modulos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos_roles`
 --
 ALTER TABLE `permisos_roles`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
