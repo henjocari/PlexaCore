@@ -92,7 +92,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::get('/probar-email', function() {
         try {
-            $miCorreo = 'royssimarra@gmail.com'; 
+            $miCorreo = 'roisroisomg@gmail.com'; 
             $datos = ['empleado' => 'Usuario de Prueba', 'destino' => 'Destino Test', 'fecha' => '2026-12-31'];
             Illuminate\Support\Facades\Mail::to($miCorreo)->send(new App\Mail\SolicitudViajeMail($datos));
             return "✅ ¡ÉXITO! Laravel dice que envió el correo.";
