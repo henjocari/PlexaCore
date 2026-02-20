@@ -57,38 +57,62 @@
                                     
                                     <input type="hidden" name="tipo_viaje" id="input_real_tipo" value="Solo Ida">
                                     
+                                    <h6 class="font-weight-bold text-primary mb-3 border-bottom pb-2 mt-2">
+                                        <i class="fas fa-user-check mr-1"></i> Información del Pasajero
+                                    </h6>
+
+                                    <div class="row mb-2">
+                                        <div class="col-md-12 mb-3">
+                                            <label class="text-secondary small font-weight-bold">Nombre Completo del Viajero *</label>
+                                            <input type="text" name="beneficiario_nombre" class="form-control" placeholder="Ej: Pepito Pérez" required value="{{ old('beneficiario_nombre') }}">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-secondary small font-weight-bold">Cédula / ID *</label>
+                                            <input type="text" name="beneficiario_cedula" class="form-control" placeholder="Ej: 1045..." required value="{{ old('beneficiario_cedula') }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" title="Solo se permiten números">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-secondary small font-weight-bold">Fecha de Nacimiento *</label>
+                                            <input type="date" name="beneficiario_fecha_nac" class="form-control" required value="{{ old('beneficiario_fecha_nac') }}">
+                                        </div>
+                                    </div>
+
+                                    <h6 class="font-weight-bold text-primary mb-3 border-bottom pb-2 mt-4">
+                                        <i class="fas fa-map-marked-alt mr-1"></i> Itinerario del Viaje
+                                    </h6>
+
                                     <div class="form-group">
-                                        <label>Origen</label>
+                                        <label class="text-secondary small font-weight-bold">Origen *</label>
                                         <input type="text" name="origen" class="form-control" required placeholder="Ej: Cartagena">
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label>Destino</label>
+                                        <label class="text-secondary small font-weight-bold">Destino *</label>
                                         <input type="text" name="destino" class="form-control" required placeholder="Ej: Bogotá">
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12" id="col-fecha-ida">
                                             <div class="form-group">
-                                                <label>Fecha de Ida</label>
+                                                <label class="text-secondary small font-weight-bold">Fecha de Ida *</label>
                                                 <input type="date" name="fecha_viaje" class="form-control" required>
                                             </div>
                                         </div>
 
                                         <div class="col-md-6" id="col-fecha-regreso" style="display: none;">
                                             <div class="form-group">
-                                                <label class="text-primary font-weight-bold">Fecha de Regreso</label>
-                                                <input type="date" name="fecha_regreso" id="input-regreso" class="form-control">
+                                                <label class="text-primary font-weight-bold small">Fecha de Regreso *</label>
+                                                <input type="date" name="fecha_regreso" id="input-regreso" class="form-control border-left-primary">
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Motivo</label>
-                                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe el propósito del viaje..."></textarea>
+                                        <label class="text-secondary small font-weight-bold">Motivo del Viaje *</label>
+                                        <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe el propósito del viaje..." required></textarea>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-block font-weight-bold">
+                                    <button type="submit" class="btn btn-primary btn-block font-weight-bold mt-4">
                                         ENVIAR SOLICITUD <i class="fas fa-paper-plane ml-1"></i>
                                     </button>
                                 </form>
@@ -104,11 +128,10 @@
                                     <table class="table table-bordered table-sm">
                                         <thead class="thead-light">
                                             <tr>
+                                                <th>Pasajero</th>
                                                 <th>Ruta</th>
-                                                <th>Fecha Ida</th>
-                                                <th>Fecha Vuelta</th>
+                                                <th>Fechas</th>
                                                 <th>Tipo</th>
-                                                <th>Motivo</th>
                                                 <th>Estado</th>
                                                 <th>Tiquete</th>
                                             </tr>
@@ -116,18 +139,23 @@
                                         <tbody>
                                             @foreach($misTickets as $t)
                                             <tr>
-                                                <td>{{ $t->origen }} > {{ $t->destino }}</td>
-                                                <td>{{ $t->fecha_viaje }}</td>
+                                                <td class="align-middle">
+                                                    <span class="font-weight-bold">{{ $t->beneficiario_nombre ?? 'N/A' }}</span><br>
+                                                    <small class="text-muted">CC: {{ $t->beneficiario_cedula ?? 'N/A' }}</small>
+                                                </td>
+
+                                                <td class="align-middle">
+                                                    {{ $t->origen }} <i class="fas fa-arrow-right text-muted mx-1"></i> {{ $t->destino }}
+                                                </td>
                                                 
-                                                <td class="text-center">
+                                                <td class="align-middle text-nowrap">
+                                                    <div class="small"><strong>Ida:</strong> {{ $t->fecha_viaje }}</div>
                                                     @if($t->fecha_regreso)
-                                                        {{ $t->fecha_regreso }}
-                                                    @else
-                                                        <span class="text-gray-400">-</span>
+                                                        <div class="small text-info"><strong>Regreso:</strong> {{ $t->fecha_regreso }}</div>
                                                     @endif
                                                 </td>
 
-                                                <td>
+                                                <td class="align-middle text-center">
                                                     @if($t->tipo_viaje == 'Ida y Vuelta' || $t->tipo_viaje == 'redondo')
                                                         <span class="badge badge-info">Ida y Vuelta</span>
                                                     @else
@@ -135,17 +163,17 @@
                                                     @endif
                                                 </td>
 
-                                                <td title="{{ $t->descripcion }}">
-                                                    {{ \Illuminate\Support\Str::limit($t->descripcion, 15) }}
-                                                </td>
-                                                <td>
+                                                <td class="align-middle text-center">
                                                     @if($t->estado == 2) <span class="badge badge-warning">Pendiente</span>
                                                     @elseif($t->estado == 1) <span class="badge badge-success">Aprobado</span>
                                                     @else <span class="badge badge-danger">Rechazado</span> @endif
                                                 </td>
-                                                <td>
+                                                
+                                                <td class="align-middle text-center">
                                                     @if($t->estado == 1 && $t->archivo_tikete)
                                                         <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm btn-circle"><i class="fas fa-download"></i></a>
+                                                    @else
+                                                        -
                                                     @endif
                                                 </td>
                                             </tr>

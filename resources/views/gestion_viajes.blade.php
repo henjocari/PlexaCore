@@ -100,7 +100,8 @@
                             <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th>Empleado</th>
+                                        <th>Solicitado Por</th>
+                                        <th>Viajero</th>
                                         <th>Ruta</th>
                                         <th>Fecha Viaje</th>
                                         <th class="text-center">Estado</th>
@@ -110,29 +111,46 @@
                                 <tbody>
                                     @forelse($tickets as $t)
                                     <tr>
-                                        <td class="align-middle">
-                                            <div class="font-weight-bold text-gray-800">{{ $t->Nombre }} {{ $t->Apellido }}</div>
-                                            <small class="text-muted">{{ $t->email }}</small>
+                                        <td class="align-middle border-right">
+                                            <div class="font-weight-bold text-primary">{{ $t->Nombre }} {{ $t->Apellido }}</div>
+                                            <small class="text-muted"><i class="fas fa-laptop mr-1"></i> {{ $t->email }}</small>
                                         </td>
+
+                                        <td class="align-middle bg-light">
+                                            <div class="font-weight-bold text-dark text-uppercase">
+                                                <i class="fas fa-user-tag text-info mr-1"></i> {{ $t->beneficiario_nombre ?? 'N/A' }}
+                                            </div>
+                                            <small class="text-gray-600"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small><br>
+                                            <small class="text-gray-600"><strong>Nac:</strong> {{ $t->beneficiario_fecha_nac ?? 'N/A' }}</small>
+                                        </td>
+
                                         <td class="align-middle">
                                             <span>{{ $t->origen }}</span> <i class="fas fa-long-arrow-alt-right text-primary mx-1"></i> <span class="font-weight-bold">{{ $t->destino }}</span>
-                                            <div class="text-xs text-info font-weight-bold">{{ $t->tipo_viaje }}</div>
+                                            <div class="text-xs text-info font-weight-bold mt-1">{{ $t->tipo_viaje }}</div>
                                         </td>
+
                                         <td class="align-middle">
                                             <div><i class="far fa-calendar-alt mr-1"></i> {{ $t->fecha_viaje }}</div>
                                             @if($t->fecha_regreso) <small class="text-danger">Regreso: {{ $t->fecha_regreso }}</small> @endif
                                         </td>
+
                                         <td class="align-middle text-center">
                                             @if($t->estado == 2) <span class="badge badge-warning px-2 py-1">Pendiente</span>
                                             @elseif($t->estado == 1) <span class="badge badge-success px-2 py-1">Aprobado</span>
                                             @else <span class="badge badge-danger px-2 py-1">Rechazado</span> @endif
                                         </td>
+
                                         <td class="align-middle text-center">
                                             @if($t->estado == 2)
-                                                <button class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#m{{$t->id}}">
-                                                    <i class="fas fa-cog"></i> Gestionar
-                                                </button>
-                                            @elseif($t->estado == 1)
+                                                
+                                                @if(in_array('Aprobar Viajes', session('permisos_permitidos', [])))
+                                                    <button class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#m{{$t->id}}">
+                                                        <i class="fas fa-cog"></i> Gestionar
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted small"><i class="fas fa-lock"></i> Sin permiso</span>
+                                                @endif
+                                                @elseif($t->estado == 1)
                                                 <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm"><i class="fas fa-file-pdf"></i> Ver Tiquete</a>
                                             @else -- @endif
                                         </td>
@@ -149,9 +167,18 @@
                                                 <form action="{{ route('tickets.gestionar', $t->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario(this)">
                                                     @csrf
                                                     <div class="modal-body bg-light">
+                                                        
                                                         <div class="alert alert-primary mb-3">
-                                                            <small class="text-uppercase font-weight-bold">Solicitante:</small><br>
-                                                            <span class="h6 font-weight-bold">{{ $t->Nombre }} {{ $t->Apellido }}</span>
+                                                            <div class="mb-2">
+                                                                <small class="text-uppercase font-weight-bold text-primary">Solicitado por:</small><br>
+                                                                <span class="font-weight-bold">{{ $t->Nombre }} {{ $t->Apellido }}</span>
+                                                            </div>
+                                                            <hr class="my-1 border-primary" style="opacity: 0.3;">
+                                                            <div>
+                                                                <small class="text-uppercase font-weight-bold text-primary">Pasajero (Comprar Tiquete a nombre de):</small><br>
+                                                                <span class="font-weight-bold text-dark"><i class="fas fa-user mr-1"></i> {{ $t->beneficiario_nombre ?? 'N/A' }}</span><br>
+                                                                <small class="text-dark"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small>
+                                                            </div>
                                                         </div>
 
                                                         <div class="form-group">
@@ -172,7 +199,7 @@
 
                                                         <div class="form-group mt-3">
                                                             <label class="small font-weight-bold text-gray-600">Mensaje (Opcional)</label>
-                                                            <textarea name="mensaje_admin" class="form-control" rows="2" placeholder="Ej: Buen viaje..."></textarea>
+                                                            <textarea name="mensaje_admin" class="form-control" rows="2" placeholder="Ej: Buen viaje, adjunto tiquete..."></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer bg-light">
@@ -186,7 +213,7 @@
                                         </div>
                                     </div>
                                     @empty
-                                    <tr><td colspan="5" class="text-center py-5">No se encontraron solicitudes.</td></tr>
+                                    <tr><td colspan="6" class="text-center py-5">No se encontraron solicitudes.</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -218,23 +245,14 @@
 
     // 2. VALIDACIÓN DEL BOTÓN "GUARDAR CAMBIOS"
     function validarFormulario(form) {
-        // Buscamos el select de acción y el input de archivo DENTRO de este formulario específico
         var accion = form.querySelector('.select-accion').value;
         var archivo = form.querySelector('.input-archivo');
 
-        // Si la acción es APROBAR y el archivo está VACÍO
         if (accion === 'aprobar' && archivo.files.length === 0) {
-            // Lanzamos la alerta
             alert("⚠️ ¡ATENCIÓN!\n\nPara aprobar la solicitud es OBLIGATORIO adjuntar el tiquete o comprobante (PDF o Imagen).");
-            
-            // Ponemos el foco en el input para que el usuario vea dónde falta
             archivo.focus();
-            
-            // Detenemos el envío del formulario
             return false;
         }
-
-        // Si todo está bien, dejamos pasar
         return true;
     }
 </script>

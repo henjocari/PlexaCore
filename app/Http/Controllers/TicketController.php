@@ -53,7 +53,9 @@ class TicketController extends Controller
                 $q->where('usuarios.Nombre', 'LIKE', "%{$search}%")
                   ->orWhere('usuarios.Apellido', 'LIKE', "%{$search}%")
                   ->orWhere('3_tickets.origen', 'LIKE', "%{$search}%")
-                  ->orWhere('3_tickets.destino', 'LIKE', "%{$search}%");
+                  ->orWhere('3_tickets.destino', 'LIKE', "%{$search}%")
+                  ->orWhere('3_tickets.beneficiario_nombre', 'LIKE', "%{$search}%") // Buscar también por el viajero
+                  ->orWhere('3_tickets.beneficiario_cedula', 'LIKE', "%{$search}%");
             });
         }
 
@@ -83,43 +85,55 @@ class TicketController extends Controller
     // =========================================================================
     public function store(Request $request)
     {
+        // 1. VALIDAMOS TODOS LOS CAMPOS (Incluidos los nuevos del pasajero)
         $request->validate([
-            'origen' => 'required', 
-            'destino' => 'required', 
-            'fecha_viaje' => 'required|date',
-            'tipo_viaje' => 'required',
-            'fecha_regreso' => 'nullable|date|after_or_equal:fecha_viaje',
+            'beneficiario_nombre'    => 'required|string|max:255',
+            'beneficiario_cedula'    => 'required|numeric',
+            'beneficiario_fecha_nac' => 'required|date',
+            'origen'                 => 'required|string', 
+            'destino'                => 'required|string', 
+            'fecha_viaje'            => 'required|date',
+            'tipo_viaje'             => 'required|string',
+            'fecha_regreso'          => 'nullable|date|after_or_equal:fecha_viaje',
         ]);
 
         if ($request->tipo_viaje == 'Ida y Vuelta' && !$request->fecha_regreso) {
             return back()->withErrors(['fecha_regreso' => 'La fecha de regreso es obligatoria para viajes Ida y Vuelta.']);
         }
 
-        // Crear el Ticket en BD
+        // 2. CREAMOS EL TICKET EN BD
         $ticket = Ticket::create([
-            'user_id'     => Auth::user()->cedula,
-            'origen'      => $request->origen,
-            'destino'     => $request->destino,
-            'fecha_viaje' => $request->fecha_viaje,
-            'tipo_viaje'  => $request->tipo_viaje, 
-            'fecha_regreso' => ($request->tipo_viaje == 'Ida y Vuelta') ? $request->fecha_regreso : null,
-            'descripcion' => $request->descripcion,
-            'estado'      => 2 // 2 = Pendiente
+            'user_id'                => Auth::user()->cedula, // Quien hace clic en "Enviar"
+            
+            // --- NUEVOS CAMPOS AGREGADOS ---
+            'beneficiario_nombre'    => $request->beneficiario_nombre,
+            'beneficiario_cedula'    => $request->beneficiario_cedula,
+            'beneficiario_fecha_nac' => $request->beneficiario_fecha_nac,
+            // -------------------------------
+
+            'origen'                 => $request->origen,
+            'destino'                => $request->destino,
+            'fecha_viaje'            => $request->fecha_viaje,
+            'tipo_viaje'             => $request->tipo_viaje, 
+            'fecha_regreso'          => ($request->tipo_viaje == 'Ida y Vuelta') ? $request->fecha_regreso : null,
+            'descripcion'            => $request->descripcion,
+            'estado'                 => 2 // 2 = Pendiente
         ]);
 
-        // Preparar datos para el correo
+        // 3. PREPARAMOS EL CORREO
         $nombreEmpleado = Auth::user()->Nombre . ' ' . Auth::user()->Apellido;
         $urlParaAprobar = route('tickets.gestion'); 
 
         $datos = [
-            'empleado' => $nombreEmpleado,
-            'origen'   => $request->origen,
-            'destino'  => $request->destino,
-            'fecha'    => $request->fecha_viaje,
-            'fecha_ida' => $request->fecha_viaje,
+            'empleado'      => $nombreEmpleado, // Quien solicitó
+            'pasajero'      => $request->beneficiario_nombre, // Quien viaja
+            'origen'        => $request->origen,
+            'destino'       => $request->destino,
+            'fecha'         => $request->fecha_viaje,
+            'fecha_ida'     => $request->fecha_viaje,
             'fecha_regreso' => $request->fecha_regreso,
-            'tipo'     => $request->tipo_viaje,
-            'url'      => $urlParaAprobar
+            'tipo'          => $request->tipo_viaje,
+            'url'           => $urlParaAprobar
         ];
 
         // --- ENVÍO DE CORREOS ---

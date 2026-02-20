@@ -16,3 +16,4 @@ class PermisosModulo extends Model
         return $this->belongsTo(Roles::class, 'roles', 'id');
     }
 }
+

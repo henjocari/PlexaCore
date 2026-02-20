@@ -9,111 +9,125 @@
 
     <hr class="sidebar-divider my-0">
 
-    <li class="nav-item active">
-        @if(session('modulos_permitidos') && in_array('Dashboard', session('modulos_permitidos', [])))
+    @php
+        $misModulos = session('modulos_permitidos', []);
+    @endphp
+
+    @if(in_array('Dashboard', $misModulos))
+        <li class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ url('/dashboard') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-        @endif
-    </li>
+        </li>
+    @endif
 
-    <li class="nav-item active">
-        @if(session('modulos_permitidos') && in_array('Usuarios', session('modulos_permitidos', [])))
+    @if(in_array('Usuarios', $misModulos) || in_array('Roles', $misModulos))
+        <li class="nav-item">
             <a class="nav-link" href="{{ url('/usuarios') }}">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-fw fa-users"></i>
                 <span>Usuarios</span>
             </a>
-        @endif
-    </li>
+        </li>
+    @endif
 
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Sección</div>
+    @if(in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Sección</div>
 
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHotel"
-            aria-expanded="true" aria-controls="collapseHotel">
-            <i class="fas fa-fw fa-hotel"></i>
-            <span>Gestión de Hotel</span>
-        </a>
-        <div id="collapseHotel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Navegación:</h6>
-                
-                @if(session('modulos_permitidos') && in_array('Hotel', session('modulos_permitidos', [])))
-                    <a class="collapse-item" href="{{ url('/hotel') }}">
-                        <i class="fas fa-bed mr-2 text-gray-500"></i> Hotel
-                    </a>
-                @endif
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseHotel"
+                aria-expanded="true" aria-controls="collapseHotel">
+                <i class="fas fa-fw fa-hotel"></i>
+                <span>Gestión de Hotel</span>
+            </a>
+            <div id="collapseHotel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Navegación:</h6>
+                    
+                    @if(in_array('Hotel', $misModulos))
+                        <a class="collapse-item" href="{{ url('/hotel') }}">
+                            <i class="fas fa-bed mr-2 text-gray-500"></i> Hotel
+                        </a>
+                    @endif
 
-                @if(session('modulos_permitidos') && in_array('Historial Habitacion', session('modulos_permitidos', [])))
-                    <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
-                        <i class="fas fa-history mr-2 text-gray-500"></i> Historial
-                    </a>
-                @endif
+                    @if(in_array('Historial Habitacion', $misModulos))
+                        <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
+                            <i class="fas fa-history mr-2 text-gray-500"></i> Historial
+                        </a>
+                    @endif
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    @endif
 
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Configuración</div>
+    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Configuración</div>
 
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin"
-            aria-expanded="true" aria-controls="collapseAdmin">
-            <i class="fas fa-fw fa-cogs"></i>
-            <span>Administración</span>
-        </a>
-        <div id="collapseAdmin" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Opciones Admin:</h6>
-                
-                @if(session('modulos_permitidos') && in_array('Precio GLP', session('modulos_permitidos', [])))
-                    <a class="collapse-item" href="{{ url('/precio-glp') }}">
-                        <i class="fas fa-gas-pump mr-2 text-gray-500"></i> Precio GLP
-                    </a>
-                @endif
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin"
+                aria-expanded="true" aria-controls="collapseAdmin">
+                <i class="fas fa-fw fa-cogs"></i>
+                <span>Administración</span>
+            </a>
+            <div id="collapseAdmin" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Opciones Admin:</h6>
+                    
+                    @if(in_array('Precio GLP', $misModulos))
+                        <a class="collapse-item" href="{{ url('/precio-glp') }}">
+                            <i class="fas fa-gas-pump mr-2 text-gray-500"></i> Precio GLP
+                        </a>
+                    @endif
 
-                <a class="collapse-item" href="{{ url('/carrusel') }}">
-                    <i class="fas fa-images mr-2 text-gray-500"></i> Carrusel
-                </a>
+                    @if(in_array('Carrusel', $misModulos))
+                        <a class="collapse-item" href="{{ url('/carrusel') }}">
+                            <i class="fas fa-images mr-2 text-gray-500"></i> Carrusel
+                        </a>
+                    @endif
 
-                @if(session('modulos_permitidos') && in_array('Tabla Conductores', session('modulos_permitidos', [])))
-                    <a class="collapse-item" href="{{ url('/tablas') }}">
-                        <i class="fas fa-table mr-2 text-gray-500"></i> Conductores
-                    </a>
-                @endif
+                    @if(in_array('Tabla Conductores', $misModulos))
+                        <a class="collapse-item" href="{{ url('/tablas') }}">
+                            <i class="fas fa-table mr-2 text-gray-500"></i> Conductores
+                        </a>
+                    @endif
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    @endif
 
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">Logística</div>
+    @if(in_array('Solicitar Viaje', $misModulos) || in_array('Gestion Viajes', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Logística</div>
 
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseViajes"
-            aria-expanded="true" aria-controls="collapseViajes">
-            <i class="fas fa-fw fa-plane-departure"></i>
-            <span>Gestión de Viajes</span>
-        </a>
-        <div id="collapseViajes" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Solicitudes:</h6>
-                
-                <a class="collapse-item {{ request()->routeIs('tickets.solicitar') ? 'active' : '' }}" 
-                   href="{{ route('tickets.solicitar') }}">
-                   <i class="fas fa-plus-circle mr-2 text-success"></i> Solicitar Viaje
-                </a>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseViajes"
+                aria-expanded="true" aria-controls="collapseViajes">
+                <i class="fas fa-fw fa-plane-departure"></i>
+                <span>Gestión de Viajes</span>
+            </a>
+            <div id="collapseViajes" class="collapse" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Solicitudes:</h6>
+                    
+                    @if(in_array('Solicitar Viaje', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('tickets.solicitar') ? 'active' : '' }}" 
+                           href="{{ route('tickets.solicitar') }}">
+                           <i class="fas fa-plus-circle mr-2 text-success"></i> Solicitar Viaje
+                        </a>
+                    @endif
 
-                @if(Auth::check() && (Auth::user()->rol == 1 || Auth::user()->rol == 2))
-                    <a class="collapse-item {{ request()->routeIs('tickets.gestion') ? 'active' : '' }}" 
-                       href="{{ route('tickets.gestion') }}">
-                       <i class="fas fa-clipboard-list mr-2 text-primary"></i> Viajes Solicitados
-                    </a>
-                @endif
+                    @if(in_array('Gestion Viajes', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('tickets.gestion') ? 'active' : '' }}" 
+                           href="{{ route('tickets.gestion') }}">
+                           <i class="fas fa-clipboard-list mr-2 text-primary"></i> Viajes Solicitados
+                        </a>
+                    @endif
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    @endif
 
     <hr class="sidebar-divider d-none d-md-block">
 

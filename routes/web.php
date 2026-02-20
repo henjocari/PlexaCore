@@ -24,18 +24,11 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 // ----------------------
 Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
-    Route::get('/', function () {
-        return view('index');
-    })->name('index');
-
-    Route::get('/index', function () {
-        return view('index');
-    });
+    Route::get('/', function () { return view('index'); })->name('index');
+    Route::get('/index', function () { return view('index'); });
     
     // 🚫 Módulo Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })
+    Route::get('/dashboard', function () { return view('dashboard'); })
     ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Dashboard')
     ->name('dashboard');
 
@@ -65,9 +58,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/usuarios/{cedula}/toggle', [UsuarioController::class, 'toggle'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.toggle');
-    //--------------Usuarios------------\\
 
-    
     //--------------Precio GLP------------\\
     Route::get('/precio-glp', [PrecioGlpController::class, 'precioglp'])
         ->middleware(VerificarModulo::class . ':Precio GLP')
@@ -83,43 +74,32 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     
     Route::get('/precio-glp/ver/{archivo}', [PrecioGlpController::class, 'verPDF'])
         ->name('precio.ver');
-    //--------------Precio GLP------------\\
 
     // ==========================================
-    //           MÓDULO DE VIAJES
+    //           MÓDULO DE VIAJES (CON CANDADOS)
     // ==========================================
+    Route::get('/solicitar-viaje', [TicketController::class, 'verSolicitar'])
+        ->middleware(VerificarModulo::class . ':Solicitar Viaje')
+        ->name('tickets.solicitar');
     
-    // 1. Vista para SOLICITAR (Empleados y Jefes pueden pedir)
-    Route::get('/solicitar-viaje', [TicketController::class, 'verSolicitar'])->name('tickets.solicitar');
-    
-    // 2. Vista para GESTIONAR (Solo Jefes ven esto)
-    Route::get('/gestion-viajes', [TicketController::class, 'verGestion'])->name('tickets.gestion');
+    Route::get('/gestion-viajes', [TicketController::class, 'verGestion'])
+        ->middleware(VerificarModulo::class . ':Gestion Viajes')
+        ->name('tickets.gestion');
 
-    // Acciones (Guardar y Gestionar)
     Route::post('/tickets/crear', [TicketController::class, 'store'])->name('tickets.store');
     Route::post('/tickets/{id}/gestionar', [TicketController::class, 'gestionar'])->name('tickets.gestionar');
 
-    Route::get('/probar-email', function() {
-    try {
-        // REEMPLAZA ESTE CORREO POR EL TUYO DE RESEND
-        $miCorreo = 'royssimarra@gmail.com'; 
-        
-        $datos = [
-            'empleado' => 'Usuario de Prueba',
-            'destino'  => 'Destino Test',
-            'fecha'    => '2026-12-31'
-        ];
-        
-        Illuminate\Support\Facades\Mail::to($miCorreo)
-            ->send(new App\Mail\SolicitudViajeMail($datos));
-            
-        return "✅ ¡ÉXITO! Laravel dice que envió el correo. Revisa tu bandeja de entrada (y Spam).";
-        
-    } catch (\Exception $e) {
-        return "❌ ERROR DETECTADO: " . $e->getMessage();
-    }
-    });
 
+    Route::get('/probar-email', function() {
+        try {
+            $miCorreo = 'royssimarra@gmail.com'; 
+            $datos = ['empleado' => 'Usuario de Prueba', 'destino' => 'Destino Test', 'fecha' => '2026-12-31'];
+            Illuminate\Support\Facades\Mail::to($miCorreo)->send(new App\Mail\SolicitudViajeMail($datos));
+            return "✅ ¡ÉXITO! Laravel dice que envió el correo.";
+        } catch (\Exception $e) {
+            return "❌ ERROR DETECTADO: " . $e->getMessage();
+        }
+    });
 
     //--------------CARRUSEL------------\\
     Route::get('/carrusel', [CarruselController::class, 'carrusel'])
@@ -141,29 +121,18 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::patch('/carrusel/{id}/activar', [CarruselController::class, 'activar'])
         ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.activar');
-    //--------------CARRUSEL------------\\
-
 
    // ==========================================
-    //       RUTAS DE TICKETS     
+    //       RUTAS DE TICKETS (PAPELERA)    
     // ==========================================
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
-    
-    // 🚨 RUTA NUEVA: PAPELERA (Ver borrados)
     Route::get('/tickets/papelera', [TicketController::class, 'papelera'])->name('tickets.papelera');
-
-    // Botones de Acción
     Route::patch('/tickets/{id}/inactivar', [TicketController::class, 'inactivar'])->name('tickets.inactivar');
     Route::patch('/tickets/{id}/activar', [TicketController::class, 'activar'])->name('tickets.activar');
-    // ==========================================
 
-    Route::get('/gestiondehotel', function () {
-        return view('gestiondehotel');
-    });
-    Route::get('/utilidades', function () {
-        return view('buttons');
-    });
+    Route::get('/gestiondehotel', function () { return view('gestiondehotel'); });
+    Route::get('/utilidades', function () { return view('buttons'); });
 
     // Conductores CRUD
     Route::get('/conductores/{id}', [ConductorController::class, 'show']);
@@ -177,14 +146,18 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/habitaciones/{id}/asignar', [HabitacionController::class, 'asignarConductor'])->name('habitaciones.asignar');
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
 
-    // HISTORIAL DE HABITACIONES
-    Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])->name('historial.export.excel');
-    Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])->name('historial.habitaciones');
+    // HISTORIAL DE HABITACIONES (CON CANDADOS)
+    Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])
+        ->middleware(VerificarModulo::class . ':Historial Habitacion')
+        ->name('historial.export.excel');
+        
+    Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':Historial Habitacion')
+        ->name('historial.habitaciones');
 
     // CloudFleet
     Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])->name('actualizarconductores');
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
 });

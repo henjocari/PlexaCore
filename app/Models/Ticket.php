@@ -14,13 +14,16 @@ class Ticket extends Model
 
     protected $fillable = [
         'user_id',
+        'beneficiario_nombre',    
+        'beneficiario_cedula',    
+        'beneficiario_fecha_nac', 
         'origen',
         'destino',
         'fecha_viaje',
-        'fecha_regreso', 
-        'tipo_viaje',    
+        'tipo_viaje',
+        'fecha_regreso',
         'descripcion',
         'estado',
-        'archivo_tikete',
+        'archivo_tikete'
     ];
 }
