@@ -103,7 +103,7 @@
                                         <th>Solicitado Por</th>
                                         <th>Viajero</th>
                                         <th>Ruta</th>
-                                        <th>Fecha Viaje</th>
+                                        <th>Fechas y Hotel</th>
                                         <th class="text-center">Estado</th>
                                         <th class="text-center">Acción</th>
                                     </tr>
@@ -129,9 +129,21 @@
                                             <div class="text-xs text-info font-weight-bold mt-1">{{ $t->tipo_viaje }}</div>
                                         </td>
 
-                                        <td class="align-middle">
-                                            <div><i class="far fa-calendar-alt mr-1"></i> {{ $t->fecha_viaje }}</div>
-                                            @if($t->fecha_regreso) <small class="text-danger">Regreso: {{ $t->fecha_regreso }}</small> @endif
+                                        <td class="align-middle text-nowrap">
+                                            <div class="small text-dark">
+                                                <strong>Ida:</strong> {{ $t->fecha_viaje }} 
+                                                <span class="text-muted">({{ $t->jornada_ida ?? 'N/A' }})</span>
+                                            </div>
+                                            @if($t->fecha_regreso) 
+                                                <div class="small text-danger">
+                                                    <strong>Regreso:</strong> {{ $t->fecha_regreso }} 
+                                                    <span class="text-muted">({{ $t->jornada_regreso ?? 'N/A' }})</span>
+                                                </div> 
+                                            @endif
+                                            
+                                            @if($t->hospedaje)
+                                                <span class="badge badge-info mt-1 shadow-sm"><i class="fas fa-bed"></i> Hotel Solicitado</span>
+                                            @endif
                                         </td>
 
                                         <td class="align-middle text-center">
@@ -150,8 +162,10 @@
                                                 @else
                                                     <span class="text-muted small"><i class="fas fa-lock"></i> Sin permiso</span>
                                                 @endif
-                                                @elseif($t->estado == 1)
+                                            @elseif($t->estado == 1)
+                                                @if($t->archivo_tikete)
                                                 <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm"><i class="fas fa-file-pdf"></i> Ver Tiquete</a>
+                                                @endif
                                             @else -- @endif
                                         </td>
                                     </tr>
@@ -174,10 +188,31 @@
                                                                 <span class="font-weight-bold">{{ $t->Nombre }} {{ $t->Apellido }}</span>
                                                             </div>
                                                             <hr class="my-1 border-primary" style="opacity: 0.3;">
-                                                            <div>
+                                                            <div class="mb-2">
                                                                 <small class="text-uppercase font-weight-bold text-primary">Pasajero (Comprar Tiquete a nombre de):</small><br>
                                                                 <span class="font-weight-bold text-dark"><i class="fas fa-user mr-1"></i> {{ $t->beneficiario_nombre ?? 'N/A' }}</span><br>
                                                                 <small class="text-dark"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small>
+                                                            </div>
+                                                            <hr class="my-1 border-primary" style="opacity: 0.3;">
+                                                            
+                                                            <div>
+                                                                <small class="text-uppercase font-weight-bold text-primary">Hospedaje e Itinerario:</small><br>
+                                                                
+                                                                <ul class="mb-1 pl-3 text-dark small">
+                                                                    <li><strong>Ida:</strong> {{ $t->fecha_viaje }} <span class="text-muted">({{ $t->jornada_ida }})</span></li>
+                                                                    @if($t->fecha_regreso)
+                                                                        <li><strong>Regreso:</strong> {{ $t->fecha_regreso }} <span class="text-muted">({{ $t->jornada_regreso }})</span></li>
+                                                                    @endif
+                                                                </ul>
+
+                                                                @if($t->hospedaje)
+                                                                    <div class="mt-2 p-2 bg-white rounded border border-info">
+                                                                        <small class="text-info font-weight-bold"><i class="fas fa-hotel mr-1"></i> Noches Solicitadas:</small><br>
+                                                                        <small class="text-dark d-block" style="white-space: pre-wrap;">{{ str_replace(' | ', "\n", $t->hospedaje) }}</small>
+                                                                    </div>
+                                                                @else
+                                                                    <small class="text-muted d-block mt-2"><i class="fas fa-bed mr-1"></i> No se solicitaron noches de hotel.</small>
+                                                                @endif
                                                             </div>
                                                         </div>
 

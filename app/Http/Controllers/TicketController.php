@@ -85,7 +85,7 @@ class TicketController extends Controller
     // =========================================================================
     public function store(Request $request)
     {
-        // 1. VALIDAMOS TODOS LOS CAMPOS
+        // 1. VALIDAMOS TODOS LOS CAMPOS (AHORA INCLUYEN JORNADAS Y HOSPEDAJE)
         $request->validate([
             'beneficiario_nombre'    => 'required|string|max:255',
             'beneficiario_cedula'    => 'required|numeric',
@@ -93,12 +93,19 @@ class TicketController extends Controller
             'origen'                 => 'required|string', 
             'destino'                => 'required|string', 
             'fecha_viaje'            => 'required|date',
+            'jornada_ida'            => 'required|string', // NUEVO CAMPO OBLIGATORIO
             'tipo_viaje'             => 'required|string',
             'fecha_regreso'          => 'nullable|date|after_or_equal:fecha_viaje',
+            'jornada_regreso'        => 'nullable|string', // NUEVO CAMPO CONDICIONAL
+            'hospedaje'              => 'nullable|string', // NUEVO CAMPO OPCIONAL
         ]);
 
         if ($request->tipo_viaje == 'Ida y Vuelta' && !$request->fecha_regreso) {
             return back()->withErrors(['fecha_regreso' => 'La fecha de regreso es obligatoria para viajes Ida y Vuelta.']);
+        }
+        
+        if ($request->tipo_viaje == 'Ida y Vuelta' && !$request->jornada_regreso) {
+            return back()->withErrors(['jornada_regreso' => 'La jornada de regreso es obligatoria para viajes Ida y Vuelta.']);
         }
 
         // 2. CREAMOS EL TICKET EN BD
@@ -109,9 +116,17 @@ class TicketController extends Controller
             'beneficiario_fecha_nac' => $request->beneficiario_fecha_nac,
             'origen'                 => $request->origen,
             'destino'                => $request->destino,
+            
             'fecha_viaje'            => $request->fecha_viaje,
+            'jornada_ida'            => $request->jornada_ida, // GUARDAMOS LA JORNADA
+            
             'tipo_viaje'             => $request->tipo_viaje, 
+            
             'fecha_regreso'          => ($request->tipo_viaje == 'Ida y Vuelta') ? $request->fecha_regreso : null,
+            'jornada_regreso'        => ($request->tipo_viaje == 'Ida y Vuelta') ? $request->jornada_regreso : null, // GUARDAMOS LA JORNADA
+            
+            'hospedaje'              => $request->hospedaje, // GUARDAMOS EL STRING ARMADO POR JAVASCRIPT
+            
             'descripcion'            => $request->descripcion,
             'estado'                 => 2 
         ]);
@@ -121,22 +136,23 @@ class TicketController extends Controller
         $urlParaAprobar = route('tickets.gestion'); 
 
         $datos = [
-            'empleado'      => $nombreEmpleado,
-            'pasajero'      => $request->beneficiario_nombre,
-            'origen'        => $request->origen,
-            'destino'       => $request->destino,
-            'fecha'         => $request->fecha_viaje,
-            'fecha_ida'     => $request->fecha_viaje,
-            'fecha_regreso' => $request->fecha_regreso,
-            'tipo'          => $request->tipo_viaje,
-            'url'           => $urlParaAprobar
+            'empleado'        => $nombreEmpleado,
+            'pasajero'        => $request->beneficiario_nombre,
+            'origen'          => $request->origen,
+            'destino'         => $request->destino,
+            'fecha'           => $request->fecha_viaje,
+            'fecha_ida'       => $request->fecha_viaje,
+            'jornada_ida'     => $request->jornada_ida, // ENVIAMOS JORNADA AL CORREO
+            'fecha_regreso'   => $request->fecha_regreso,
+            'jornada_regreso' => $request->jornada_regreso, // ENVIAMOS JORNADA AL CORREO
+            'hospedaje'       => $request->hospedaje, // ENVIAMOS HOSPEDAJE AL CORREO
+            'tipo'            => $request->tipo_viaje,
+            'url'             => $urlParaAprobar
         ];
 
         // ====================================================
         // --- ENVÍO DE CORREOS (MODO LOCAL/PRUEBA RESEND) ---
         // ====================================================
-        // Como Resend gratis solo deja enviar a tu propio correo, forzamos la salida hacia ti.
-        // Cuando vayas a subir la web a producción, cambias $miCorreoDePrueba por $emailJefe y Auth::user()->email
         
         $miCorreoDePrueba = 'roisroisomg@gmail.com'; 
 
@@ -215,7 +231,6 @@ class TicketController extends Controller
             ];
             
             try {
-                // NOTA: Para pruebas locales, también forzaremos tu correo en la respuesta.
                 $miCorreoDePrueba = 'roisroisomg@gmail.com'; 
                 Mail::to($miCorreoDePrueba)->send(new RespuestaViajeMail($datos));
             } catch (\Exception $e) {

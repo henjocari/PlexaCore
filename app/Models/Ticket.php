@@ -20,8 +20,11 @@ class Ticket extends Model
         'origen',
         'destino',
         'fecha_viaje',
+        'jornada_ida',      
         'tipo_viaje',
         'fecha_regreso',
+        'jornada_regreso',  
+        'hospedaje',        
         'descripcion',
         'estado',
         'archivo_tikete'
