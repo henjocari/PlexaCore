@@ -33,9 +33,16 @@
         <li><strong>Pasajero:</strong> {{ $datos['pasajero'] }}</li>
         <li><strong>Ruta:</strong> {{ $datos['origen'] }} ➔ {{ $datos['destino'] }}</li>
         <li><strong>Tipo de Viaje:</strong> {{ $datos['tipo'] }}</li>
-        <li><strong>Fecha de Salida:</strong> {{ $datos['fecha_ida'] }}</li>
+        <li><strong>Fecha de Salida:</strong> {{ $datos['fecha_ida'] }} ({{ $datos['jornada_ida'] ?? 'N/A' }})</li>
+        
         @if(!empty($datos['fecha_regreso']))
-            <li><strong>Fecha de Regreso:</strong> {{ $datos['fecha_regreso'] }}</li>
+            <li><strong>Fecha de Regreso:</strong> {{ $datos['fecha_regreso'] }} ({{ $datos['jornada_regreso'] ?? 'N/A' }})</li>
+        @endif
+        
+        @if(!empty($datos['hospedaje']))
+            <li style="margin-top: 10px;"><strong>Detalle de Hoteles:</strong><br>
+                <span style="white-space: pre-wrap; color: #555;">{{ str_replace(' | ', "\n", $datos['hospedaje']) }}</span>
+            </li>
         @endif
     </ul>
 

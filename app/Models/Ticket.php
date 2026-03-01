@@ -27,6 +27,7 @@ class Ticket extends Model
         'hospedaje',        
         'descripcion',
         'estado',
-        'archivo_tikete'
+        'archivo_tikete',
+        'archivos_hoteles'
     ];
 }

@@ -5,6 +5,8 @@
     <title>Solicitar Viaje</title>
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.png') }}">
     <style>
         .fondo-plexa{background:#fff url("{{ asset('img/Logo_plexa.svg') }}") center/80% no-repeat; min-height:100vh; padding:2rem;}
         .btn-group-toggle .btn.active {

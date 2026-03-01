@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Gestión de Viajes | Admin</title>
+    <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.png') }}">
@@ -105,7 +106,7 @@
                                         <th>Ruta</th>
                                         <th>Fechas y Hotel</th>
                                         <th class="text-center">Estado</th>
-                                        <th class="text-center">Acción</th>
+                                        <th class="text-center">Archivos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -154,7 +155,6 @@
 
                                         <td class="align-middle text-center">
                                             @if($t->estado == 2)
-                                                
                                                 @if(in_array('Aprobar Viajes', session('permisos_permitidos', [])))
                                                     <button class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#m{{$t->id}}">
                                                         <i class="fas fa-cog"></i> Gestionar
@@ -163,9 +163,19 @@
                                                     <span class="text-muted small"><i class="fas fa-lock"></i> Sin permiso</span>
                                                 @endif
                                             @elseif($t->estado == 1)
+                                                
                                                 @if($t->archivo_tikete)
-                                                <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm"><i class="fas fa-file-pdf"></i> Ver Tiquete</a>
+                                                <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm mb-1 text-nowrap" title="Ver Tiquete de Avión"><i class="fas fa-plane"></i> Tiquete</a><br>
                                                 @endif
+
+                                                @if($t->archivos_hoteles)
+                                                    @foreach(explode(',', $t->archivos_hoteles) as $index => $hotelFile)
+                                                        @if(trim($hotelFile) != '')
+                                                            <a href="{{ asset('archivos_tickets/'.trim($hotelFile)) }}" target="_blank" class="btn btn-outline-info btn-sm shadow-sm mb-1 text-nowrap" title="Reserva de Hotel"><i class="fas fa-hotel"></i> Hotel {{ $index + 1 }}</a><br>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+
                                             @else -- @endif
                                         </td>
                                     </tr>
@@ -194,17 +204,14 @@
                                                                 <small class="text-dark"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small>
                                                             </div>
                                                             <hr class="my-1 border-primary" style="opacity: 0.3;">
-                                                            
                                                             <div>
                                                                 <small class="text-uppercase font-weight-bold text-primary">Hospedaje e Itinerario:</small><br>
-                                                                
                                                                 <ul class="mb-1 pl-3 text-dark small">
                                                                     <li><strong>Ida:</strong> {{ $t->fecha_viaje }} <span class="text-muted">({{ $t->jornada_ida }})</span></li>
                                                                     @if($t->fecha_regreso)
                                                                         <li><strong>Regreso:</strong> {{ $t->fecha_regreso }} <span class="text-muted">({{ $t->jornada_regreso }})</span></li>
                                                                     @endif
                                                                 </ul>
-
                                                                 @if($t->hospedaje)
                                                                     <div class="mt-2 p-2 bg-white rounded border border-info">
                                                                         <small class="text-info font-weight-bold"><i class="fas fa-hotel mr-1"></i> Noches Solicitadas:</small><br>
@@ -219,22 +226,49 @@
                                                         <div class="form-group">
                                                             <label class="font-weight-bold text-gray-800">Acción:</label>
                                                             <select name="accion" class="form-control select-accion" onchange="toggle(this, {{$t->id}})">
-                                                                <option value="aprobar">✅ Aprobar (Requiere Tiquete)</option>
-                                                                <option value="rechazar">❌ Rechazar</option>
+                                                                <option value="aprobar">✅ Aprobar Viaje</option>
+                                                                <option value="rechazar">❌ Rechazar Viaje</option>
                                                             </select>
                                                         </div>
 
                                                         <div id="file{{$t->id}}" class="form-group p-3 bg-white rounded border shadow-sm">
+                                                            
                                                             <label class="text-danger font-weight-bold small text-uppercase">
-                                                                <i class="fas fa-file-upload mr-1"></i> Subir Tiquete/Comprobante *
+                                                                <i class="fas fa-plane-departure mr-1"></i> Tiquete / Transporte *
                                                             </label>
                                                             <input type="file" name="archivo_tikete" class="form-control-file input-archivo" accept=".pdf, .jpg, .jpeg, .png">
-                                                            <small class="form-text text-muted mt-2"><i class="fas fa-info-circle"></i> Obligatorio. Solo PDF, JPG o PNG.</small>
+                                                            <small class="form-text text-muted mb-3"><i class="fas fa-info-circle"></i> Obligatorio para aprobar. PDF o JPG.</small>
+
+                                                            <hr>
+
+                                                            <label class="text-info font-weight-bold small text-uppercase mt-3">
+                                                                <i class="fas fa-hotel mr-1"></i> Soportes de Hospedaje
+                                                            </label>
+                                                            
+                                                            @if($t->hospedaje)
+                                                                <div class="p-2 border border-info rounded bg-white mt-2">
+                                                                    @php $noches = explode(' | ', $t->hospedaje); @endphp
+                                                                    @foreach($noches as $index => $noche)
+                                                                        <div class="mb-2 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
+                                                                            <label class="small text-dark font-weight-bold mb-1 d-block">
+                                                                                <i class="fas fa-calendar-day text-info mr-1"></i> {{ trim($noche) }}
+                                                                            </label>
+                                                                            <input type="file" name="archivos_hoteles[]" class="form-control-file input-sm" accept=".pdf, .jpg, .jpeg, .png">
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                                <small class="form-text text-muted mt-2">
+                                                                    <i class="fas fa-lightbulb text-warning"></i> <b>Nota:</b> Si el empleado se quedó en el <b>mismo hotel</b> todas las noches, solo sube el soporte en la primera fecha y deja las demás vacías.
+                                                                </small>
+                                                            @else
+                                                                <input type="file" name="archivos_hoteles[]" class="form-control-file mt-2" accept=".pdf, .jpg, .jpeg, .png" multiple>
+                                                                <small class="form-text text-muted mt-1"><i class="fas fa-lightbulb text-warning"></i> Puedes seleccionar varios archivos a la vez.</small>
+                                                            @endif
                                                         </div>
 
                                                         <div class="form-group mt-3">
                                                             <label class="small font-weight-bold text-gray-600">Mensaje (Opcional)</label>
-                                                            <textarea name="mensaje_admin" class="form-control" rows="2" placeholder="Ej: Buen viaje, adjunto tiquete..."></textarea>
+                                                            <textarea name="mensaje_admin" class="form-control" rows="2" placeholder="Ej: Buen viaje, adjunto tiquete y reservas..."></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer bg-light">
@@ -268,7 +302,6 @@
 <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
 <script>
-    // 1. Mostrar/Ocultar el campo de archivo
     function toggle(selectObj, id) {
         var fileDiv = document.getElementById('file' + id);
         if (selectObj.value == 'rechazar') {
@@ -278,7 +311,6 @@
         }
     }
 
-    // 2. VALIDACIÓN DEL BOTÓN "GUARDAR CAMBIOS"
     function validarFormulario(form) {
         var accion = form.querySelector('.select-accion').value;
         var archivo = form.querySelector('.input-archivo');
