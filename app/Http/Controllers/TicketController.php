@@ -60,6 +60,7 @@ class TicketController extends Controller
             'beneficiario_nombre'    => 'required|string|max:255',
             'beneficiario_cedula'    => 'required|numeric',
             'beneficiario_fecha_nac' => 'required|date',
+            'centro_operaciones'     => 'required|string', // NUEVO
             'origen'                 => 'required|string', 
             'destino'                => 'required|string', 
             'fecha_viaje'            => 'required|date',
@@ -68,6 +69,7 @@ class TicketController extends Controller
             'fecha_regreso'          => 'nullable|date|after_or_equal:fecha_viaje',
             'jornada_regreso'        => 'nullable|string',
             'hospedaje'              => 'nullable|string',
+            'descripcion'            => 'required|string'
         ]);
 
         if ($request->tipo_viaje == 'Ida y Vuelta' && !$request->fecha_regreso) {
@@ -82,6 +84,7 @@ class TicketController extends Controller
             'beneficiario_nombre'    => $request->beneficiario_nombre,
             'beneficiario_cedula'    => $request->beneficiario_cedula,
             'beneficiario_fecha_nac' => $request->beneficiario_fecha_nac,
+            'centro_operaciones'     => $request->centro_operaciones, // NUEVO
             'origen'                 => $request->origen,
             'destino'                => $request->destino,
             'fecha_viaje'            => $request->fecha_viaje,
@@ -97,6 +100,7 @@ class TicketController extends Controller
         $datos = [
             'empleado'        => Auth::user()->Nombre . ' ' . Auth::user()->Apellido,
             'pasajero'        => $request->beneficiario_nombre,
+            'co'              => $request->centro_operaciones, // NUEVO AL CORREO
             'origen'          => $request->origen,
             'destino'         => $request->destino,
             'fecha_ida'       => $request->fecha_viaje,
@@ -108,10 +112,11 @@ class TicketController extends Controller
             'url'             => route('tickets.gestion')
         ];
 
-        $miCorreoDePrueba = 'roisroisomg@gmail.com'; 
+        $correoEmpleado = Auth::user()->email;
+        $correoJefe = 'jefe@plexa.com'; // Cambiar en producción
 
-        try { Mail::to($miCorreoDePrueba)->send(new SolicitudViajeMail($datos, 'jefe')); } catch (\Exception $e) {}
-        try { Mail::to($miCorreoDePrueba)->send(new SolicitudViajeMail($datos, 'empleado')); } catch (\Exception $e) {}
+        try { Mail::to($correoJefe)->send(new SolicitudViajeMail($datos, 'jefe')); } catch (\Exception $e) { \Log::error("Correo Jefe: " . $e->getMessage()); }
+        try { Mail::to($correoEmpleado)->send(new SolicitudViajeMail($datos, 'empleado')); } catch (\Exception $e) { \Log::error("Correo Empleado: " . $e->getMessage()); }
 
         return back()->with('success', 'Solicitud enviada exitosamente.');
     }
@@ -126,18 +131,16 @@ class TicketController extends Controller
         if ($request->accion == 'aprobar') {
             $request->validate([
                 'archivo_tikete'     => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
-                'archivos_hoteles.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240' // Validación para múltiples archivos
+                'archivos_hoteles.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240'
             ], [
                 'archivo_tikete.required'  => 'Es OBLIGATORIO subir el tiquete para aprobar.',
-                'archivo_tikete.mimes'     => 'El tiquete debe ser formato PDF, JPG o PNG.',
-                'archivos_hoteles.*.mimes' => 'Las reservas de hotel deben ser PDF, JPG o PNG.',
-                'archivos_hoteles.*.max'   => 'Uno de los archivos de hotel es muy pesado (Max 10MB).'
+                'archivo_tikete.mimes'     => 'El tiquete debe ser PDF, JPG o PNG.',
+                'archivos_hoteles.*.mimes' => 'Las reservas de hotel deben ser PDF, JPG o PNG.'
             ]);
 
             $path = public_path('archivos_tickets');
             if(!File::exists($path)) File::makeDirectory($path, 0755, true);
 
-            // 1. GUARDAR TIQUETE (1 Solo Archivo)
             if($request->hasFile('archivo_tikete')){
                 $file = $request->file('archivo_tikete');
                 $nombre = time().'_TIK_'.$ticket->id.'.'.$file->getClientOriginalExtension();
@@ -146,7 +149,6 @@ class TicketController extends Controller
                 $rutaAdjunto = $path.'/'.$nombre;
             }
 
-            // 2. GUARDAR RESERVAS DE HOTELES (Múltiples Archivos)
             if($request->hasFile('archivos_hoteles')){
                 $nombresHoteles = [];
                 foreach($request->file('archivos_hoteles') as $indice => $fileHotel) {
@@ -154,12 +156,10 @@ class TicketController extends Controller
                     $fileHotel->move($path, $nombreH);
                     $nombresHoteles[] = $nombreH;
                 }
-                // Los guardamos todos juntos separados por coma
                 $ticket->archivos_hoteles = implode(',', $nombresHoteles);
             }
 
             $ticket->estado = 1; 
-
         } else {
             $ticket->estado = 0; 
             $rutaAdjunto = null;
@@ -176,9 +176,8 @@ class TicketController extends Controller
                 'ruta_archivo' => $rutaAdjunto 
             ];
             try {
-                $miCorreoDePrueba = 'roisroisomg@gmail.com'; 
-                Mail::to($miCorreoDePrueba)->send(new RespuestaViajeMail($datos));
-            } catch (\Exception $e) {}
+                Mail::to($user->email)->send(new RespuestaViajeMail($datos));
+            } catch (\Exception $e) { \Log::error("Correo Respuesta: " . $e->getMessage()); }
         }
 
         return back()->with('success', 'La solicitud ha sido gestionada correctamente.');

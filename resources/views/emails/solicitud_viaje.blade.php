@@ -28,10 +28,10 @@
 
     <hr style="border: 1px solid #eee;">
     
-    <h3>Detalles del Viaje:</h3>
+    <<h3>Detalles del Viaje:</h3>
     <ul style="background-color: #f9f9f9; padding: 15px 35px; border-radius: 5px;">
         <li><strong>Pasajero:</strong> {{ $datos['pasajero'] }}</li>
-        <li><strong>Ruta:</strong> {{ $datos['origen'] }} ➔ {{ $datos['destino'] }}</li>
+        <li><strong>Centro de Operaciones:</strong> {{ $datos['co'] }}</li> <li><strong>Ruta:</strong> {{ $datos['origen'] }} ➔ {{ $datos['destino'] }}</li>
         <li><strong>Tipo de Viaje:</strong> {{ $datos['tipo'] }}</li>
         <li><strong>Fecha de Salida:</strong> {{ $datos['fecha_ida'] }} ({{ $datos['jornada_ida'] ?? 'N/A' }})</li>
         

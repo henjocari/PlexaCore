@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>Gestión de Viajes | Admin</title>
-    <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/x-icon">
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.png') }}">
@@ -15,46 +14,27 @@
 </head>
 <body id="page-top">
 <div id="wrapper">
-    
     @include('layouts.menu')
-    
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            
             @include('layouts.cabecera')
-            
             <div class="container-fluid fondo-plexa">
-                
                 <div class="d-sm-flex align-items-center justify-content-between mb-4 px-3 py-2 bg-white shadow-sm rounded border-left-danger">
-                    <h1 class="h3 mb-0 text-gray-800">
-                        <i class="fas fa-plane-departure mr-2 text-danger"></i> Gestión de Solicitudes
-                    </h1>
+                    <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-plane-departure mr-2 text-danger"></i> Gestión de Solicitudes</h1>
                     <span class="badge badge-danger">Administrador</span>
                 </div>
 
-                @if(session('success')) 
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div> 
-                @endif
-                
+                @if(session('success')) <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert"><i class="fas fa-check-circle mr-1"></i> {{ session('success') }}<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div> @endif
                 @if($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                         <strong><i class="fas fa-exclamation-triangle"></i> No se pudo procesar:</strong>
-                        <ul class="mb-0 mt-1 pl-3">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                        <ul class="mb-0 mt-1 pl-3">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                 @endif
 
                 <div class="card shadow mb-4 border-bottom-primary">
-                    <div class="card-header py-3 bg-gradient-filter">
-                        <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-filter mr-1"></i> Filtros de Búsqueda</h6>
-                    </div>
+                    <div class="card-header py-3 bg-gradient-filter"><h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-filter mr-1"></i> Filtros de Búsqueda</h6></div>
                     <div class="card-body bg-light">
                         <form action="{{ route('tickets.gestion') }}" method="GET">
                             <div class="row align-items-end">
@@ -122,7 +102,7 @@
                                                 <i class="fas fa-user-tag text-info mr-1"></i> {{ $t->beneficiario_nombre ?? 'N/A' }}
                                             </div>
                                             <small class="text-gray-600"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small><br>
-                                            <small class="text-gray-600"><strong>Nac:</strong> {{ $t->beneficiario_fecha_nac ?? 'N/A' }}</small>
+                                            <small class="text-gray-600"><strong>CO:</strong> {{ $t->centro_operaciones ?? 'N/A' }}</small>
                                         </td>
 
                                         <td class="align-middle">
@@ -132,19 +112,14 @@
 
                                         <td class="align-middle text-nowrap">
                                             <div class="small text-dark">
-                                                <strong>Ida:</strong> {{ $t->fecha_viaje }} 
-                                                <span class="text-muted">({{ $t->jornada_ida ?? 'N/A' }})</span>
+                                                <strong>Ida:</strong> {{ $t->fecha_viaje }} <span class="text-muted">({{ $t->jornada_ida ?? 'N/A' }})</span>
                                             </div>
                                             @if($t->fecha_regreso) 
                                                 <div class="small text-danger">
-                                                    <strong>Regreso:</strong> {{ $t->fecha_regreso }} 
-                                                    <span class="text-muted">({{ $t->jornada_regreso ?? 'N/A' }})</span>
+                                                    <strong>Regreso:</strong> {{ $t->fecha_regreso }} <span class="text-muted">({{ $t->jornada_regreso ?? 'N/A' }})</span>
                                                 </div> 
                                             @endif
-                                            
-                                            @if($t->hospedaje)
-                                                <span class="badge badge-info mt-1 shadow-sm"><i class="fas fa-bed"></i> Hotel Solicitado</span>
-                                            @endif
+                                            @if($t->hospedaje) <span class="badge badge-info mt-1 shadow-sm"><i class="fas fa-bed"></i> Hotel Solicitado</span> @endif
                                         </td>
 
                                         <td class="align-middle text-center">
@@ -156,26 +131,17 @@
                                         <td class="align-middle text-center">
                                             @if($t->estado == 2)
                                                 @if(in_array('Aprobar Viajes', session('permisos_permitidos', [])))
-                                                    <button class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#m{{$t->id}}">
-                                                        <i class="fas fa-cog"></i> Gestionar
-                                                    </button>
+                                                    <button class="btn btn-primary btn-sm font-weight-bold shadow-sm" data-toggle="modal" data-target="#m{{$t->id}}"><i class="fas fa-cog"></i> Gestionar</button>
                                                 @else
                                                     <span class="text-muted small"><i class="fas fa-lock"></i> Sin permiso</span>
                                                 @endif
                                             @elseif($t->estado == 1)
-                                                
-                                                @if($t->archivo_tikete)
-                                                <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm mb-1 text-nowrap" title="Ver Tiquete de Avión"><i class="fas fa-plane"></i> Tiquete</a><br>
-                                                @endif
-
+                                                @if($t->archivo_tikete) <a href="{{ asset('archivos_tickets/'.$t->archivo_tikete) }}" target="_blank" class="btn btn-info btn-sm shadow-sm mb-1 text-nowrap" title="Ver Tiquete de Avión"><i class="fas fa-plane"></i> Tiquete</a><br> @endif
                                                 @if($t->archivos_hoteles)
                                                     @foreach(explode(',', $t->archivos_hoteles) as $index => $hotelFile)
-                                                        @if(trim($hotelFile) != '')
-                                                            <a href="{{ asset('archivos_tickets/'.trim($hotelFile)) }}" target="_blank" class="btn btn-outline-info btn-sm shadow-sm mb-1 text-nowrap" title="Reserva de Hotel"><i class="fas fa-hotel"></i> Hotel {{ $index + 1 }}</a><br>
-                                                        @endif
+                                                        @if(trim($hotelFile) != '') <a href="{{ asset('archivos_tickets/'.trim($hotelFile)) }}" target="_blank" class="btn btn-outline-info btn-sm shadow-sm mb-1 text-nowrap" title="Reserva de Hotel"><i class="fas fa-hotel"></i> Hotel {{ $index + 1 }}</a><br> @endif
                                                     @endforeach
                                                 @endif
-
                                             @else -- @endif
                                         </td>
                                     </tr>
@@ -187,11 +153,9 @@
                                                     <h5 class="modal-title font-weight-bold">Gestionar Solicitud #{{$t->id}}</h5>
                                                     <button class="close text-white" type="button" data-dismiss="modal"><span>×</span></button>
                                                 </div>
-                                                
                                                 <form action="{{ route('tickets.gestionar', $t->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario(this)">
                                                     @csrf
                                                     <div class="modal-body bg-light">
-                                                        
                                                         <div class="alert alert-primary mb-3">
                                                             <div class="mb-2">
                                                                 <small class="text-uppercase font-weight-bold text-primary">Solicitado por:</small><br>
@@ -201,16 +165,15 @@
                                                             <div class="mb-2">
                                                                 <small class="text-uppercase font-weight-bold text-primary">Pasajero (Comprar Tiquete a nombre de):</small><br>
                                                                 <span class="font-weight-bold text-dark"><i class="fas fa-user mr-1"></i> {{ $t->beneficiario_nombre ?? 'N/A' }}</span><br>
-                                                                <small class="text-dark"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small>
+                                                                <small class="text-dark"><strong>CC:</strong> {{ $t->beneficiario_cedula ?? 'N/A' }}</small><br>
+                                                                <small class="text-dark"><strong>CO:</strong> {{ $t->centro_operaciones ?? 'N/A' }}</small>
                                                             </div>
                                                             <hr class="my-1 border-primary" style="opacity: 0.3;">
                                                             <div>
                                                                 <small class="text-uppercase font-weight-bold text-primary">Hospedaje e Itinerario:</small><br>
                                                                 <ul class="mb-1 pl-3 text-dark small">
                                                                     <li><strong>Ida:</strong> {{ $t->fecha_viaje }} <span class="text-muted">({{ $t->jornada_ida }})</span></li>
-                                                                    @if($t->fecha_regreso)
-                                                                        <li><strong>Regreso:</strong> {{ $t->fecha_regreso }} <span class="text-muted">({{ $t->jornada_regreso }})</span></li>
-                                                                    @endif
+                                                                    @if($t->fecha_regreso) <li><strong>Regreso:</strong> {{ $t->fecha_regreso }} <span class="text-muted">({{ $t->jornada_regreso }})</span></li> @endif
                                                                 </ul>
                                                                 @if($t->hospedaje)
                                                                     <div class="mt-2 p-2 bg-white rounded border border-info">
@@ -232,34 +195,23 @@
                                                         </div>
 
                                                         <div id="file{{$t->id}}" class="form-group p-3 bg-white rounded border shadow-sm">
-                                                            
-                                                            <label class="text-danger font-weight-bold small text-uppercase">
-                                                                <i class="fas fa-plane-departure mr-1"></i> Tiquete / Transporte *
-                                                            </label>
+                                                            <label class="text-danger font-weight-bold small text-uppercase"><i class="fas fa-plane-departure mr-1"></i> Tiquete / Transporte *</label>
                                                             <input type="file" name="archivo_tikete" class="form-control-file input-archivo" accept=".pdf, .jpg, .jpeg, .png">
                                                             <small class="form-text text-muted mb-3"><i class="fas fa-info-circle"></i> Obligatorio para aprobar. PDF o JPG.</small>
-
                                                             <hr>
-
-                                                            <label class="text-info font-weight-bold small text-uppercase mt-3">
-                                                                <i class="fas fa-hotel mr-1"></i> Soportes de Hospedaje
-                                                            </label>
+                                                            <label class="text-info font-weight-bold small text-uppercase mt-3"><i class="fas fa-hotel mr-1"></i> Soportes de Hospedaje</label>
                                                             
                                                             @if($t->hospedaje)
                                                                 <div class="p-2 border border-info rounded bg-white mt-2">
                                                                     @php $noches = explode(' | ', $t->hospedaje); @endphp
                                                                     @foreach($noches as $index => $noche)
                                                                         <div class="mb-2 pb-2 {{ !$loop->last ? 'border-bottom' : '' }}">
-                                                                            <label class="small text-dark font-weight-bold mb-1 d-block">
-                                                                                <i class="fas fa-calendar-day text-info mr-1"></i> {{ trim($noche) }}
-                                                                            </label>
+                                                                            <label class="small text-dark font-weight-bold mb-1 d-block"><i class="fas fa-calendar-day text-info mr-1"></i> {{ trim($noche) }}</label>
                                                                             <input type="file" name="archivos_hoteles[]" class="form-control-file input-sm" accept=".pdf, .jpg, .jpeg, .png">
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
-                                                                <small class="form-text text-muted mt-2">
-                                                                    <i class="fas fa-lightbulb text-warning"></i> <b>Nota:</b> Si el empleado se quedó en el <b>mismo hotel</b> todas las noches, solo sube el soporte en la primera fecha y deja las demás vacías.
-                                                                </small>
+                                                                <small class="form-text text-muted mt-2"><i class="fas fa-lightbulb text-warning"></i> <b>Nota:</b> Si es el mismo hotel todas las noches, sube el soporte solo en la primera fecha.</small>
                                                             @else
                                                                 <input type="file" name="archivos_hoteles[]" class="form-control-file mt-2" accept=".pdf, .jpg, .jpeg, .png" multiple>
                                                                 <small class="form-text text-muted mt-1"><i class="fas fa-lightbulb text-warning"></i> Puedes seleccionar varios archivos a la vez.</small>
@@ -273,9 +225,7 @@
                                                     </div>
                                                     <div class="modal-footer bg-light">
                                                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn btn-primary font-weight-bold">
-                                                            <i class="fas fa-save mr-1"></i> Guardar Cambios
-                                                        </button>
+                                                        <button type="submit" class="btn btn-primary font-weight-bold"><i class="fas fa-save mr-1"></i> Guardar Cambios</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -290,7 +240,6 @@
                         <div class="d-flex justify-content-center mt-4">{{ $tickets->appends(request()->query())->links() }}</div>
                     </div>
                 </div>
-
             </div>
         </div>
         @include('layouts.pie')
@@ -323,6 +272,5 @@
         return true;
     }
 </script>
-
 </body>
 </html>

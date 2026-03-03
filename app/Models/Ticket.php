@@ -9,22 +9,22 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    // EL NOMBRE DE LA TABLA (Asegúrate que sea el correcto)
     protected $table = '3_tickets'; 
 
     protected $fillable = [
         'user_id',
         'beneficiario_nombre',    
         'beneficiario_cedula',    
-        'beneficiario_fecha_nac', 
+        'beneficiario_fecha_nac',
+        'centro_operaciones', // <-- NUEVO
         'origen',
         'destino',
         'fecha_viaje',
-        'jornada_ida',      
+        'jornada_ida',
         'tipo_viaje',
         'fecha_regreso',
-        'jornada_regreso',  
-        'hospedaje',        
+        'jornada_regreso',
+        'hospedaje',
         'descripcion',
         'estado',
         'archivo_tikete',
