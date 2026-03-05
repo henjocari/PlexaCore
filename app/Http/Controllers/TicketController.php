@@ -60,7 +60,7 @@ class TicketController extends Controller
             'beneficiario_nombre'    => 'required|string|max:255',
             'beneficiario_cedula'    => 'required|numeric',
             'beneficiario_fecha_nac' => 'required|date',
-            'centro_operaciones'     => 'required|string', // NUEVO
+            'centro_operaciones'     => 'required|string', 
             'origen'                 => 'required|string', 
             'destino'                => 'required|string', 
             'fecha_viaje'            => 'required|date',
@@ -84,7 +84,7 @@ class TicketController extends Controller
             'beneficiario_nombre'    => $request->beneficiario_nombre,
             'beneficiario_cedula'    => $request->beneficiario_cedula,
             'beneficiario_fecha_nac' => $request->beneficiario_fecha_nac,
-            'centro_operaciones'     => $request->centro_operaciones, // NUEVO
+            'centro_operaciones'     => $request->centro_operaciones, 
             'origen'                 => $request->origen,
             'destino'                => $request->destino,
             'fecha_viaje'            => $request->fecha_viaje,
@@ -100,7 +100,7 @@ class TicketController extends Controller
         $datos = [
             'empleado'        => Auth::user()->Nombre . ' ' . Auth::user()->Apellido,
             'pasajero'        => $request->beneficiario_nombre,
-            'co'              => $request->centro_operaciones, // NUEVO AL CORREO
+            'co'              => $request->centro_operaciones, 
             'origen'          => $request->origen,
             'destino'         => $request->destino,
             'fecha_ida'       => $request->fecha_viaje,
