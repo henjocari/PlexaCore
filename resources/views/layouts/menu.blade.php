@@ -61,7 +61,7 @@
         </li>
     @endif
 
-    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos))
+    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos) || true)
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Configuración</div>
 
@@ -86,6 +86,10 @@
                             <i class="fas fa-images mr-2 text-gray-500"></i> Carrusel
                         </a>
                     @endif
+
+                    <a class="collapse-item" href="{{ url('/tratamientodedatos') }}">
+                        <i class="fas fa-file-signature mr-2 text-gray-500"></i> Tratamiento de Datos
+                    </a>
 
                     @if(in_array('Tabla Conductores', $misModulos))
                         <a class="collapse-item" href="{{ url('/tablas') }}">

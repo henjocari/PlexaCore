@@ -122,6 +122,13 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.activar');
 
+    //--------------TRATAMIENTO DE DATOS------------\\
+    // 
+    Route::get('/tratamientodedatos', function () {
+        return view('tratamientodedatos');
+    })->name('tratamientodedatos.index');
+
+
    // ==========================================
     //       RUTAS DE TICKETS (PAPELERA)    
     // ==========================================
