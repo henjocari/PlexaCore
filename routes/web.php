@@ -12,6 +12,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PrecioGlpController;
 use App\Http\Controllers\CarruselController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TratamientoDatosController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -89,7 +90,6 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/tickets/crear', [TicketController::class, 'store'])->name('tickets.store');
     Route::post('/tickets/{id}/gestionar', [TicketController::class, 'gestionar'])->name('tickets.gestionar');
 
-
     Route::get('/probar-email', function() {
         try {
             $miCorreo = 'roisroisomg@gmail.com'; 
@@ -122,12 +122,18 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.activar');
 
-    //--------------TRATAMIENTO DE DATOS------------\\
-    // 
-    Route::get('/tratamientodedatos', function () {
-        return view('tratamientodedatos');
-    })->name('tratamientodedatos.index');
+ //--------------TRATAMIENTO DE DATOS------------\\
+    Route::get('/tratamientodedatos', [TratamientoDatosController::class, 'index'])
+        // ->middleware(VerificarModulo::class . ':Tratamiento de Datos')
+        ->name('tratamientodedatos.index');
 
+    Route::post('/tratamientodedatos/actualizar', [TratamientoDatosController::class, 'update'])
+        // ->middleware(VerificarModulo::class . ':Tratamiento de Datos')
+        ->name('tratamientodedatos.update');
+
+    // 👇 ESTA ES LA RUTA QUE FALTABA PARA VER EL PDF 👇
+    Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
+        ->name('firma.documento');
 
    // ==========================================
     //       RUTAS DE TICKETS (PAPELERA)    
@@ -153,7 +159,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/habitaciones/{id}/asignar', [HabitacionController::class, 'asignarConductor'])->name('habitaciones.asignar');
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
 
-    // HISTORIAL DE HABITACIONES (CON CANDADOS)
+    // HISTORIAL DE HABITACIONES
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])
         ->middleware(VerificarModulo::class . ':Historial Habitacion')
         ->name('historial.export.excel');
@@ -167,4 +173,13 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+
 });
+
+    // ==========================================
+    Route::post('/guardar-firma', [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']);
+
+    // RUTA PARA QUE PLEXAWEB LEA LOS TEXTOS Y COLORES
+    Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);   
+    

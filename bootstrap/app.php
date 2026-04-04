@@ -11,7 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Excepción de seguridad para que Python pueda enviar la firma
+        $middleware->validateCsrfTokens(except: [
+            'guardar-firma',
+            '/guardar-firma',
+            '*guardar-firma*'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
