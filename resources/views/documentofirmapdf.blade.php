@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Autorización - {{ $firma->nombre }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.png') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -149,7 +150,7 @@
             <tr>
                 <td rowspan="2" style="width: 25%;">
                     <img src="/img/formato.png" style="max-width: 100px; height: auto;" alt="Logo Plexa">
-                    <div style="font-size: 10px; margin-top: 5px; color: #378E77; font-weight: bold;">Energía que avanza</div>
+                    <div style="font-size: 10px; margin-top: 5px; color: #378E77; font-weight: bold;"></div>
                 </td>
                 <td rowspan="2" style="width: 50%;" class="pdf-title">AUTORIZACIÓN DE TRATAMIENTO DE DATOS PERSONALES</td>
                 <td style="width: 25%;" class="pdf-meta"><strong>FORMATO</strong><br>SGI-PS1-P1-F8</td>
