@@ -1,0 +1,1568 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1:3307
+-- Tiempo de generación: 06-04-2026 a las 16:05:06
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `plexa_core`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `1_carrusel`
+--
+
+CREATE TABLE `1_carrusel` (
+  `id` int(11) NOT NULL,
+  `imagen` text NOT NULL,
+  `titulo` varchar(255) DEFAULT NULL,
+  `subtitulo` varchar(255) DEFAULT NULL,
+  `url` text DEFAULT NULL,
+  `boton` varchar(30) DEFAULT NULL,
+  `orden` int(2) NOT NULL,
+  `estado` tinyint(1) NOT NULL DEFAULT 1,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
+  `cedula` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `1_carrusel`
+--
+
+INSERT INTO `1_carrusel` (`id`, `imagen`, `titulo`, `subtitulo`, `url`, `boton`, `orden`, `estado`, `fecha`, `cedula`) VALUES
+(1, 'http://127.0.0.1:8000/imagenes_carrusel/1769517831_VID_20260122_213015.mp4', 'SOMOS PLEXA', 'Cuando la logística es clave, la energía fluye.\nTransportamos gases derivados del petróleo e hidrocarburos con precisión logística, garantizando continuidad y desempeño operacional', '#', 'Leer Más', 1, 1, '2025-12-30 09:25:00', 1047418839),
+(2, 'http://plexa.co/wp-content/uploads/2025/04/DJI_0719-scaled.jpg', 'Comercialización', 'En la Comercialización, Plexa brinda la Solución Energética que su negocio necesita. Desde la fuente hasta el punto de entrega.', 'comerci', 'Leer Más', 3, 1, '2025-12-30 11:05:51', 1047418839),
+(3, 'http://plexa.co/wp-content/uploads/2025/04/DJI_0706-scaled.jpg', 'Logística', 'Años de experiencia aportando valor al desarrollo del mercado de Gas Licuado del Petróleo (GLP), con enfoque en eficiencia, seguridad y continuidad operativa.', 'logistica', 'Leer Más', 4, 1, '2025-12-30 11:10:17', 1047418839),
+(4, 'http://plexa.co/wp-content/uploads/2025/04/plexaport.jpg', 'PLEXAPORT', 'Capacidad de almacenamiento por 1.080.000 GL de propano, isobutano, butano   Plexaport\nAlta capacidad de almacenamiento, 1.080.000 galones para una operación GLP segura y eficiente.\n ', 'plexaport', 'Leer Más', 5, 1, '2025-12-30 11:10:17', 1047418839),
+(5, 'https://yegoecot.com/wp-content/uploads/2024/01/AND09802.jpg', 'Yego Eco-T', 'Yego Ecot es una empresa visionaria dedicada al transporte masivo y semimasivo en Colombia. Con una flota propia de vehículos a GNV, lideramos la transición hacia combustibles amigables con el medio ambiente. Descubre nuestra historia, compromiso y visión', 'https://yegoecot.com/', 'Leer Más', 6, 0, '2025-12-30 11:12:29', 1047418839),
+(6, 'https://yego.com.co/wp-content/uploads/2024/12/DSC01368-1.jpg', 'Yego AutoGLP', 'Ahorra más, contamina menos Hasta 35% de ahorro con AutoGLP.', 'https://yego.com.co/', 'Leer Más', 7, 1, '2025-12-30 11:12:29', 1047418839),
+(7, 'http://plexa.co/wp-content/uploads/2026/01/plexachilefondo.png', 'CHILE', 'Iniciamos Operacion en', 'chile', 'Leer Más', 2, 1, '2025-12-30 09:25:00', 1047418839),
+(9, 'http://127.0.0.1:8000/imagenes_carrusel/1769175676_imagen__7_.jpg', 'prueba', 'solucion', '#', 'Leer Más', 10, 0, '2026-01-23 08:12:16', 1041972451),
+(10, 'http://127.0.0.1:8000/imagenes_carrusel/1771940746_omni-501ad7a3-70c9-4c26-a9c8-82d05d97a06b.png', 'prueba', 'prueba', '#', 'Leer Más', 10, 0, '2026-02-24 08:45:46', 1041972451);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `2_precios_glp`
+--
+
+CREATE TABLE `2_precios_glp` (
+  `id` int(11) NOT NULL,
+  `archivo_pdf` varchar(255) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `estado` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `2_precios_glp`
+--
+
+INSERT INTO `2_precios_glp` (`id`, `archivo_pdf`, `fecha_inicio`, `fecha_fin`, `user_id`, `estado`) VALUES
+(1, '1 Enero de 2026', '2026-01-20', '2026-02-20', 1041972451, 1),
+(26, '1769173397_1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(27, '1769174903_10_Marzo_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(28, '1769175375_1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(29, '10_Marzo_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(30, '1_Enero_de_2026.pdf', '2026-01-23', '2026-02-23', 1041972451, 1),
+(31, 'Bomberos.pdf', '2026-02-24', '2026-03-24', 1041972451, 1),
+(32, '1 Enero de 2026.pdf', '2026-02-24', '2026-03-24', 1041972451, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `3_tickets`
+--
+
+CREATE TABLE `3_tickets` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `beneficiario_nombre` varchar(255) DEFAULT NULL,
+  `beneficiario_cedula` varchar(255) DEFAULT NULL,
+  `beneficiario_fecha_nac` date DEFAULT NULL,
+  `centro_operaciones` varchar(100) DEFAULT NULL,
+  `origen` varchar(255) NOT NULL,
+  `destino` varchar(255) NOT NULL,
+  `tipo_viaje` varchar(20) DEFAULT 'ida',
+  `fecha_viaje` date NOT NULL,
+  `jornada_ida` varchar(50) DEFAULT NULL,
+  `fecha_regreso` date DEFAULT NULL,
+  `jornada_regreso` varchar(50) DEFAULT NULL,
+  `hospedaje` text DEFAULT NULL,
+  `archivo_tikete` varchar(255) DEFAULT NULL,
+  `archivos_hoteles` text DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `estado` int(11) NOT NULL DEFAULT 2,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `3_tickets`
+--
+
+INSERT INTO `3_tickets` (`id`, `user_id`, `beneficiario_nombre`, `beneficiario_cedula`, `beneficiario_fecha_nac`, `centro_operaciones`, `origen`, `destino`, `tipo_viaje`, `fecha_viaje`, `jornada_ida`, `fecha_regreso`, `jornada_regreso`, `hospedaje`, `archivo_tikete`, `archivos_hoteles`, `descripcion`, `estado`, `created_at`, `updated_at`) VALUES
+(45, '1041972451', 'Breiner Alonzo', '1051973438', '2000-05-04', '202', 'Cartagena', 'Medellin', 'Solo Ida', '2026-03-03', 'Tarde', NULL, NULL, '03/03/2026: Bogota', NULL, NULL, 'Prueba', 0, '2026-03-05 20:21:12', '2026-03-09 15:41:58');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cache`
+--
+
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cache_locks`
+--
+
+CREATE TABLE `cache_locks` (
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `conductores`
+--
+
+CREATE TABLE `conductores` (
+  `cedula` int(10) NOT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `apellido` varchar(50) DEFAULT NULL,
+  `email` varchar(250) DEFAULT NULL,
+  `celular` varchar(30) DEFAULT NULL,
+  `tipo` varchar(30) DEFAULT NULL,
+  `estado` int(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `conductores`
+--
+
+INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `tipo`, `estado`) VALUES
+(-73574852, 'CESAR LUIS', 'NORIEGA ACOSTA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(55555, 'HUMBERTO', 'BALLESTA', NULL, NULL, 'CONDUCTOR', 1),
+(321654, 'LUIS EDUARDO', 'FONSECA OCHOA', NULL, NULL, 'CONDUCTOR', 1),
+(796659, 'MIGUEL ', 'SUAREZ', NULL, NULL, 'CONDUCTOR', 0),
+(2231760, 'PEDRO JAVIER', 'ORTIZ VELASQUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(2746928, 'DIEGO NARVAEZ VERA ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(3090225, 'MIGUEL ARCANGEL', 'MALAVER SANDOVAL ', NULL, NULL, 'CONDUCTOR', 1),
+(3108779, 'Daniel Humberto', 'González gaitá', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(3131731, 'EGLY TOVAR MAHECHA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(3142992, 'GABRIEL ANGEL', 'DIAZ CHACON', NULL, NULL, 'CONDUCTOR', 1),
+(3199802, 'JUAN GEOVANY', 'MARTINEZ MUÑETON', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(3199828, 'JOSE RAUL SARMIENTO GARCIA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(3214467, 'HECTOR MANUEL', 'BEJARANO BEJARANO', NULL, NULL, 'CONDUCTOR', 1),
+(3649478, 'Tulio Mario', 'Hernandez', 'tuliomariohernandez@hotmail.com', NULL, 'CONDUCTOR', 1),
+(3906344, 'EINAR ENRIQUE', 'RUIZ PAJARO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(4234942, 'LUIS ALBERTO', 'RAMIREZ PARRA', NULL, NULL, 'CONDUCTOR', 1),
+(4255448, ' Carlos Arturo Toncon Sepulved', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(4277739, 'Jose Mauricio Corredor Molano', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(4292864, 'Luis Alfredo ', 'Merchan Medina', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(4438199, 'DUVIER ARLEX', 'MOLINA MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(4932735, 'ORLANDO MOTTA', NULL, NULL, NULL, 'CONDUCTOR', 1),
+(5031572, 'JAINER FERNEY', 'PEREZ HERNANDEZ', NULL, NULL, 'CONDUCTOR', 1),
+(5031893, 'REINALDO ', 'DIAZ GALVIS', 'RDIAZGALVIS@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(5046861, 'VICTOR MANUEL', 'GUERRERO MORA', NULL, NULL, 'CONDUCTOR', 1),
+(5136157, 'DIOGENES', 'ARRIETA GAMEZ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(5470706, 'CARLOS DANIEL', 'PARADA LEON', 'Carlosdani08@ook.com', NULL, 'CONDUCTOR', 1),
+(5622048, 'JORGE EDUARDO', 'BAEZ VASQUEZ', 'Jorbava_70@hotmail.com', NULL, 'CONDUCTOR', 1),
+(5625653, 'HERMES', 'BAUTISTA NARANJO', NULL, NULL, 'CONDUCTOR', 1),
+(5670802, 'ARNULFO', 'ORTEGA', NULL, '6292026', 'CONDUCTOR', 1),
+(5671853, 'HECTOR ', 'SILVA VESGA', 'hs4007821@gmail.com', NULL, 'CONDUCTOR', 1),
+(5784803, 'CESAR EDMUNDO', 'RIOS ESTEVEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(5796972, 'FRANCISCO JAVIER', 'OTERO QUIJANO', 'FRANJOTERO@HOTMAIL.COM', NULL, 'CONDUCTOR', 1),
+(5823969, 'LUIS CAMILO ', 'LEON NARANJO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(5874457, 'Edwin Ramírez Betancourt', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(6013826, 'RUBEN', 'LOPEZ SALINAS', NULL, '6292026', 'CONDUCTOR', 1),
+(6030613, 'JORGE ENRIQUE PINZON BAQUERO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(6392524, 'Diego Seid Ramirez  Garciaz', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(6776158, 'HERNAN REYES SUAREZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(6801594, 'FERNANDO', 'BEJARANO PULIDO', NULL, NULL, 'CONDUCTOR', 1),
+(6889035, 'ANIBAL MANUEL', 'AYAZOS ORTEGA', NULL, NULL, 'CONDUCTOR', 1),
+(7141438, 'JOSE GREGORIO', 'ARRIETA PEREZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7142979, 'JOSE MIGUEL', 'SANCHEZ LLINAZ', NULL, NULL, 'CONDUCTOR', 1),
+(7166152, 'HECTOR', 'LOPEZ CARDENAS', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(7185266, 'William Uriel ', 'Torres González', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7217414, 'VICTOR', 'SENON TORRES', NULL, NULL, 'CONDUCTOR', 1),
+(7229281, 'FRANKLIN', 'PRIETO', 'franklinprieto0173@gmail.com', NULL, 'CONDUCTOR', 1),
+(7229295, 'HERNANDO', 'NIÑO LEON', NULL, NULL, 'CONDUCTOR', 1),
+(7252406, 'CARLOS ALBERTO', 'BASTIDAS ORTIZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7253539, 'Jhon Fredy', 'Toro Puertas', NULL, NULL, 'CONDUCTOR', 1),
+(7253623, 'JORGE ENRIQUE', 'RIVILLA ROMERO', NULL, NULL, 'CONDUCTOR', 1),
+(7254172, 'GONZALO', 'BERMUDEZ PERDOMO', NULL, NULL, 'CONDUCTOR', 1),
+(7254468, 'CARLOS JULIO', 'MURILLO BLANDON ', 'carlosjuliomurilloblandon@gmail.com', NULL, 'CONDUCTOR', 1),
+(7335882, 'Néstor Sánchez Junco', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7595145, 'LUIS BELTRAN ACOSTA ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7604581, 'CRISTIAN', 'RUEDA ESTUPIÑAN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7632698, 'JORGE ISAAC', 'TORRES MONTERROSA', NULL, NULL, 'CONDUCTOR', 1),
+(7634810, 'HUMBERTO RAFAEL', 'BALLESTAS MESTRE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(7706609, 'EDINSON', 'MUÑOZ', NULL, NULL, 'CONDUCTOR', 1),
+(7777777, 'JOSÉ GREGORIO', 'CASTRO CASTELLARES', NULL, NULL, 'CONDUCTOR', 1),
+(8012504, 'César Augusto', 'Osorio Lopera ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(8505416, 'CARLOS JAVIER', 'CARMONA VILLA', NULL, '6292026', 'CONDUCTOR', 1),
+(8506504, 'luis ', 'polo orozco', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(8566715, 'DEYMAR JOSÉ', 'RESTREPO OTÁLVARO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(8782571, 'VALTIÑO', 'SARAVIA GOMEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(8854538, 'Roger', 'Altamiranda Jimenez', NULL, NULL, 'CONDUCTOR', 1),
+(8870664, 'Javier Fernando', 'Arrellano Castillo', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9097264, 'JORGE ISAAC', 'MORELO SANCHEZ', NULL, NULL, 'CONDUCTOR', 1),
+(9102498, 'SILVIO M', 'REDONDE GUZMAN', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(9287153, 'EMILIO DE JESUS', 'AGUIRRE VERGARA', NULL, NULL, 'CONDUCTOR', 1),
+(9288165, 'BENJAMIN', 'MENDOZA RUIZ ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(9291667, 'MARIO CESAR', 'MENDEZ MIELES ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9293622, 'Sidrad', 'Suarez Segovia', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9293754, 'LUIS CARLOS', 'LAMBIS SALCEDO', NULL, '6292026', 'CONDUCTOR', 1),
+(9295754, 'CHRISTIAN GERONIMO', 'OCHOA CHAMORRO', NULL, NULL, 'CONDUCTOR', 1),
+(9298436, 'CESAR AUGUSTO', 'ELLES TEHERAN', 'CAETJR@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(9434731, 'Carlos  Julio Guzman Rodriguez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9527974, 'Jose Cosme Rodriguez Hernande', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9694292, 'MARIO FERNANDO ALONSO BUSTOS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9738009, 'Johnatan Caicedo Rojas', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(9876807, 'LISANDER RAFAEL', 'GUERRA GUTIERREZ', NULL, '6292026', 'CONDUCTOR', 1),
+(9976131, 'FABIO NELSON', 'MOSQUERA DUQUE', NULL, NULL, 'CONDUCTOR', 1),
+(10168389, 'JOSE DEL CARMEN', 'HURTADO IBAÑEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(10174039, 'JOSE RAMIRO', 'ROMERO BUSTOS', NULL, NULL, 'CONDUCTOR', 1),
+(10185427, 'Jose Fernando Martinez Rico', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(10541669, 'WILLIAM', 'DUARTE ZUÑIGA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(10951921, 'JOSE GUZMAN ROMERO', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(11201633, 'Edwin Gonzalez Leon', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(11230312, 'FELIX SANIN', 'PEÑA AGUILERA', NULL, NULL, 'CONDUCTOR', 1),
+(11231505, 'ANTONIO MARIA', 'PULIDO SALCEDO', NULL, '6292026', 'CONDUCTOR', 1),
+(11231966, 'LUIS', 'ALMANZA AVELLANEDA', NULL, '6292026', 'CONDUCTOR', 1),
+(11297522, 'Manuel Vicente ', 'Melo Lozano', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(11304869, 'HECTOR', 'GARRIDO GONZALEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(11342377, 'SANTIAGO ANTONIO ', 'VERDUGO PAEZ', NULL, NULL, 'CONDUCTOR', 1),
+(11348208, 'RAMIRO', 'VARGAS TARAZONA ', 'knegrette@plexa.co', NULL, 'CONDUCTOR', 1),
+(11386412, 'ORLANDO', 'CABALLERO ROMERO', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(11436552, 'WILMER HORACIO', 'BURITICA GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(11439049, 'JULIO CESAR', 'CHAPARRO SANCHEZ', NULL, NULL, 'CONDUCTOR', 1),
+(11441168, 'FÉLIX ARNALDO', 'ORTIZ BENITEZ', NULL, NULL, 'CONDUCTOR', 1),
+(11442548, 'HENRY OSWALDO', 'LOPEZ VILLADIEGO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(11519583, 'Pedro  Jairo', 'Morales Vanegas', 'jairom_117@hotmail.com', NULL, 'CONDUCTOR', 1),
+(12195315, 'Wilson ', 'Garavito Calderón', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(12279270, 'Abla Gastón Triana', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(12282009, 'JORGE HUMBERTO', 'MEDINA SALAZAR', NULL, NULL, 'CONDUCTOR', 1),
+(12458681, 'RODOLFO LIZCANO GÓMEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(12558801, 'DAIRO ALFONSO', 'MARTINEZ CUELLO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(12634026, 'JOSE AMAVIL', 'GUAL MOLINA', NULL, NULL, 'CONDUCTOR', 1),
+(12642656, 'CASTULO MIGUEL CORREA SOTO', NULL, 'correacastulo@gmail.com', NULL, 'CONDUCTOR', 1),
+(12643681, 'EZEQUIEL', 'CONTRERA ENSUNCHU', NULL, NULL, 'CONDUCTOR', 1),
+(12685412, 'Edinson Manuel', 'Jimenez Castillo', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13175607, 'YAMID ALFONSO ', 'VARGAS CABRALES ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13443958, 'JOSE DANIEL', 'CARRILLO CONTRERAS', 'jdcc140459@outlook.es', NULL, 'CONDUCTOR', 1),
+(13483232, 'ROQUE JULIO', 'PORTILLA CASTELLANOS', NULL, NULL, 'CONDUCTOR', 1),
+(13489704, 'LUIS', 'CADENA CONTRERA', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(13498407, 'JAIRO ALFONSO', 'GALVIS SANCHEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13510435, 'JUAN CASTAÑEDA VARGAS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13511055, 'GERARDO ALEXANDER', 'ORDOÑEZ SANDOVAL', NULL, NULL, 'CONDUCTOR', 1),
+(13514682, 'JOSE BERCELY', 'GALEANO GALVIS', NULL, '6292026', 'CONDUCTOR', 1),
+(13535671, 'OSCAR', 'SERRANO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13565482, 'CARLOS IGNACIO', 'ARANGO DE LA TORRE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13566096, 'Jorge Wilman', 'Morales Rincón ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13566671, 'ALEXANDER', 'TORRES BRUGES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13568151, 'ARMANDO', 'QUINTERO CARREÑO', NULL, '6292026', 'CONDUCTOR', 1),
+(13570671, 'Jason', 'Orozco Bedoya ', NULL, NULL, 'CONDUCTOR', 1),
+(13570821, 'MARIO FERNADO', 'PEREZ FLORES', NULL, NULL, 'CONDUCTOR', 1),
+(13636316, 'FRANCISCO', 'MUÑOZ ARIZA', NULL, NULL, 'CONDUCTOR', 0),
+(13702896, 'JUAN JIOVANNI', 'FLOREZ ARCHILA', NULL, NULL, 'CONDUCTOR', 1),
+(13703630, 'FREDY VICENTE', 'FLOREZ ARCHILA', NULL, NULL, 'CONDUCTOR', 1),
+(13715248, 'EDWIN RENE', 'HERRERA HERNANDEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(13717641, 'LUIS ALBERTO', 'PAEZ DIAZ', 'betopaezd@gmail.com', '6292026', 'CONDUCTOR', 1),
+(13717900, 'FABIO', 'BELLO ABELLO', NULL, NULL, 'CONDUCTOR', 1),
+(13720518, 'JUAN DE DIOS', 'GARCIA GALVIS', 'garciagalvisjuan@gmail.com', '6292026', 'CONDUCTOR', 1),
+(13742446, 'JOHN RODRIGO', 'CUADROS ALVAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(13743294, 'JHON ALEXANDER', 'GELVEZ AYALA', NULL, '6292026', 'CONDUCTOR', 1),
+(13744770, 'Román Heberto Sanabria Barrera', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13839315, 'OLIMPO LOPEZ RIVERA', NULL, 'myepes@plexa.co', NULL, 'CONDUCTOR', 1),
+(13850035, 'JAIME', 'ARRIETA URIETA', 'arrietaurietajaime@gmail.com', '6292026', 'CONDUCTOR', 1),
+(13854469, 'LEONARDO ', 'MARTINEZ TELLEZ', 'LEONARDOMARTINEZQUINTERO1982@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(13860626, 'JHON JAIRO', 'LIZCANO ALDANA', NULL, NULL, 'CONDUCTOR', 1),
+(13865398, 'EDWIN ', 'TORRES GARCIA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(13873345, 'NOLBERTO', 'MANTILLA VALENZUELA', NULL, NULL, 'CONDUCTOR', 1),
+(13874415, 'ROBERTO', 'RANGEL ROMERO', NULL, '6292026', 'CONDUCTOR', 1),
+(13885218, 'NABOR', 'FORERO DUARTE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(14236171, 'LUIS CARLOS', 'VARON ACOSTA', NULL, NULL, 'CONDUCTOR', 1),
+(14320709, 'Luis Alberto Lozano Rodriguez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(14565310, 'CESAR AUGUSTO', 'PESCADOR RAMIREZ', NULL, NULL, 'CONDUCTOR', 1),
+(14896361, 'JAIRO ALBERTO', 'DIAZ RIAÑO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(15174695, 'JAIDER', 'GARCIA PEÑA', 'jaidergarcia2045@gmail.com', NULL, 'CONDUCTOR', 0),
+(15303242, 'EULICES COBOS MEJIA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(15430439, 'OSCAR', 'RESTREPO GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(15666607, 'JORGE LUIS ', 'TORRES ARGUELLO', NULL, NULL, 'CONDUCTOR', 1),
+(16076757, 'John Henry maya taborda ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(16266790, 'HOOVER', 'URIBE RIOS', NULL, NULL, 'CONDUCTOR', 1),
+(16268225, 'CARLOS JULIO CORREA SOTO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(16897421, 'MOISES', 'GONZALEZ', 'Moises850429@gmail.com', NULL, 'CONDUCTOR', 1),
+(17324520, 'JOSE ALVARO', 'RODRIGUEZ CASALLAS', NULL, NULL, 'CONDUCTOR', 1),
+(17339134, 'EDGAR', 'RODRIGUEZ FLOREZ', NULL, NULL, 'CONDUCTOR', 1),
+(17339853, 'Jesus  Ivan Ramirez Alturo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(17354768, 'JOSE FIDEL', 'SARAY GONZALEZ', 'f.gonzaper11@gmail.com', '6292026', 'CONDUCTOR', 1),
+(17356497, 'NORBEY ', 'MARIN JUANIAS', NULL, NULL, 'CONDUCTOR', 1),
+(17390108, 'WILFRED', 'ROJAS ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(17586190, 'FREDY', 'MANZANO', NULL, '6292026', 'CONDUCTOR', 1),
+(17959303, 'JAINER', 'DAZA PARODI', NULL, NULL, 'CONDUCTOR', 1),
+(18393845, 'Leonardo fabio ', 'Mosquera Rojas', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18403225, 'Jhonathan Arenas Sepúlveda', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18904331, 'Edgar Alfonso Ramírez Suárez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18922620, 'JAIME RAFAEL', 'GAVIRIA CHINCHILLA', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(18923068, 'EDGAR ', 'CALDERON ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18925833, 'Fernández Vega', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18929486, 'FERNANDO', 'GUTIERREZ CHONA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(18971324, 'LIBARDO DE JESUS ', 'MENESES MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(18972875, 'ALVARO MENESES', NULL, '2PDW32E4D@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(19158115, 'JAIRO', 'TEJADA TORRES', NULL, NULL, 'CONDUCTOR', 1),
+(19401156, 'ALBERTO', 'SEGURA CASTILLO', NULL, '6292026', 'CONDUCTOR', 1),
+(19442269, 'NESTOR', 'BENAVIDEZ GUIO', NULL, '6292026', 'CONDUCTOR', 1),
+(19462946, 'JUAN CARLOS', 'ARAQUE BETANCOURT', NULL, NULL, 'CONDUCTOR', 1),
+(19619448, 'JOSE MANUEL', 'ORTEGA ALVAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(19619767, 'Alexander jesus charris Vargas', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(19708277, 'BALVIR DE JESUS', 'LARIOS HERNADEZ ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(55555555, 'JUAN JOSE', 'CASTAÑEDA VARGAS', NULL, NULL, 'CONDUCTOR', 1),
+(70113368, 'JUAN ANTONIO', 'PANIAGUA YEPES', NULL, NULL, 'CONDUCTOR', 1),
+(71940291, 'Marcelino amorocho ladinez ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(72001619, 'MANUEL POSADA', NULL, 'MANUEL.POSADA32@HOTMAIL.COM', NULL, 'CONDUCTOR', 1),
+(72146726, 'MOISES', 'CARREÑO OLARTE', 'MOISESCO_@HOTMAIL.COM', '6292026', 'CONDUCTOR', 1),
+(72155628, 'ALFREDO JOSE', 'ESCORCIA CIENFUEGOS', 'alfredo-escorcia@hotmail.com', NULL, 'CONDUCTOR', 1),
+(72163213, 'YORK ENRIQUE', 'ROMERO DEL VALLE', NULL, NULL, 'CONDUCTOR', 1),
+(72172977, 'ROBERTO CARLOS', 'STEEVENSON SICILIANO', NULL, NULL, 'CONDUCTOR', 1),
+(72178093, 'DAGOBERTO', 'RODRIGUEZ MALDONADO', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(72214240, 'MANUEL ENRRIQUE', 'ROMERO ALONSO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(72233606, 'ALEXANDER', 'GUTIERREZ CARRILLO', 'alexandercarrillo434@gmail.com', NULL, 'CONDUCTOR', 1),
+(72262869, 'Carlos Pineda', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(72296263, 'JOHAN SEBASTIAN SEGURA ESPINOS', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(72325997, 'CARLOS ORLANDO BARON ARIAS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73006586, 'ARNEL JOSE', 'DOMINGUEZ MERLANO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73125738, 'NARCISO JOSE', 'MORALES', NULL, NULL, 'CONDUCTOR', 1),
+(73128698, 'PEDRO', 'GARCIA CABALLERO', NULL, '6292026', 'CONDUCTOR', 1),
+(73129032, 'CESAR ', 'CABARCAS MORALES ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(73130729, 'Rodrigo Arturo Herrera Anderso', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73131516, 'JORGE LUIS', 'ORTEGA OSPINA', NULL, NULL, 'CONDUCTOR', 1),
+(73132908, 'MARLON', 'SOTO PEREZ', NULL, '6292026', 'CONDUCTOR', 1),
+(73145342, 'EDINSON ', 'LOPEZ OZUNA ', NULL, NULL, 'CONDUCTOR', 1),
+(73149718, 'LUIS EDINSON', 'BELEÑO CARRILLO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73151399, 'EDWIN ', 'BELTRAN BELTRAN', 'CTGBELTRANB@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(73156450, 'joaquin guillermo ', 'diaz caseres', 'joacodiaz1972@gmail.com', NULL, 'CONDUCTOR', 1),
+(73157599, 'LEXSON ', 'PALENCIA HERNANDEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73158545, 'Juan Carlos correa olivo ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73160232, 'YADER YADID', 'PORTO PAUTT', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73164605, 'Yoni Segundo Mercado Rodríguez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73167659, 'BERNARDO', 'RICO INCER', 'ricoincerbernardo@gmail.com', '6292026', 'CONDUCTOR', 1),
+(73183836, 'HUGUER', 'CABEZA ESCANDON ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(73187811, 'JOSE HERNADEZ PAJARO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73194441, 'MARIANO', 'NUÑEZ VELEZ', 'marianonunezvelez@gmail.com', NULL, 'CONDUCTOR', 1),
+(73196055, 'RONALD DAVID ', 'GAMBOA BETTIN ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73208749, 'ARNULFO ', 'FIGUEROA CASTRO', 'ARNULFO4507@HOTMAIL.COM', NULL, 'CONDUCTOR', 1),
+(73215066, 'MIGUEL', 'SUAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(73230691, 'ELICER RAFAEL', 'POSSO JARAMILLO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73572477, 'RODOLFO MANUEL', 'JARABA MANJAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(73574852, 'Cesar Luis Noriega Acosta', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73575214, 'ROGER SOTO MIRANDA ', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(73579202, 'ENEIS', 'SANTANA PINEDA', 'ENEISSANTANAPINEDA@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(73580643, 'OSWALDO', 'SARMIENTO RUIZ', 'josc1031@gmail.com', '6292026', 'CONDUCTOR', 1),
+(73593708, 'IDELBER', 'PEREZ BARRERA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(73594504, 'PEDRO HERNADEZ MEJIA ', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(73594998, 'JULIO CESAR', 'BUSTOS ALVARADO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74083857, 'Oscar Preciado Alarcon', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74183130, 'Jorge alberto', 'Orrego', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74352373, 'Humberto  Dueñas Rojas', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74359139, 'JOSE GELVER', 'GOMEZ', 'jogego26711@gmail.com', NULL, 'CONDUCTOR', 1),
+(74362121, 'GERMAN PRECIADO', NULL, NULL, NULL, 'CONDUCTOR', 1),
+(74369596, 'NELSON', 'RINCON BASTIDAS', NULL, NULL, 'CONDUCTOR', 1),
+(74369694, 'ALVARO', 'CARO FONSECA', NULL, NULL, 'CONDUCTOR', 1),
+(74372083, 'Germán Ricardo Cristancho Hern', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74374743, 'Pedro Alejandro Guatibonza Tor', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74378733, 'JOSE JAVIER', 'AVILA TORRES', NULL, '6292026', 'CONDUCTOR', 1),
+(74753780, 'Fernando Ramírez Salamanca', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(74847231, 'LUIS LEONARDO', 'CORREA AVELLA', NULL, NULL, 'CONDUCTOR', 0),
+(77032272, 'ALEX JAVIER', 'AVILA MESTRE', NULL, NULL, 'CONDUCTOR', 1),
+(77081919, 'RODRIGO', 'CALDERON HERRERA', 'rodrigocalderon1976@gmail.com', NULL, 'CONDUCTOR', 1),
+(77102623, 'JAIRO MOJICA GARCIA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(77130701, 'RODOLFO', 'MERCHAN RUSINQUE', 'KNEGRETTE@PLEXA.CO', NULL, 'CONDUCTOR', 1),
+(77131949, 'HELBERT JOSE', 'GUERRA', NULL, NULL, 'CONDUCTOR', 1),
+(77140085, 'ALBEIRO', 'MALDONADO SANCHEZ', 'albeiromaldonado@hotmail.com', NULL, 'CONDUCTOR', 1),
+(77149430, 'JUAN CARLOS', 'CHAPETA', NULL, NULL, 'CONDUCTOR', 1),
+(77154496, 'Wilfredo Martínez Fonseca', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(77164810, 'LUIS ALFONSO', 'ESPAÑA CARRILLO', NULL, NULL, 'CONDUCTOR', 1),
+(77167074, 'JHONY DE JESUS', 'SORACA GUZMAN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(77167102, 'JOSE JOAQUIN', 'MARTINEZ RODRIGUE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(77167409, 'ARLEZ MAURICIO', 'MAZO RIVERA', NULL, NULL, 'CONDUCTOR', 1),
+(77179842, 'WILFREDO', 'GARCIA QUINTERO', NULL, NULL, 'CONDUCTOR', 1),
+(77195742, 'MANUEL JOSE', 'BAUTISTA CANO', NULL, NULL, 'CONDUCTOR', 1),
+(78026113, 'CARLOS ARTURO ', 'OLIVARES HERRERA', NULL, NULL, 'CONDUCTOR', 1),
+(78699089, 'Frey José Fernández galarcio', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79062442, 'LUIS ALFREDO ', 'CAJAMARCA GUZMAN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79100434, 'JOSE HUMBERTO', 'RODRIGUEZ AREVALO', NULL, NULL, 'CONDUCTOR', 1),
+(79118034, 'JAIRO', 'MENA MORA', NULL, '6292026', 'CONDUCTOR', 1),
+(79132903, 'CARLOS', 'RINCON SANCHEZ', NULL, NULL, 'CONDUCTOR', 1),
+(79156010, 'LUIS ALBERTO', 'NIÑO CASTRO', NULL, '6292026', 'CONDUCTOR', 1),
+(79169140, 'LEUDYS', 'MANTILLA CARMARGO', NULL, NULL, 'CONDUCTOR', 1),
+(79180340, 'NELSON ALBERTO', 'SANCHEZ VARGAS', 'nelson800901@gmail.com', NULL, 'CONDUCTOR', 1),
+(79201204, 'LUIS', 'SANCHEZ MONTENEGRO', NULL, '6292026', 'CONDUCTOR', 1),
+(79206496, 'JUAN ALFREDO', 'ARIAS OSPINA', NULL, NULL, 'CONDUCTOR', 1),
+(79244956, 'EDGAR', 'RODRIGUEZ RINCON', NULL, '6292026', 'CONDUCTOR', 1),
+(79245525, 'MARIO', 'BOHORQUEZ RODRIGUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(79296744, 'JUAN MANUEL', 'ZAMBRANO', NULL, NULL, 'CONDUCTOR', 1),
+(79325954, 'PEDRO FERNANDO', 'GALVIS BELTRAN', NULL, '6292026', 'CONDUCTOR', 1),
+(79355197, ' LUIS ANTONIO', 'DIAZ LANCHEROS', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(79374847, 'Ricardo Sanchez Morales', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79383042, 'OSCAR RUBEN', 'ALVAREZ YATE', NULL, NULL, 'CONDUCTOR', 1),
+(79411298, 'WILLIAM ERNESTO', 'GUERRERO LOPEZ', NULL, NULL, 'CONDUCTOR', 1),
+(79415582, 'OMAR AUGUSTO', 'SANCHEZ LEON', NULL, NULL, 'CONDUCTOR', 1),
+(79424601, 'Jose Neftalí   ', 'Gonzalez García', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79428688, 'Uriel Duarte Sierra', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79443609, 'RIGOBERTO', 'AREVALO VILLARRAGA', NULL, NULL, 'CONDUCTOR', 1),
+(79447853, 'LUIS  ALFREDO ', 'GOMEZ BALESTERO', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(79458457, 'JAIRO MONTAÑA GONZALES ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79464381, 'JOSE FERNANDO PRADA ', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(79470752, 'Jabier Danilo ', 'Rodriguez  Villamizar', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79481458, 'JOSE VITELMO', 'AGUDELO REY', NULL, NULL, 'CONDUCTOR', 1),
+(79485012, 'MAURICIO', 'GALEANO RODRIGUEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(79490989, 'ORLANDO', 'OROZCO BARRERO', NULL, NULL, 'CONDUCTOR', 1),
+(79491038, 'JUAN MANUEL', 'RATIVA BELTRAN', NULL, '6292026', 'CONDUCTOR', 1),
+(79508382, 'EDIXON', 'AVILA BARRERA', NULL, '6292026', 'CONDUCTOR', 1),
+(79511121, 'JHON FREDDY CASTEBLANCO BERNAL', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79520298, 'HAROLD WILSON', 'RAMOS GOMEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(79521362, 'OSCAR', 'DUARTE SAENZ', NULL, '6292026', 'CONDUCTOR', 1),
+(79529769, 'DIEGO EFREY', 'SALAZAR PORTILIA', 'diegoefreys@gmail.com ', NULL, 'CONDUCTOR', 1),
+(79560893, 'JOSE LUIS', 'CAMPOS RUIZ', NULL, NULL, 'CONDUCTOR', 1),
+(79575373, 'MIGUEL ANTONIO', 'ROBAYO ARIAS', NULL, '6292026', 'CONDUCTOR', 1),
+(79575575, 'William Monroy Cortes', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79617112, 'MILTON  CESAR', 'SALAZAR AHUMADA', NULL, NULL, 'CONDUCTOR', 1),
+(79636714, 'JUAN', 'RODRIGUEZ MOLINA', NULL, '6292026', 'CONDUCTOR', 1),
+(79697145, 'WILLIAM', 'MARTINEZ AVILA', NULL, '6292026', 'CONDUCTOR', 1),
+(79703239, 'MAURICIO', 'PINEDA GALVIS', NULL, '6292026', 'CONDUCTOR', 1),
+(79711123, 'JOSE HERNANDO', 'QUIJANO BOHORQUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(79736280, 'JUSTINO', 'BARRETO GOMEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(79747910, 'LEONARDO ANDRES', NULL, 'SAMUELANDRES.SAMB@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(79747942, 'Jorge casteblanco Molina', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79764077, 'EMERSON', 'PORRAS HENAO', NULL, '6292026', 'CONDUCTOR', 1),
+(79770695, 'CARLOS DARIO', 'DUARTE SIERRA', NULL, NULL, 'CONDUCTOR', 1),
+(79785624, 'WYTINTO', 'GUERRERO DUEÑAS', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(79821549, 'Raúl Bareño Reyes', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79832510, 'Rubén Darío ', 'Gómez Rodríguez', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79839693, 'JHON', 'VASQUEZ CASTAÑEDA', NULL, '6292026', 'CONDUCTOR', 1),
+(79888480, 'Iván Andrés Hernández', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(79897389, 'DANIEL EDUARDO', 'CARDENAS TRIANA', NULL, NULL, 'CONDUCTOR', 1),
+(79899974, 'JOSE FREDY', 'DUARTE HERNANDEZ', 'FREDUHER79@HOTMAIL.COM ', NULL, 'CONDUCTOR', 1),
+(79906571, 'LUIS ALEJADRO', 'LEMUS FORERO', 'alejolefo2877@gmail.com', NULL, 'CONDUCTOR', 1),
+(79959886, 'JHON ALEXANDER', 'MARTIN COLLAZOS', NULL, NULL, 'CONDUCTOR', 1),
+(79960022, 'YHON', 'MENDOZA', NULL, NULL, 'CONDUCTOR', 1),
+(79974348, 'LUIS  FERNANDO', 'PARRADO BELTRAN', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(80000557, 'Yonh Marlon ', 'Durán Durán', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80004718, 'HAROLD ORLANDO', 'MEDINA MANCILLA', NULL, NULL, 'CONDUCTOR', 1),
+(80020639, 'Andres  Salamanca ', NULL, 'Analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80035545, 'MANUEL ALBERTO SAMACA TELAGUY', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80055228, 'FABIAN', 'PACHON MUÑOZ', NULL, NULL, 'CONDUCTOR', 1),
+(80134753, 'FREDY NORBERTO', 'ALVARADO BUSTOS', NULL, NULL, 'CONDUCTOR', 1),
+(80158025, 'Esneider chitiva', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80158594, 'OSCAR MAURICIO', 'BOHORQUEZ VALLEJO', NULL, NULL, 'CONDUCTOR', 1),
+(80206613, 'JUAN MORALES OSPINA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80222676, 'Luis Fernando romero ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80225738, 'YESID', 'CIFUENTES AMAYA', 'cifuentesamayayesid@hotmail.com', NULL, 'CONDUCTOR', 1),
+(80252266, 'FRANKIL YAIR', 'CARDENAS BUITRAGO', NULL, NULL, 'CONDUCTOR', 1),
+(80260762, 'EDILBERTO HERNANDEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80268586, 'Julio Ramon Velosa Pérez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80271614, 'António Peña Castillo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80272845, 'Miguel angel cespedes soler', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80311873, 'JEFERSON', 'SANCHEZ SERRANO', NULL, '6292026', 'CONDUCTOR', 1),
+(80322640, 'CESAR HUMBERTO BARRAGAN RUBIO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80355239, 'FERNANDO', 'HERNANDEZ RODRIGUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(80365109, 'José Ricardo Rodríguez Ñustes', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80384510, 'RAUL ISNARDO', 'MAYORGA GONZALEZ', NULL, NULL, 'CONDUCTOR', 1),
+(80400664, 'CARLOS', 'DE LA TORRE MELGAREJO', NULL, '6292026', 'CONDUCTOR', 1),
+(80405598, 'Daniel Camacho', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80406808, 'Nelson Arcadio', 'Ramos Jurado', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80421996, 'JOSE', 'GONZALEZ GONZALEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(80422451, 'RICHARD', 'REYES SOLER', 'PORTCHIPS@HOTMAIL.COM', '6292026', 'CONDUCTOR', 1),
+(80429206, 'GABRIEL ANTONIO', 'ZAPATA SALAZAR', 'GABRIELZAPATA01@LIVE.COM', NULL, 'CONDUCTOR', 1),
+(80435090, 'WILSON HERNANDO', 'BARON SANDOVAL', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80436112, 'ALEXANDER', 'LINARES CABALLERO', NULL, NULL, 'CONDUCTOR', 1),
+(80441570, 'OMAR', 'CASTAÑEDA TRIVIÑO', NULL, NULL, 'CONDUCTOR', 1),
+(80451892, 'JOSE GERMAN BONILLA MUÑOZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(80543543, 'JOSE URIEL', 'CEPEDA', 'JOSECEPEDA@GMAIL.COM ', NULL, 'CONDUCTOR', 1),
+(80743320, 'JOSE VICENTE', 'SANCHEZ PINEDA', NULL, NULL, 'CONDUCTOR', 1),
+(80810921, 'MAIKOL', 'ARDILA PARDO', NULL, '6292026', 'CONDUCTOR', 1),
+(80826019, 'Julio César ', 'Rengifo   Hernández', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(84075639, 'LIBARDO', 'HERNANDEZ VELASQUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(85272202, 'LEONARD', 'GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(85440219, 'SAMUEL CAAMAÑO', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(85446008, 'CARLOS ANDRES', 'RUIZ BOJANINI', NULL, '6292026', 'CONDUCTOR', 1),
+(85456201, 'LUIS LEANDRO', 'CALDERON HENRIQUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(85461437, 'JAIME', 'GUTIERREZ TERRAZA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(85468441, 'GERARDO ALEXANDER', 'PARRA BAEZ', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(85487950, 'JAIDER ', 'CALDERON OSPINO', 'jeym-1981@hotmail.com', NULL, 'CONDUCTOR', 1),
+(86056340, 'JADER ALBERTO', 'SARMIENTO RIVERA', NULL, NULL, 'CONDUCTOR', 1),
+(87067276, 'FREDY ', 'BENAVIDES CHALPARTAR', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88191901, 'edgar dueñez blanco', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88203302, 'LUIS EDU  VILLADA VELEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88227900, 'LUIWEN EDUARDO', 'RODRIGUEZ SALAZAR', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88232456, 'José Julian Mora Castro ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88236928, 'WILMAN OSWALDO ', 'GRISALES SERNA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88240010, 'DIEGO DIAZ CONTRERAS', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(88252176, 'MARCOS MAURICIO', 'SUAREZ FLOREZ', NULL, '6292026', 'CONDUCTOR', 1),
+(89007560, 'JAMES LEONARDO', 'FERNANDEZ ARANGO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91011730, 'Fidel', 'Villamil ', NULL, NULL, 'CONDUCTOR', 1),
+(91012003, 'Otoniel Ardila', NULL, 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91014312, 'NILSON ROLANDO', 'MATEUS ARIZA', NULL, NULL, 'CONDUCTOR', 1),
+(91045207, 'EDISON MAURICIO', 'BAUTISTA ACELAS', NULL, NULL, 'CONDUCTOR', 1),
+(91046158, 'Javier Reinaldo ', 'Rodriguez Niño', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91046706, 'ENOC GOMEZ ALMEYDA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91069407, 'JOSE JOAQUIN', 'VELASQUEZ MUÑOS', 'joaquinvelasquez64@hotmail.com', NULL, 'CONDUCTOR', 1),
+(91070038, 'OMAR', 'CHACON GOMEZ', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91072575, 'EDUARDO', 'ANGEL ESPINOSA', NULL, NULL, 'CONDUCTOR', 1),
+(91073003, 'Gilberto ', 'velasquez Duarte', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91076019, 'HECTOR ELIAS', 'ARENAS LOPEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91103098, 'LUIS ALFREDO', 'ARCILA OLARTE', 'keiler7894@hotmail.com', NULL, 'CONDUCTOR', 1),
+(91106794, 'GERMAN', 'SANTAMARIA FONSECA', NULL, NULL, 'CONDUCTOR', 1),
+(91109798, 'Oscar Mauricio', 'Bastilla', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91134857, 'Carlos Gilberto ', 'Quejada Bermud', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91152201, 'JUAN CARLOS', 'QUINTERO REYES', 'carlosreyes0064@gmail.com', NULL, 'CONDUCTOR', 1),
+(91156968, 'SAMUEL', 'SANCHEZ CELIS', 'samuelsanchezcelis@gmail.com ', NULL, 'CONDUCTOR', 1),
+(91158389, 'JORGE ELIECER', 'DIAZ PEDRAZA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91181352, 'EVINSON', 'ARIZA MOSQUERA', NULL, '6292026', 'CONDUCTOR', 1),
+(91183059, 'JOVANNY', 'NOCOBE RUEDA', NULL, NULL, 'CONDUCTOR', 1),
+(91183525, 'JULIAN ALFREDO ', 'CUADROS GONZALES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91214114, 'CHRISTIAM ALBERTO', 'RAMIREZ AMOROCHO', NULL, '6292026', 'CONDUCTOR', 1),
+(91220437, 'RUPERTO', 'SANABRIA DELGADO', NULL, NULL, 'CONDUCTOR', 1),
+(91222393, 'BENIGNO  HERRERA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91223639, 'ALEX FERNANDO', 'OSMA MONCADA', NULL, NULL, 'CONDUCTOR', 1),
+(91224649, 'CARLOS', 'MARTINEZ', NULL, NULL, 'CONDUCTOR', 1),
+(91225478, 'JAIME ENRIQUE', 'MEJIA RUBIO', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91231269, 'ALEJANDRO', 'CHACON RIVERA', NULL, NULL, 'CONDUCTOR', 1),
+(91236597, 'ALFONSO', 'PORTILLA ORTEGA', NULL, NULL, 'CONDUCTOR', 1),
+(91236979, 'JAIME ', 'ARIAS MENDOZA', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(91248089, 'EVER DARIO', 'VILLAMIZAR GARCIA', NULL, '6292026', 'CONDUCTOR', 1),
+(91248184, 'TOMAS', 'CALA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91249379, 'FREDERMAN', 'VEGA GOMEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(91249838, 'GERMAN', 'ARENALES MORA', 'german.pan.65@hotmail.com', NULL, 'CONDUCTOR', 1),
+(91250996, 'ERIBERTO ', 'MUÑOZ VELASQUEZ ', 'eribertomunoz1967@gmail.com', NULL, 'CONDUCTOR', 1),
+(91252337, 'NELSON ', 'CASTRO ALVARADO', NULL, NULL, 'CONDUCTOR', 1),
+(91253546, 'Santiago Prada Prada', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91255211, 'Wilson Ernesto ', 'Alza Herrera', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91257823, 'HERNAN', 'MEDINA CASTAÑO', NULL, NULL, 'CONDUCTOR', 1),
+(91260148, 'JESUS', 'HURTADO GAVIRIA', NULL, NULL, 'CONDUCTOR', 1),
+(91260421, 'Jaime Santamaría Robayo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91260978, 'JAMES', 'DUCON CHACON', NULL, NULL, 'CONDUCTOR', 1),
+(91261965, 'RICARDO ', 'SARMIENTO ORDUZ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(91262713, 'GUILLERMO', 'GONZALEZ CORTES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91263835, 'HECTOR', 'DELGADO SALAZAR', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(91264076, 'JOSE ORLANDO', 'BARCENAS MORENO', NULL, NULL, 'CONDUCTOR', 1),
+(91264082, 'WILSON', 'ROJAS VELANDIA', NULL, NULL, 'CONDUCTOR', 1),
+(91264700, 'JAVIER', 'MORANTES CASTRO', NULL, NULL, 'CONDUCTOR', 1),
+(91268063, 'GUSTAVO CASTILLO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91271638, 'ANTONIO', 'REYES MONROY', NULL, NULL, 'CONDUCTOR', 1),
+(91271783, 'MILTON  MAURICIO', 'MEJIA ROJAS', NULL, NULL, 'CONDUCTOR', 1),
+(91273748, 'OSCAR OMAR', 'TRUJILLO HERRERA', NULL, NULL, 'CONDUCTOR', 1),
+(91277060, 'ALCIDES', 'MANTILLA RUEDA', NULL, NULL, 'CONDUCTOR', 1),
+(91278296, 'JOSEFITO', NULL, NULL, NULL, 'CONDUCTOR', 1),
+(91278812, 'JAVIER ORLANDO', 'RODRIGUEZ CABEZA', NULL, NULL, 'CONDUCTOR', 0),
+(91279714, 'Helber', 'Niño Flores', NULL, NULL, 'CONDUCTOR', 1),
+(91281887, 'ALBEIRO', 'CHACON REYES', NULL, NULL, 'CONDUCTOR', 1),
+(91282286, 'EDUARDO', 'RIVERA PARRA', NULL, NULL, 'CONDUCTOR', 1),
+(91283351, 'ALEXANDER', 'SANCHEZ TAPIAS', NULL, '6292026', 'CONDUCTOR', 1),
+(91288115, 'JOSE', 'CARDENAS RAMIREZ', NULL, NULL, 'CONDUCTOR', 1),
+(91288417, 'Henry Flavio ', 'Alza Herrera', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91290614, 'JOSE ANTONIO', 'PEREZ GAMBOA', 'jose_perez_1973@hotmail.com', NULL, 'CONDUCTOR', 1),
+(91290723, 'WELTON ANIBAL', 'MURCIA RODRIGUEZ', NULL, NULL, 'CONDUCTOR', 1),
+(91291380, 'ORLANDO', 'GONZALES SANTIAGO', NULL, '6292026', 'CONDUCTOR', 1),
+(91293014, 'GILMER ALFONSO', 'MANTILLA PARADA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91296272, 'Augusto Rosado García', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91298535, 'LINTON', 'MORENO CORZO', NULL, NULL, 'CONDUCTOR', 1),
+(91299453, 'WILIMTON', 'ORTIZ', 'Wilimtonortizflorez@gmail.com', NULL, 'CONDUCTOR', 1),
+(91341363, 'HUMBERTO', 'ARIAS', NULL, NULL, 'CONDUCTOR', 1),
+(91342872, 'CAYETANO', 'MEJIA HERNANDEZ', NULL, NULL, 'CONDUCTOR', 1),
+(91343162, 'ALONSO SERRANO DURAN', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91344921, 'MANUEL', 'OVIEDO HERNANDEz', NULL, NULL, 'CONDUCTOR', 1),
+(91349176, 'JHON ALEXANDER', 'DIAZ MONSALVE', NULL, NULL, 'CONDUCTOR', 1),
+(91349276, 'NELSON ALIRIO', 'PARDO MUÑOZ', NULL, NULL, 'CONDUCTOR', 1),
+(91354086, 'PEDRO MANUEL', 'OVALLE DALLOS', 'Povalle_32da@hotmail.com', '6292026', 'CONDUCTOR', 1),
+(91354193, 'FERNANDO CAMILO', 'POVEDA PEDRAZA', NULL, '6292026', 'CONDUCTOR', 1),
+(91355344, 'TEOFILO MANOSALVA DUARTE ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91355538, 'LUIS FERNANDO ', 'REY GARCIA ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91356679, 'JHON ELVER', 'PITA PITA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91420711, 'ISAAC', 'GARCIA DUARTE', '2pdw32e4d@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91424527, 'ORLANDO', 'PLATA GOMEZ', NULL, '6292026', 'CONDUCTOR', 1),
+(91431717, 'JORGE ELIECER', 'CABRERA TORRES', NULL, NULL, 'CONDUCTOR', 1),
+(91431760, 'JOHN DAIRO', 'CANO BEDOYA', NULL, '6292026', 'CONDUCTOR', 1),
+(91432055, 'José Eduardo', 'Jiménez Merchán', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91432069, 'HENRY ', 'CAMARGO CALA', NULL, NULL, 'CONDUCTOR', 1),
+(91433362, 'TULIO', 'ALEMAN DIAZ', 'tulio_aleman@hotmail.com ', NULL, 'CONDUCTOR', 1),
+(91435499, 'SALOMON', 'GONZALEZ GUERRERO', NULL, '6292026', 'CONDUCTOR', 1),
+(91437979, 'JORGE', 'CARPIO OROZCO', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(91438105, 'ISNARDO', 'PARADA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91438579, 'HUMBERTO', 'URRUTIA MATTOS', 'Humberto.urrutia@outlook.com', '6292026', 'CONDUCTOR', 1),
+(91439876, 'OSCAR', 'PACHECO ROSAS', NULL, '6292026', 'CONDUCTOR', 1),
+(91442896, 'RAUL', 'PAEZ GARCIA', 'raul.0702@outlook.com', NULL, 'CONDUCTOR', 1),
+(91445774, 'ELKIS', 'CRUZ SOLORZANO', 'apoyologistico@plexa.co', '6292026', 'CONDUCTOR', 1),
+(91446328, 'JAVIER ANTONIO', 'TORRES GARCIA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91447264, 'WILFREDO', 'TORRES SANABRIA ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91449304, 'JHON EDWIN', 'SAENZ', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(91457430, 'Misael Jerez Martinez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91461157, 'CRISTIAN', 'RUEDA GARZON', NULL, '6292026', 'CONDUCTOR', 1),
+(91464227, 'CARLOS DANIEL', 'ILLERAS GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(91470636, 'GERARDO', 'ARDILA FUENTES', NULL, NULL, 'CONDUCTOR', 1),
+(91471889, 'OSWALD CRUZ ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91472174, 'HENRY', 'VERA MALDONADO', NULL, NULL, 'CONDUCTOR', 1),
+(91474894, 'ISRAEL', 'FRANDY JEREZ', NULL, '6292026', 'CONDUCTOR', 1),
+(91476077, 'LUIS ENRIQUE', 'RIAÑO GALVIS', NULL, NULL, 'CONDUCTOR', 1),
+(91487182, 'JAVIER', 'PALACIO SARMIENTO', NULL, NULL, 'CONDUCTOR', 1),
+(91488115, 'JUAN CARLOS', 'QUINTERO GAMBOA', NULL, NULL, 'CONDUCTOR', 1),
+(91494885, 'MELQUICEDEC JULIO PABON', NULL, 'Mjuliop@hotmail.com', NULL, 'CONDUCTOR', 1),
+(91495992, 'JOHN JAIRO JEREZ JIMENEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91499287, 'LUIS MANUEL', 'MENDEZ CORZO', NULL, NULL, 'CONDUCTOR', 1),
+(91506899, 'Jhon Braulio Domínguez Barbosa', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91513315, 'LEONARDO ROJAS VALBUENA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91516849, 'Edwin Javier ', 'Osorio Rincón', NULL, NULL, 'CONDUCTOR', 1),
+(91518503, 'JORGE ARMANDO', 'DURAN GALVIS', NULL, NULL, 'CONDUCTOR', 1),
+(91519336, 'RAFAEL ANTONIO', 'SERRANO CACERES', NULL, '6292026', 'CONDUCTOR', 1),
+(91519643, 'Alexis Arguello oviedo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91525490, 'JOSE ORLEY', 'DEVIA VILLALOBOS', NULL, NULL, 'CONDUCTOR', 1),
+(91533742, 'HENRY', 'SOLANO BARBOSA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91536815, 'RAFAEL ERNESTO', 'PORTILLA RODRIGUEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(91539182, 'FERNEY', 'BENITEZ BARRAGAN', 'ferneybenitezconductor@outlook.com', NULL, 'CONDUCTOR', 1),
+(91540491, 'OSCAR FABIAN', 'MENDEZ BASTIDAS', NULL, NULL, 'CONDUCTOR', 1),
+(92032962, 'JESUS DAVID', 'DE LA OSSA PEREZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(93134673, 'JUAN CARLOS', 'ORTIZ VARGAS', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(93335275, 'RODRIGO', 'OSPITIA', NULL, NULL, 'CONDUCTOR', 1),
+(93359965, 'EDGAR', 'GARCIA MORENO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(93386917, 'LUIS', 'MUÑOZ TIQUE', NULL, '6292026', 'CONDUCTOR', 1),
+(93395124, 'IVAN MAURICIO', 'RODRIGUEZ PINILLA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(93438956, 'RUBEN DARIO', 'MARTINEZ ARANA', NULL, NULL, 'CONDUCTOR', 1),
+(93461482, 'SAMUEL ANGEL', 'CASTIBLANCO NIETO', NULL, NULL, 'CONDUCTOR', 1),
+(93472260, 'Carlos Augusto Chavarro Gomez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(94268231, 'EFRAIN', 'SHUWERY PINEDA', NULL, NULL, 'CONDUCTOR', 1),
+(94312847, 'Javier Pérez Correa', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(94456108, 'EDUIN ALBERTO', 'PASTAS VILLEGAS', NULL, NULL, 'CONDUCTOR', 1),
+(94461759, 'ALEXANDER', 'GONZALEZ GARCIA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(94463985, 'NODIER', 'VELASQUEZ ', NULL, NULL, 'CONDUCTOR', 1),
+(94506942, 'Edgar Patricio', 'Cortes Arismendy', NULL, NULL, 'CONDUCTOR', 1),
+(96354319, 'Solim ', 'Sanchez Gonzales', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(97446969, 'Angel Antonio', 'Diaz Osorio', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(98341657, 'JOSE ELISEO', 'AGUIRRE AGUIRRE', 'marceci70@hotmail.es ', NULL, 'CONDUCTOR', 1),
+(98342148, 'DIEGO RAMON', 'AGUIRRE AGUIRRE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(98395137, 'ARMANDO', 'VALLEJO VILLOTA', NULL, '6292026', 'CONDUCTOR', 1),
+(98658389, 'ANDRES', 'HERNANDEZ SANCHEZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(98658993, 'CESAR ANÍBAL RAMÍREZ ARANGO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(552434444, 'HERNANDO', 'ESCANIO MORENO', NULL, NULL, 'CONDUCTOR', 1),
+(1001876577, 'SAMUEL ', 'HERNANDEZ CALDERON', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1002193788, 'GUSTAVO', 'JIMENEZ RAMOS', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1003312739, 'OSCAR', 'CORREA GIRALDO', 'ocorreagiraldo0619@gmail.com', NULL, 'CONDUCTOR', 1),
+(1004360312, 'LUIS EDUARDO', 'MARULANDA OSORIO', NULL, NULL, 'CONDUCTOR', 1),
+(1005564911, 'Edinson', 'Hernandez Herrera ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1010167900, 'JEFFERSON', 'CHARRY MESA', NULL, NULL, 'CONDUCTOR', 1),
+(1010171581, 'DIEGO MAURICIO BELTRAN RODRIGU', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1012332772, 'JEISSON  DAVID ', 'GONZALEZ GARCIA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(1015468580, 'JUAN SEBASTIAN ', 'ORDUÑA MARIN', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1016021585, 'GUSTAVO ADOLFO CAMARGO HERRERA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1018442233, 'CAMILO ALEJANDRO', 'CASTAÑEDA SUAREZ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1022331554, 'GELBER ACOSTA ACOSTA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1022333635, 'Ángel Custodio ', 'Cuervo Plazas', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1022344021, 'Pedro Luis Sarmiento', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1022931976, 'Sergio Antonio', 'Ramírez Triana', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1022982388, 'OSCAR YAIR', 'SALAMANCA MEDINA', NULL, '6292026', 'CONDUCTOR', 1),
+(1023971452, 'LUIS  FERNANDO', 'PARRADO  MORENA', 'aberrio@plexa.co', NULL, 'CONDUCTOR', 1),
+(1024484842, 'Wilson Alfredo Ayala Jiménez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1030592268, ' Nelson', ' Sanabria Padilla', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1030600618, 'RAFAEL LEONARDO ', 'PAEZ AVILA ', 'rpaez@yegoecot.com', NULL, 'CONDUCTOR', 1),
+(1033712506, 'CRISTIAN FERNANDO', 'PICÓN QUINTERO', 'analistaplexa@gmail.com', 'cristian892001@gmail', 'CONDUCTOR', 1),
+(1042444045, 'ISRAEL', 'MARIÑO CALA', NULL, NULL, 'CONDUCTOR', 1),
+(1044640701, 'EDWIM DAVID', 'ALTAMAR GARIZABALO', NULL, NULL, 'CONDUCTOR', 1),
+(1047372036, 'JAVIER AYALA OROZCO', NULL, '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(1047391433, 'AMIN ANIBAL ATIA  MADRID', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1047398385, 'Wilson Sierra Lopez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1047409809, 'JHAN KEVIN', 'MONTALVO FONTALVO', 'Jhank2010@hotmail.com', NULL, 'CONDUCTOR', 1),
+(1047414351, 'BRYAN ', 'OSORIO VAZQUES', 'Coby-bryan0401@hotmail.com', NULL, 'CONDUCTOR', 1),
+(1047423250, 'Cesar Augusto', 'Jordan Sarmienhto', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1049607940, 'CESAR HUMBERTO', 'DUARTE MORA', NULL, NULL, 'CONDUCTOR', 1),
+(1049652723, 'CRISTIAN IVAN', 'ROJAS TORRES', NULL, NULL, 'CONDUCTOR', 1),
+(1050947219, 'JHON ALFRED', 'JIMENEZ CARMONA', NULL, NULL, 'CONDUCTOR', 1),
+(1050959901, 'RONALD YESID', 'CASTILLA GONZALEZ', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(1051824940, 'CARLOS MIGUEL', 'POLO CARO', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1054800196, 'ALVARO AUGUSTO CASTEBLANCO MOL', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1056781054, 'MIGUEL ANGEL', 'OROZCO CASTAÑO', NULL, '3108165726', 'CONDUCTOR', 1),
+(1062906990, 'IGDALIAS', 'CHACON ARIAS', NULL, NULL, 'CONDUCTOR', 1),
+(1064117000, 'CARLOS MARIO', 'SANCHEZ RODRIGUEZ ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1064797998, 'HECTOR', 'NIÑO CASTILLA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1065123584, 'EDWIN STALYN', 'MAZO RIVIERA', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(1065126360, 'ANTHONY MERCADO LEIVA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1065135217, 'Darwin Eduardo Puello Fontalvo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1065576746, 'JAVIER ENRIQUE', 'ARAGON BARBOSA', 'analistaplexa@gmail.com', '6292026', 'CONDUCTOR', 1),
+(1065873175, 'Andrey fernando ', 'sanchez Bautista', 'andreysanchez113@gmail.com', NULL, 'CONDUCTOR', 1),
+(1065907066, 'CLAUDIO ARCHILA PORTILLO', NULL, 'kbautista@plexa.co', NULL, 'CONDUCTOR', 1),
+(1067716404, 'LUIS ALBERTO', 'VILLAREAL CHARRY', NULL, '6292026', 'CONDUCTOR', 1),
+(1069305378, 'JULIAN DAVID', 'BOTIVA BAQUERO', NULL, NULL, 'CONDUCTOR', 1),
+(1069745023, 'Wilmar Camilo Bernal Martinez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1071330273, 'BOJACA JOYA', 'RAFAEL RICARDO', NULL, NULL, 'CONDUCTOR', 1),
+(1073513886, 'ANTONY', 'YANES RAMOS', 'antony.yanez@hotmail.com', NULL, 'CONDUCTOR', 1),
+(1075662196, 'miguel alfredo herrera nieto ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1081797529, 'LUIS PUELLO FONTALVO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1082850181, 'Luis Manuel ', 'Cervera Álvarez ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1082862788, 'JORGE LUIS PEREZ MARTINEZ ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1082880903, 'JOSE LUIS', 'RUEDA OLARTE', NULL, NULL, 'CONDUCTOR', 1),
+(1082957105, 'ESNEIDER', 'QUINTERO GRAJALES', 'Esneider1992@outlook.es', NULL, 'CONDUCTOR', 1),
+(1087486110, 'Giovanny Andres Ramírez Gutiér', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1091533627, 'Ronald Salvador Santana Parra', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1091666946, 'GEINER CONTRERAS PEDROZA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1093781759, 'DUVAN ALBERTO', 'CADENA GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(1094268778, 'RAFAEL ', 'PABON PORTILLA ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1095817194, 'MARLON', 'PAEZ OSORIO', 'PAEZ9404@HOTMAIL.COM', NULL, 'CONDUCTOR', 1),
+(1095915587, 'JOSE ANTONIO', 'JIMENEZ DUARTE', NULL, NULL, 'CONDUCTOR', 1),
+(1095919238, 'JHON JAIRO CASTAÑEDA PINZON', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1095942121, 'Ricardo Pedraza serrano ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1095956841, 'CRISTHIAN ALBERTO', 'CENTENO GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(1096208600, 'CARLOS EDUARDO', 'BRAND MORALES', NULL, NULL, 'CONDUCTOR', 1),
+(1096211790, 'JONATAN CALED ', 'MENDOZA GUEVARA', NULL, NULL, 'CONDUCTOR', 1),
+(1096226146, 'JOHAN', 'RATIVA AGUILLON', NULL, NULL, 'CONDUCTOR', 1),
+(1096231722, 'Rodrigo ', 'Alvarez Alvarez', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1096243624, 'LEONARDO ', 'CELIS MEJIA', 'LEONARDOCELISMEJIA2@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(1097389198, 'JORGE BLANCO ORTIZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1097393811, 'CARLOS CRUZ HURTADO', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098612904, 'ANDRES REYNALDO', 'ROBLES JAIMES', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098617468, 'JHON JAIRO', 'MELGAREJO MORA', NULL, NULL, 'CONDUCTOR', 1),
+(1098618348, 'HERNADO ', 'MENDOZA ROJAS ', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098622980, 'MIGUEL ', 'GONZALEZ FUENTES ', NULL, NULL, 'CONDUCTOR', 1),
+(1098625674, 'ALVARO IVAN', 'BOHORQUEZ R', NULL, NULL, 'CONDUCTOR', 1),
+(1098632179, 'WILLIAM', 'MARIN ROJAS', NULL, NULL, 'CONDUCTOR', 1),
+(1098642413, 'ALVARO JOSE', 'RIAÑO DURAN', NULL, NULL, 'CONDUCTOR', 1),
+(1098642846, 'JOSE GREGORIO', 'GOMEZ GARCIA', NULL, NULL, 'CONDUCTOR', 1),
+(1098659351, 'EDINSON FERNANDO', 'RODRIGUEZ OREJARENA', NULL, NULL, 'CONDUCTOR', 1),
+(1098662912, 'MIGUEL ANDRES', 'QUINTERO SUAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(1098677221, 'ERNESTO', 'PINZON TOLOZA', 'mopripinzon@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098681730, 'DEIMER ', 'ARDILA ORTIZ', NULL, NULL, 'CONDUCTOR', 1),
+(1098683470, 'JORGE', 'LANDINES', NULL, NULL, 'CONDUCTOR', 1),
+(1098685032, 'Romel armando Callejas Gómez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098688089, 'RODRIGO', 'CUADROS ALVAREZ', NULL, NULL, 'CONDUCTOR', 1),
+(1098706937, 'YEELSIHT FERNEY', 'GOMEZ CASTILLO', NULL, NULL, 'CONDUCTOR', 1),
+(1098718114, 'JAVIER', 'RANGEL', NULL, NULL, 'CONDUCTOR', 1),
+(1098756694, 'Miguel Angel Gallo', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1098799570, 'Yan Carlos Merchan Narvaez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1099205638, 'Armando Moreno Aguilera', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1100952092, 'Felipe Antonio', 'Garzon Moreno', 'kbautista@plexa.co', NULL, 'CONDUCTOR', 1),
+(1101546215, 'JOSE ', 'SANCHEZ AGREDO', '2pdw32e4d@gmail.com', NULL, 'CONDUCTOR', 1),
+(1102351650, 'Elkin Fabian', 'Gonzalez Bueno', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1102359619, 'LUIS FERNANDO', 'MONTAGUT ORTEGA', NULL, NULL, 'CONDUCTOR', 1),
+(1102370700, 'CARLOS', 'ESCOBAR SUAREZ', NULL, NULL, 'CONDUCTOR', 1);
+INSERT INTO `conductores` (`cedula`, `nombre`, `apellido`, `email`, `celular`, `tipo`, `estado`) VALUES
+(1102380288, 'EVER JULIAN', 'AGUDELO FLORES', 'julianagudelo288@gmail.com', NULL, 'CONDUCTOR', 1),
+(1102548711, 'Edgar Eduardo Buitrago Olarte ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1102549046, 'CESAR AUGUSTO', 'BUITRAGO OLARTE', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1102715085, 'FREDY ALBEIRO', 'VARGAS CASTRO', NULL, '6292026', 'CONDUCTOR', 1),
+(1104127540, 'LUIS', 'JAIMES VASQUEZ', 'luishernando1810@gmail.com', NULL, 'CONDUCTOR', 1),
+(1104129723, 'HUGHES', 'QUINTERO VILLAR', NULL, NULL, 'CONDUCTOR', 1),
+(1109415393, 'JUAN CAMILO ENCISO ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1109417886, 'OBEIMAR MONTOYA MOGOLLON', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1110117346, 'FRANCISCO JAVIER RODRIGUEZ COL', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1115914461, 'Sebastian Vargas sanchez', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1116158317, 'HILMAR JAVIER CABRERA CRUZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1118529925, 'Maria Eugenia', 'Gutierrez Camaño', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1121911838, 'JEISSON ANDRES', 'SANCHEZ CEBALLOS', 'LCARDONAV@GMAIL.COM', NULL, 'CONDUCTOR', 1),
+(1124362408, 'ANDRES AUGUSTO', 'RUIZ CORDOBA', 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1128402743, 'SAUL ANDRES REYES HERNANDEZ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1129541927, 'JOSE RAUL', 'BERMUDEZ MENDOZA', NULL, NULL, 'CONDUCTOR', 1),
+(1131108619, 'Sebastián Vélez  Hernadez ', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1143325890, 'HAROLD MANUEL', 'RIOS MAQUILON', NULL, '6292026', 'CONDUCTOR', 1),
+(1143329888, 'HECTOR ENRIQUE', 'CARRASCAL PATIÑO', NULL, NULL, 'CONDUCTOR', 1),
+(1143347304, 'GABRIEL FERNANDO BUSTAMANTE RI', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1232888211, 'GOBER ANDRES', 'PAEZ DIAZ', NULL, NULL, 'CONDUCTOR', 1),
+(1233690948, 'CAMILO ANDRES SALAMANCA', NULL, 'analistaplexa@gmail.com', NULL, 'CONDUCTOR', 1),
+(1234567890, 'Prueba', NULL, 'henjoca20@gmail.com', NULL, 'CONDUCTOR', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `failed_jobs`
+--
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `habitaciones`
+--
+
+CREATE TABLE `habitaciones` (
+  `numero` int(2) NOT NULL,
+  `estado` varchar(10) NOT NULL,
+  `conductor` int(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `habitaciones`
+--
+
+INSERT INTO `habitaciones` (`numero`, `estado`, `conductor`) VALUES
+(1, 'Disponible', NULL),
+(2, 'Disponible', NULL),
+(3, 'Disponible', NULL),
+(4, 'Disponible', NULL),
+(5, 'Disponible', NULL),
+(6, 'Disponible', NULL),
+(7, 'Disponible', NULL),
+(8, 'Disponible', NULL),
+(9, 'Disponible', NULL),
+(10, 'Disponible', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `habitaciones_historial`
+--
+
+CREATE TABLE `habitaciones_historial` (
+  `id` int(11) NOT NULL,
+  `habitacion` int(2) NOT NULL,
+  `estado` varchar(10) NOT NULL,
+  `conductor` int(10) NOT NULL,
+  `usuario` int(10) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `c_conductor` varchar(255) DEFAULT NULL,
+  `n_conductor` varchar(255) DEFAULT NULL,
+  `check_in` timestamp NULL DEFAULT NULL,
+  `check_out` timestamp NULL DEFAULT NULL,
+  `usuario_check_in` varchar(255) DEFAULT NULL,
+  `usuario_check_out` varchar(255) DEFAULT NULL,
+  `tiempo_uso` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `habitaciones_historial`
+--
+
+INSERT INTO `habitaciones_historial` (`id`, `habitacion`, `estado`, `conductor`, `usuario`, `fecha`, `c_conductor`, `n_conductor`, `check_in`, `check_out`, `usuario_check_in`, `usuario_check_out`, `tiempo_uso`) VALUES
+(2, 8, 'Ocupada', 73580643, 1047418839, '2025-12-26 16:38:31', '73580643', 'OSWALDO', '2025-12-26 20:38:31', '2025-12-26 21:40:04', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 3694),
+(3, 2, 'Ocupada', 77140085, 1047418839, '2025-12-26 16:47:41', '77140085', 'ALBEIRO', '2025-12-26 21:47:41', '2025-12-29 13:44:01', 'Henry Jose Castro Ricardo', 'Henry Jose Castro Ricardo', 230180),
+(6, 10, 'Ocupada', 1065873175, 1041972451, '2026-02-20 07:44:13', '1065873175', 'Andrey fernando ', '2026-02-20 12:44:13', '2026-02-20 12:46:09', 'Roys Rafael Simarra Gomez', 'Roys Rafael Simarra Gomez', 117),
+(7, 1, 'Ocupada', 4255448, 1041972451, '2026-02-20 07:44:23', '4255448', ' Carlos Arturo Toncon Sepulved', '2026-02-20 12:44:23', '2026-02-20 12:46:01', 'Roys Rafael Simarra Gomez', 'Roys Rafael Simarra Gomez', 99);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `indicadores`
+--
+
+CREATE TABLE `indicadores` (
+  `id` int(11) NOT NULL,
+  `codigo` varchar(10) DEFAULT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `valor` decimal(10,2) DEFAULT NULL,
+  `valor_anterior` decimal(10,2) DEFAULT 0.00,
+  `tendencia` varchar(10) DEFAULT 'igual',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `indicadores`
+--
+
+INSERT INTO `indicadores` (`id`, `codigo`, `nombre`, `valor`, `valor_anterior`, `tendencia`, `updated_at`) VALUES
+(1, 'dolar', 'Dólar TRM', 3675.81, 3669.96, 'sube', '2026-04-06 12:46:50'),
+(2, 'euro', 'Euro', 4222.16, 4222.16, 'igual', '2026-04-06 12:46:50'),
+(3, 'glp', 'GLP (Gal)', 1800.00, 1750.00, 'sube', '2026-01-28 17:16:21'),
+(4, 'gnc', 'GNC (m3)', 1200.00, 1150.00, 'sube', '2026-01-28 17:16:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `indicadors`
+--
+
+CREATE TABLE `indicadors` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `codigo` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `valor` decimal(10,2) NOT NULL,
+  `tendencia` varchar(255) NOT NULL DEFAULT 'igual',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) UNSIGNED NOT NULL,
+  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
+  `available_at` int(10) UNSIGNED NOT NULL,
+  `created_at` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `job_batches`
+--
+
+CREATE TABLE `job_batches` (
+  `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int(11) NOT NULL,
+  `pending_jobs` int(11) NOT NULL,
+  `failed_jobs` int(11) NOT NULL,
+  `failed_job_ids` longtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `cancelled_at` int(11) DEFAULT NULL,
+  `created_at` int(11) NOT NULL,
+  `finished_at` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `logs`
+--
+
+CREATE TABLE `logs` (
+  `id` int(11) NOT NULL,
+  `usuario` int(11) NOT NULL,
+  `permiso` varchar(30) NOT NULL,
+  `observación` varchar(250) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(4, '2025_10_20_133058_add_checkin_checkout_to_habitaciones_table', 2),
+(6, '0001_01_01_000000_create_users_table', 3),
+(7, '0001_01_01_000001_create_cache_table', 3),
+(8, '0001_01_01_000002_create_jobs_table', 3),
+(9, '2025_10_23_083421_create_historial_habitaciones_table', 3),
+(10, '2025_10_28_104352_add_campos_detalle_to_habitaciones_historial', 3),
+(11, '2026_01_26_105706_create_3_tickets_table', 4),
+(13, '2026_01_28_102619_create_indicadors_table', 5),
+(14, '2026_02_19_130055_add_datos_viajero_to_3_tickets_table', 5),
+(15, '2026_03_31_075206_create_tratamiento_firmas_table', 6),
+(16, '2026_03_31_075207_create_tratamiento_textos_table', 6),
+(17, '2026_03_31_083621_create_personal_access_tokens_table', 7),
+(18, '2026_03_31_103611_add_colores_to_tratamiento_textos_table', 8);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos`
+--
+
+CREATE TABLE `permisos` (
+  `id` int(11) NOT NULL,
+  `paginas` int(11) NOT NULL,
+  `permiso` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `paginas`, `permiso`) VALUES
+(3, 3, 'Actualizar Conductores'),
+(4, 7, 'Hotel'),
+(5, 4, 'Desasignar'),
+(6, 4, 'Asignar'),
+(7, 14, 'Aprobar Viajes');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos_modulos`
+--
+
+CREATE TABLE `permisos_modulos` (
+  `id` int(11) NOT NULL,
+  `roles` int(2) NOT NULL,
+  `paginas` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos_modulos`
+--
+
+INSERT INTO `permisos_modulos` (`id`, `roles`, `paginas`) VALUES
+(1, 1, 'Dashboard'),
+(2, 1, 'Páginas'),
+(3, 1, 'Tabla Conductores'),
+(4, 1, 'Hotel'),
+(5, 1, 'Historial Habitacion'),
+(6, 4, 'Usuarios'),
+(7, 1, 'Usuarios'),
+(8, 1, 'Roles'),
+(9, 2, 'Roles'),
+(12, 1, 'Precio GLP'),
+(13, 1, 'Carrusel'),
+(14, 1, 'Solicitar Viaje'),
+(15, 1, 'Gestion Viajes'),
+(16, 1, 'Solicitar Viaje'),
+(17, 2, 'Gestion Viajes');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `permisos_roles`
+--
+
+CREATE TABLE `permisos_roles` (
+  `id` int(2) NOT NULL,
+  `nombre` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos_roles`
+--
+
+INSERT INTO `permisos_roles` (`id`, `nombre`) VALUES
+(1, 'Super Administrador'),
+(2, 'Administradores'),
+(3, 'Despachadores'),
+(4, 'Trafico');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` text NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sessions`
+--
+
+CREATE TABLE `sessions` (
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('0BBO993okqonZAbpE1sVtLfflaRsm5ztGA1cmoWe', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUnJzN2pLYTZlclVaQ1RiWlJMdGxLT25XOUFoenJZMnRpZFduM21VYSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775049941),
+('0yWVDegfhydQ0YKbpYDfE16Rhkuo9aGe4qVrrQ0u', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUWZ5MVpFVUtscXA0cHhDRmNoTjFvemVSZUxYVW5KNFc4ZU5OZmMzWiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775049903),
+('3WqgAG5hJpQCzFbGApWUljYSb6hSBXBGkA6Jhku2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidUhKVkxwVU1vN1dhRXhwQnRsM1NoY2hFZWhhVGE1d0pETFpQRDBXWCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063585),
+('40TCxYxtXoD0B1REmJa2G9LXN3uDjias9NQIvbj8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiNndyYWt6ZlJBeVBwRWpoODRURThERm1JdWZWa2FTQmRCakxWd3RKaSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064775),
+('4PCpH1XdoBooxk739M6MlcDx2ErUZhHCHkWr64vb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoidVR3eGlpWG5yb1BwMUZ5OVhzd1ZyaWNSZXVWbTI2TUpEbXJOWGhkNyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063825),
+('6cj7Yp8PmCHziMe98426zmZt2rEAlpPoKepLTyTt', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidWZmWXpOblFCeWxlUGxzaTRqbE1pMndESXQwekdTbUhRbk5QUnFSWCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775046523),
+('6VxuLQtl93pueZI7PZasROjXvC96QeyBqaa1ABXo', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiOUpqbTNIMGgyaG5QeVJLOGdKQ1lqTGVBbmxDd0hYWnVIVlhPVUJjRiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063568),
+('82my91cY2smimBSB3Yt6g4gXDaER5Sg94k3TpJdk', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWVJOUmRzWkVJYUh2Q2dGQ1ZxakYyMlhCclVsdXZjNGp1NHJlMDY1TCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063232),
+('A1vXmwXXaF35Bd07ryEGnmDhso8EhR01lugE7c1m', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoic1NiM1Z1cE9tM2c5QkVkSkFyYkhMS2lnak9RUFRKZnFzYkVnM3FmdSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063834),
+('ayHAk26lmlc4Co69Qb1eZOP5fTbA4F1bwYtSWTVx', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRDlxcjh3eTFXYlpmeTlPdkk2cjRwRFUxWHVabDRkdEpkc1lUN2dPMCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064946),
+('ejKO9E3Qd7Dbi4r9OUGtFXPJVYqJsxv5Cmcj5XOt', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVm54SDhITzFCMkhNOUYwRlJtYlRZdlpDeVoyTXVxY3V4VEFmOTdqNyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063565),
+('ekQ52X1smUYF8GDLwJt3pYFnMnBJ7mCWJXIpZ5w6', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiQUNNN0VSV0ludklDNDlTUlJoaGU4OGZNbXJjYzlRREF2VXU3R0xsUiI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQwOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJhdGFtaWVudG9kZWRhdG9zIjtzOjU6InJvdXRlIjtzOjI0OiJ0cmF0YW1pZW50b2RlZGF0b3MuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMDQxOTcyNDUxO3M6MTg6Im1vZHVsb3NfcGVybWl0aWRvcyI7YToxMjp7aTowO3M6OToiRGFzaGJvYXJkIjtpOjE7czo4OiJQw6FnaW5hcyI7aToyO3M6MTc6IlRhYmxhIENvbmR1Y3RvcmVzIjtpOjM7czo1OiJIb3RlbCI7aTo0O3M6MjA6Ikhpc3RvcmlhbCBIYWJpdGFjaW9uIjtpOjU7czo4OiJVc3VhcmlvcyI7aTo2O3M6NToiUm9sZXMiO2k6NztzOjEwOiJQcmVjaW8gR0xQIjtpOjg7czo4OiJDYXJydXNlbCI7aTo5O3M6MTU6IlNvbGljaXRhciBWaWFqZSI7aToxMDtzOjE0OiJHZXN0aW9uIFZpYWplcyI7aToxMTtzOjE1OiJTb2xpY2l0YXIgVmlhamUiO31zOjE5OiJwZXJtaXNvc19wZXJtaXRpZG9zIjthOjU6e2k6MDtzOjIyOiJBY3R1YWxpemFyIENvbmR1Y3RvcmVzIjtpOjE7czo1OiJIb3RlbCI7aToyO3M6MTA6IkRlc2FzaWduYXIiO2k6MztzOjc6IkFzaWduYXIiO2k6NDtzOjE0OiJBcHJvYmFyIFZpYWplcyI7fX0=', 1775065745),
+('gQMkR62BbM9t6bZzKIq8jx8X0y4t0cTH6Q4Zi3cU', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTTlPeHQ2emdrU0dPT21hR0pQbjNqbEVpUGFYR2FPTnpRMldueEhlNCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775053976),
+('GxZUcLa5byQi3j46HfF5SjH05WbyAmepumTmoK4G', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiY0Q1S0duZjBuZVg0SlZUbmtHRnBwdTJSV1NWanF2SGgzWTlrRDduYyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775049868),
+('HfzMETVQcFZxdGTUYMRN7ggnk1LWqS5Oxd2BRAfg', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaWZEOGo5T0dJd0lSazJWVVpERnEyU0k5aVVlNGdCbUpQNTFjck1hciI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775052721),
+('I1gzuFmIQKVA5JOO3Ja0OshzFoV4upycl2dwnW6U', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidHA3dmtoNXBJcUhMUnowTTIzbjVrTjIyaTN0YUhSOVVlaHRHY3BmSiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775051237),
+('iHyxQbXOoI7T9sPWUVZWHzF63WmrAq1FHUZcNvhk', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNkI0a280dnRWNVVHaDFIdkdBTzVkOTlyTkZNNUlkMURLZkxNVHhyTyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQwOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJhdGFtaWVudG9kZWRhdG9zIjtzOjU6InJvdXRlIjtzOjI0OiJ0cmF0YW1pZW50b2RlZGF0b3MuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMDQxOTcyNDUxO3M6MTg6Im1vZHVsb3NfcGVybWl0aWRvcyI7YToxMjp7aTowO3M6OToiRGFzaGJvYXJkIjtpOjE7czo4OiJQw6FnaW5hcyI7aToyO3M6MTc6IlRhYmxhIENvbmR1Y3RvcmVzIjtpOjM7czo1OiJIb3RlbCI7aTo0O3M6MjA6Ikhpc3RvcmlhbCBIYWJpdGFjaW9uIjtpOjU7czo4OiJVc3VhcmlvcyI7aTo2O3M6NToiUm9sZXMiO2k6NztzOjEwOiJQcmVjaW8gR0xQIjtpOjg7czo4OiJDYXJydXNlbCI7aTo5O3M6MTU6IlNvbGljaXRhciBWaWFqZSI7aToxMDtzOjE0OiJHZXN0aW9uIFZpYWplcyI7aToxMTtzOjE1OiJTb2xpY2l0YXIgVmlhamUiO31zOjE5OiJwZXJtaXNvc19wZXJtaXRpZG9zIjthOjU6e2k6MDtzOjIyOiJBY3R1YWxpemFyIENvbmR1Y3RvcmVzIjtpOjE7czo1OiJIb3RlbCI7aToyO3M6MTA6IkRlc2FzaWduYXIiO2k6MztzOjc6IkFzaWduYXIiO2k6NDtzOjE0OiJBcHJvYmFyIFZpYWplcyI7fX0=', 1775052665),
+('JioXgjjuwq223As20U1AN2mfDFpCZ2tPB184mrnC', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoickdIbjd0c3RGTkhYTWo4bzgwV3pwcUFtZ3M3Nmo3RDJqRU1QVzlrbSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063212),
+('Jl4eAOg2vP26yf8DR0tVrUt6Xa8Hp9GOkjNMMFQN', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiSlYwOW9ScGY4TGliZzNNVFJGODlSMVd3ZGViYjZ0OXpnM3ZhM3V6MiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063898),
+('JqxziMEAAThNPIUATntCu7Edn98RuEz0V1VmQhpK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibHdnYmNKNnFwOFlxVzdOV1h0SXBKeGpqU3JNRXNUUlFvcTlyZExCViI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063810),
+('K03BEbzu7RNMqUcsv43frFBZ8DduMALG1a0tKJ7G', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiYkVxVjFkSWJWZVZnQjNEQ0NHbTd4aFVLWUJ1TEY5aVhTSGVEQ3l1SCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775482029),
+('KaFY27r1AvCAFhycR0DPHBFiPgw7qvqPIo4BPO9U', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQURpSlpuOFpHb3BjbUttTzFJbGxHUEZnWnZybmdwNjBSTjJCTjBCNSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063850),
+('kCjbfIju0LGgQ6EPrIbX8W2y45rcV197k8T95xSf', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiWGoxaTJXUDhOR3dRcjhHRkt5WDY4NmxDSHFCR2x4bmhLTjkzN3UxMiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775075248),
+('kYbOJ7f2iRBo0kYxioGBc950hcmpPDI0rH6Q1th1', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUmZLanlvVnIwS281UE51blBrdExQYTFiVkp2cktXakJGN3RwblFQdyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064733),
+('lc2isHgJ7BTfQw2ooevk1VB4PLHQvywXfIM1QraJ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYjNET3lTVlZBd21NdWYyQ1FXWmxlaVVlV2FOa2R5Z0NwdGdoRzgxMSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775052674),
+('lmSv7FUqKfkAyjWmyrbiRpZU7QvQelj5uauP4LtB', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibmdYMWRCWXpnMTA3ODFsTktzZlB2WlBqTTEyY2FQRnUzTVZGcmdLNSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064956),
+('LnLdGY8R3W2qDx0JNBxOmlpv50S6IbAVyd6NAJ13', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmNtMWFUMmw0N0NoWWkyQ1NIaFB5bUk3RldZM0Y5QkRzbzhaRnJjdCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775049892),
+('MB4jQyOdS2B42GQONsjqyy8BJQCGQQwelzLXBVVW', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNHQ2NnZOeUxCUkNCOUxkMFZtNDd0VXZwUVcwVnFpRTVGU0V4V1daMCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjUxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJhdGFtaWVudG8tZGF0b3MvZG9jdW1lbnRvLzQiO3M6NToicm91dGUiO3M6MTU6ImZpcm1hLmRvY3VtZW50byI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjEwNDE5NzI0NTE7czoxODoibW9kdWxvc19wZXJtaXRpZG9zIjthOjEyOntpOjA7czo5OiJEYXNoYm9hcmQiO2k6MTtzOjg6IlDDoWdpbmFzIjtpOjI7czoxNzoiVGFibGEgQ29uZHVjdG9yZXMiO2k6MztzOjU6IkhvdGVsIjtpOjQ7czoyMDoiSGlzdG9yaWFsIEhhYml0YWNpb24iO2k6NTtzOjg6IlVzdWFyaW9zIjtpOjY7czo1OiJSb2xlcyI7aTo3O3M6MTA6IlByZWNpbyBHTFAiO2k6ODtzOjg6IkNhcnJ1c2VsIjtpOjk7czoxNToiU29saWNpdGFyIFZpYWplIjtpOjEwO3M6MTQ6Ikdlc3Rpb24gVmlhamVzIjtpOjExO3M6MTU6IlNvbGljaXRhciBWaWFqZSI7fXM6MTk6InBlcm1pc29zX3Blcm1pdGlkb3MiO2E6NTp7aTowO3M6MjI6IkFjdHVhbGl6YXIgQ29uZHVjdG9yZXMiO2k6MTtzOjU6IkhvdGVsIjtpOjI7czoxMDoiRGVzYXNpZ25hciI7aTozO3M6NzoiQXNpZ25hciI7aTo0O3M6MTQ6IkFwcm9iYXIgVmlhamVzIjt9fQ==', 1775496372),
+('MNkQdPmWhOGhx7iiV4QEDRm54innUlyDavSEwwkz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiTUdYaER2ekFTakNUalcwZ2hNT0xqSVA2YUpxTFN1VjlkTzVsNVloNCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775075201),
+('mtD6AvjzzFfiQFxjqnaTEX6yC7voip2syjAHOrZi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiTUhXNVJHcWlacVNQeGxMR0FmVEdKMU8weGlNRGVRUkE3VjFoTWVhTCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775075212),
+('nhIHXpEAQNhzHWzkVAMTDOZQpQbgxGPlR4es3Myq', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiQWVoQ1lTUzJHTDFmOXFSSzE1Y25MWVZTdzIxVmoyQTRLbWQyWmdhQyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775075185),
+('QRjEoZ1IDjunStuNcf5xIJUmPtv7CZ8N3Qd52Tup', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieGduQVk1UzY5WWttM3VyUmlTdm1na29OQkRISkp2Q2Z0bk1pd0tRbSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063105),
+('rc5NJdbIIAs2OkI7s2hLqGRiddCcrZ6hQkg5ovMv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMEwwTFFQMXhoaXVCYzY4UE83R0NrelNVTmdmUDJ5SXVoTkhWdGFKOSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775052779),
+('reiXXZ97pld5bBLGahyt6ZGWrwU0NQ6hk5hLKUL5', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiODFuNld1c3ljWWVrdkdLRkRZZnRhUnZ5ZThxNVdHaG92UHh3NFVWZSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064924),
+('rm3oqOHGeiLLSoCTvmjeCbEpZ5yRYr54a8f0ov6O', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoicUhITFZ4aHZod2pJRWxZRWNFWGxvZDNNR3NnQjNYVDBROUlnRlNTciI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063106),
+('SNUTe95FcstD2QM8Z8FmicwfSVbjrOCF1V18ikAR', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiZ0JZaGFva09XVTJKWEF1YlJTS1BiU0NJbVJJdm9XQ1ZESnJOcUp3TyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775063892),
+('StdT5QjoPxKZVlluMg3CD0IfSJNtqsBHsW3Ezbf2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZzUwc0ZJYlFTSTBFU3VOWW9tT1kyZFl5MTB1cDhVdUlKYm1tZzhBSiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775052667),
+('tfNYSEIHmsbgXiTLTmyJ32CjcKkRrcTY8r4Gumte', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaFh0TGR3dHZHTVBmTXAyMW53YUltRXMzSXZBVWxqcmlyQk5GcDNaQiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775054055),
+('TIrPQ9Fam8QO44V3mWmBuUuXw8a8n1zuIvrAb8Gn', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibk4xMlk0aUtJRm9rQXRJOXRiamtqQWFrVWQ5RkN4a0NxMDFtMU1wTSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064973),
+('u4ZXQ1Xbz4PVsHiXa7GGnzPWjur7sCuiHzSGHMOp', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRzZPRk5uUGN2WTdxWXhmdEl0dmNrdEltZHVBczZnbzJRRXhZbEo1SiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775065750),
+('uUePGwJJxFPPET52K6cTY8nhka0ULG7g2Zl21e0C', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaFRTMGlwSjhrM2xySTRSMEFkV2xkaGFQelB1UTNQUWw2djBvMk90diI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775065667),
+('VdpKRQjVekVOX3rAIqFcTY4ru2akezljPwHckYA1', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiR21CZU9aZnFVZjBiY296SXM4RXBSRGNZdHJzbktrWExjMW5wQzZjWCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775064548),
+('vEcMs2YLc62yJOSu7W37rDvrzn4HLHNGla4JD2lM', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiN2hRYU96NnNHeldmSUNFN3lBdjUxNTQ3cVRyUjd2MzJPamFOYk1KbiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775047415),
+('VHWD7H0cn9v5FD5FzNpnQHHHxY6ySbIkxqQezLMU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUFV3YVpVUnFlNzNJZEJJOWw5bVRTc1BuQ2FwWVd5bzczZVUycG84WiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775049905),
+('wAiGEe9LaHNframM7ejdIFSjfldbW5UTeSf5ViTK', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic0xBbG5JaU84RlFJWGlVdG1TejZDbkNwZjhtYkxsOGpLaGIzMXZUbSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vYnRlbmVyLXRleHRvcyI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775053977),
+('X3YvYDvCD982hdOlMxhDMRdZynTUNDtb1bU7Uh8k', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiNzAybXBLZFZ1a0hMdG5sUm1IM2h6c2hlU0lZcklJWmdiZFJFbkVzTiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775076129),
+('xBwpxQqBYJTtp58rbqEZ0zF32Gq9e86S3wikveOU', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiZkRJSUNkVlVCazY1WVdvT1RoZHJ0S2NXeGFmOHZXbzc0YkVmMkRJMSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjUxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJhdGFtaWVudG8tZGF0b3MvZG9jdW1lbnRvLzIiO3M6NToicm91dGUiO3M6MTU6ImZpcm1hLmRvY3VtZW50byI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjEwNDE5NzI0NTE7czoxODoibW9kdWxvc19wZXJtaXRpZG9zIjthOjEyOntpOjA7czo5OiJEYXNoYm9hcmQiO2k6MTtzOjg6IlDDoWdpbmFzIjtpOjI7czoxNzoiVGFibGEgQ29uZHVjdG9yZXMiO2k6MztzOjU6IkhvdGVsIjtpOjQ7czoyMDoiSGlzdG9yaWFsIEhhYml0YWNpb24iO2k6NTtzOjg6IlVzdWFyaW9zIjtpOjY7czo1OiJSb2xlcyI7aTo3O3M6MTA6IlByZWNpbyBHTFAiO2k6ODtzOjg6IkNhcnJ1c2VsIjtpOjk7czoxNToiU29saWNpdGFyIFZpYWplIjtpOjEwO3M6MTQ6Ikdlc3Rpb24gVmlhamVzIjtpOjExO3M6MTU6IlNvbGljaXRhciBWaWFqZSI7fXM6MTk6InBlcm1pc29zX3Blcm1pdGlkb3MiO2E6NTp7aTowO3M6MjI6IkFjdHVhbGl6YXIgQ29uZHVjdG9yZXMiO2k6MTtzOjU6IkhvdGVsIjtpOjI7czoxMDoiRGVzYXNpZ25hciI7aTozO3M6NzoiQXNpZ25hciI7aTo0O3M6MTQ6IkFwcm9iYXIgVmlhamVzIjt9fQ==', 1775077533),
+('yzb5Y49RRc29tq7YRm8rUTfAV5KFyQFg9QTprsiR', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiZ1J0dEVkcklYM3ZhaU1qM3UxcUJQRWk2c0kyT1piSUtwd1BPWkp4eiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775496338),
+('ZEA0X41jsO1Cy8l363405iw8PwalT6qqc2hYfFlb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibzBXSjlCM2tnTU9jaktkdmVUUkx1QzAydmJZRUs4R2NKN0dsdXhyMiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1775065557),
+('zMGXH01i9NC6hH0l2uzUsqnCIuTvYpue0X8eqs25', 1041972451, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNlJ2R2Z3M3BMdHBVVG5sMWhnWGdmZzNGeTkyMUE3S3BoTjdzUjVqSSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQwOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJhdGFtaWVudG9kZWRhdG9zIjtzOjU6InJvdXRlIjtzOjI0OiJ0cmF0YW1pZW50b2RlZGF0b3MuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMDQxOTcyNDUxO3M6MTg6Im1vZHVsb3NfcGVybWl0aWRvcyI7YToxMjp7aTowO3M6OToiRGFzaGJvYXJkIjtpOjE7czo4OiJQw6FnaW5hcyI7aToyO3M6MTc6IlRhYmxhIENvbmR1Y3RvcmVzIjtpOjM7czo1OiJIb3RlbCI7aTo0O3M6MjA6Ikhpc3RvcmlhbCBIYWJpdGFjaW9uIjtpOjU7czo4OiJVc3VhcmlvcyI7aTo2O3M6NToiUm9sZXMiO2k6NztzOjEwOiJQcmVjaW8gR0xQIjtpOjg7czo4OiJDYXJydXNlbCI7aTo5O3M6MTU6IlNvbGljaXRhciBWaWFqZSI7aToxMDtzOjE0OiJHZXN0aW9uIFZpYWplcyI7aToxMTtzOjE1OiJTb2xpY2l0YXIgVmlhamUiO31zOjE5OiJwZXJtaXNvc19wZXJtaXRpZG9zIjthOjU6e2k6MDtzOjIyOiJBY3R1YWxpemFyIENvbmR1Y3RvcmVzIjtpOjE7czo1OiJIb3RlbCI7aToyO3M6MTA6IkRlc2FzaWduYXIiO2k6MztzOjc6IkFzaWduYXIiO2k6NDtzOjE0OiJBcHJvYmFyIFZpYWplcyI7fX0=', 1775482038);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tratamiento_firmas`
+--
+
+CREATE TABLE `tratamiento_firmas` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `cedula` varchar(255) NOT NULL,
+  `lugar_expedicion` varchar(255) NOT NULL,
+  `acepto_terminos` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `ciudad_firma` varchar(255) DEFAULT NULL,
+  `firma` longtext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tratamiento_firmas`
+--
+
+INSERT INTO `tratamiento_firmas` (`id`, `nombre`, `cedula`, `lugar_expedicion`, `acepto_terminos`, `created_at`, `updated_at`, `ciudad_firma`, `firma`) VALUES
+(1, 'Roys', '101010101', '2026-04-02', 1, '2026-04-01 17:45:57', '2026-04-01 17:45:57', NULL, NULL),
+(2, 'Roys Simarra Perez', '1041972514', 'Cartagena', 1, '2026-04-01 20:42:09', '2026-04-01 20:42:09', 'cartagena', 'data:image/png;base64,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'),
+(3, 'Roys Simarra Gomez', '1041972451', 'Cartagena', 1, '2026-04-06 13:27:09', '2026-04-06 13:27:09', 'cartagena', 'data:image/png;base64,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'),
+(4, 'Roys Simarra Gomez', '1041972451', 'Cartagena', 1, '2026-04-06 17:25:38', '2026-04-06 17:25:38', 'cartagena', 'data:image/png;base64,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');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tratamiento_textos`
+--
+
+CREATE TABLE `tratamiento_textos` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `subtitulo` text DEFAULT NULL,
+  `terminos_legales` longtext DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `color_fondo` varchar(255) NOT NULL DEFAULT '#f8fafc',
+  `color_texto` varchar(255) NOT NULL DEFAULT '#1e293b',
+  `color_boton` varchar(255) NOT NULL DEFAULT '#378E77'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tratamiento_textos`
+--
+
+INSERT INTO `tratamiento_textos` (`id`, `titulo`, `subtitulo`, `terminos_legales`, `created_at`, `updated_at`, `color_fondo`, `color_texto`, `color_boton`) VALUES
+(1, 'Autorización de Tratamiento de Datos', 'Documento de cumplimiento a la Ley 1581 de 2012 y el Decreto 1377 de 2013 de PLEXA S.A.S E.S.P.', '<ul>\r\n<li>Consultar, verificar, reportar, suministrar y analizar la información a partir de mi hoja de vida y/o documentos personales a las centrales de información debidamente constituidas.</li>\r\n<li>Aplicar en cualquier momento pruebas de alcoholimetría y de detección de consumo de narcóticos o sustancias psicoactivas (en caso de ser conductor).</li>\r\n<li>Que dicha información pueda ser utilizada para efectos de remitir los resultados a terceros, respetando las limitaciones impuestas por las normas legales y las autoridades competentes.</li>\r\n</ul>', '2026-03-31 15:16:34', '2026-04-01 17:49:05', '#f8fafc', '#000000', '#378e77');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `cedula` int(20) NOT NULL,
+  `Nombre` varchar(50) NOT NULL,
+  `Apellido` varchar(50) NOT NULL,
+  `email` varchar(250) DEFAULT NULL,
+  `cel` varchar(30) DEFAULT NULL,
+  `contraseña` varchar(255) NOT NULL,
+  `rol` int(2) NOT NULL,
+  `estado` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`cedula`, `Nombre`, `Apellido`, `email`, `cel`, `contraseña`, `rol`, `estado`) VALUES
+(1041972451, 'Roys Rafael', 'Simarra Gomez', 'roisroisomg@gmail.com', '3245145599', 'Plexa2025', 1, 1),
+(1042975487, 'plexa_core', 'aja', 'bueno@gmail.com', NULL, 'Plexa2025', 3, 1),
+(1047418839, 'Henry Jose', 'Castro Ricardo', 'hcastro@plexa.co', NULL, 'Plexa2025', 1, 1);
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `1_carrusel`
+--
+ALTER TABLE `1_carrusel`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `2_precios_glp`
+--
+ALTER TABLE `2_precios_glp`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `3_tickets`
+--
+ALTER TABLE `3_tickets`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `cache`
+--
+ALTER TABLE `cache`
+  ADD PRIMARY KEY (`key`);
+
+--
+-- Indices de la tabla `cache_locks`
+--
+ALTER TABLE `cache_locks`
+  ADD PRIMARY KEY (`key`);
+
+--
+-- Indices de la tabla `conductores`
+--
+ALTER TABLE `conductores`
+  ADD PRIMARY KEY (`cedula`);
+
+--
+-- Indices de la tabla `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indices de la tabla `habitaciones`
+--
+ALTER TABLE `habitaciones`
+  ADD PRIMARY KEY (`numero`);
+
+--
+-- Indices de la tabla `habitaciones_historial`
+--
+ALTER TABLE `habitaciones_historial`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `indicadores`
+--
+ALTER TABLE `indicadores`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codigo` (`codigo`);
+
+--
+-- Indices de la tabla `indicadors`
+--
+ALTER TABLE `indicadors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `indicadors_codigo_unique` (`codigo`);
+
+--
+-- Indices de la tabla `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `jobs_queue_index` (`queue`);
+
+--
+-- Indices de la tabla `job_batches`
+--
+ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `logs`
+--
+ALTER TABLE `logs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Indices de la tabla `permisos`
+--
+ALTER TABLE `permisos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`,`paginas`),
+  ADD KEY `id_2` (`id`),
+  ADD KEY `modulos` (`paginas`);
+
+--
+-- Indices de la tabla `permisos_modulos`
+--
+ALTER TABLE `permisos_modulos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `rol` (`roles`);
+
+--
+-- Indices de la tabla `permisos_roles`
+--
+ALTER TABLE `permisos_roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  ADD KEY `personal_access_tokens_expires_at_index` (`expires_at`);
+
+--
+-- Indices de la tabla `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sessions_user_id_index` (`user_id`),
+  ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indices de la tabla `tratamiento_firmas`
+--
+ALTER TABLE `tratamiento_firmas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `tratamiento_textos`
+--
+ALTER TABLE `tratamiento_textos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`cedula`),
+  ADD KEY `rol` (`rol`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `1_carrusel`
+--
+ALTER TABLE `1_carrusel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de la tabla `2_precios_glp`
+--
+ALTER TABLE `2_precios_glp`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT de la tabla `3_tickets`
+--
+ALTER TABLE `3_tickets`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+
+--
+-- AUTO_INCREMENT de la tabla `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `habitaciones_historial`
+--
+ALTER TABLE `habitaciones_historial`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT de la tabla `indicadores`
+--
+ALTER TABLE `indicadores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `indicadors`
+--
+ALTER TABLE `indicadors`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `logs`
+--
+ALTER TABLE `logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos`
+--
+ALTER TABLE `permisos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos_modulos`
+--
+ALTER TABLE `permisos_modulos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT de la tabla `permisos_roles`
+--
+ALTER TABLE `permisos_roles`
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tratamiento_firmas`
+--
+ALTER TABLE `tratamiento_firmas`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `tratamiento_textos`
+--
+ALTER TABLE `tratamiento_textos`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `permisos`
+--
+ALTER TABLE `permisos`
+  ADD CONSTRAINT `permisos_ibfk_1` FOREIGN KEY (`paginas`) REFERENCES `permisos_modulos` (`id`);
+
+--
+-- Filtros para la tabla `permisos_modulos`
+--
+ALTER TABLE `permisos_modulos`
+  ADD CONSTRAINT `permisos_modulos_ibfk_1` FOREIGN KEY (`roles`) REFERENCES `permisos_roles` (`id`);
+
+--
+-- Filtros para la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `permisos_roles` (`id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
