@@ -54,18 +54,19 @@ class TratamientoDatosController extends Controller
         return back()->with('success', '¡Textos y colores actualizados correctamente!');
     }
 
-    // 3. API para recibir los datos desde PlexaWeb (Python) ACTUALIZADO
+    // 3. API para recibir los datos desde PlexaWeb (Python) - VERSIÓN FINAL CON DESCARGA
     public function guardarFirmaApi(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'cedula' => 'required|string|max:50',
-            'lugar_expedicion' => 'required|string|max:255', // <-- Nuevo
-            'ciudad_firma' => 'required|string|max:255',     // <-- Nuevo
+            'lugar_expedicion' => 'required|string|max:255',
+            'ciudad_firma' => 'required|string|max:255',
             'acepto_terminos' => 'required',
-            'firma' => 'required'                            // <-- Nuevo (Imagen base64)
+            'firma' => 'required' 
         ]);
 
+        // Guardamos en la base de datos
         $firma = TratamientoFirma::create([
             'nombre' => $request->nombre,
             'cedula' => $request->cedula,
@@ -75,9 +76,14 @@ class TratamientoDatosController extends Controller
             'firma' => $request->firma,
         ]);
 
+        // GENERAMOS EL ENLACE EXACTO BASADO EN TU web.php
+        $url_pdf = route('firma.documento', ['id' => $firma->id]);
+
+        // Retornamos la respuesta mágica
         return response()->json([
             'success' => true,
             'message' => '¡Firma guardada exitosamente!',
+            'url_pdf' => $url_pdf, 
             'data' => $firma
         ], 201);
     }
@@ -93,7 +99,7 @@ class TratamientoDatosController extends Controller
         ]);
     }
 
-    // 5. NUEVO: Función para generar la vista de impresión/descarga individual
+    // 5. Función para generar la vista de impresión/descarga individual
     public function verDocumento($id)
     {
         $firma = TratamientoFirma::findOrFail($id);

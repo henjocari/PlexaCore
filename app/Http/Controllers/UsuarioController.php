@@ -38,7 +38,7 @@ class UsuarioController extends Controller
             'email' => $request->email,
             'cel' => $request->cel,
             // 🔐 Encriptamos la contraseña para usar autenticación
-            'contraseña' => Hash::make($request->contraseña),
+            'contraseña' => $request->contraseña,
             'rol' => $request->rol,
             'estado' => $request->estado,
         ]);
