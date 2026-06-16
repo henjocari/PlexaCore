@@ -35,8 +35,7 @@ class PrecioGlpController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // CAMBIO AQUÍ: Aumentado a 100MB (102400 KB)
-            // Antes era 20480 (20MB)
+            // Aumentado a 100MB (102400 KB)
             'archivo_pdf' => 'required|file|mimes:pdf|max:102400',
         ]);
 
@@ -44,10 +43,8 @@ class PrecioGlpController extends Controller
             if ($request->hasFile('archivo_pdf')) {
                 $file = $request->file('archivo_pdf');
                 
-                // 1. OBTENEMOS EL NOMBRE ORIGINAL
+                // OBTENEMOS EL NOMBRE ORIGINAL
                 $nombreOriginal = $file->getClientOriginalName();
-                
-                // Ya NO reemplazamos espacios por guiones. Se guarda tal cual.
                 $nombreArchivo = $nombreOriginal; 
 
                 // Ruta de destino
@@ -74,7 +71,6 @@ class PrecioGlpController extends Controller
             return back()->with('error', 'Falta el archivo.');
 
         } catch (\Exception $e) {
-            // En caso de error grave, lo mostramos para depurar
             dd("ERROR: " . $e->getMessage());
         }
     }
@@ -86,5 +82,39 @@ class PrecioGlpController extends Controller
         
         DB::table('2_precios_glp')->where('id', $id)->update(['estado' => 0]);
         return back()->with('success', 'Documento eliminado.');
+    }
+
+    // =======================================================
+    // MÉTODO PARA MOSTRAR EL PDF A NEWPLEXA (VISOR)
+    // =======================================================
+    public function verPDF($archivo)
+    {
+        $ruta = public_path('archivos_glp/' . $archivo); 
+
+        if (!file_exists($ruta)) {
+            abort(404, 'El documento PDF no fue encontrado en el servidor.');
+        }
+
+        return response()->file($ruta, [
+            'Content-Type' => 'application/pdf',
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS'
+        ]);
+    }
+
+    // =======================================================
+    // MÉTODO PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL)
+    // =======================================================
+    public function descargarPDF($archivo)
+    {
+        $ruta = public_path('archivos_glp/' . $archivo); 
+
+        if (!file_exists($ruta)) {
+            abort(404, 'El documento PDF no fue encontrado.');
+        }
+
+        return response()->download($ruta, $archivo, [
+            'Access-Control-Allow-Origin' => '*'
+        ]);
     }
 }

@@ -72,9 +72,6 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::patch('/precio-glp/{id}/inactivar', [PrecioGlpController::class, 'inactivar'])
         ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Precio GLP')
         ->name('precio.inactivar');
-    
-    Route::get('/precio-glp/ver/{archivo}', [PrecioGlpController::class, 'verPDF'])
-        ->name('precio.ver');
 
     // ==========================================
     //           MÓDULO DE VIAJES (CON CANDADOS)
@@ -124,14 +121,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
  //--------------TRATAMIENTO DE DATOS------------\\
     Route::get('/tratamientodedatos', [TratamientoDatosController::class, 'index'])
-        // ->middleware(VerificarModulo::class . ':Tratamiento de Datos')
         ->name('tratamientodedatos.index');
 
     Route::post('/tratamientodedatos/actualizar', [TratamientoDatosController::class, 'update'])
-        // ->middleware(VerificarModulo::class . ':Tratamiento de Datos')
         ->name('tratamientodedatos.update');
 
-    // 👇 ESTA ES LA RUTA QUE FALTABA PARA VER EL PDF 👇
     Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
         ->name('firma.documento');
 
@@ -173,13 +167,17 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-
 });
 
-    // ==========================================
-    Route::post('/guardar-firma', [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']);
+// ==========================================
+//   RUTAS PÚBLICAS DE LA API Y RECURSOS
+// ==========================================
 
-    // RUTA PARA QUE PLEXAWEB LEA LOS TEXTOS Y COLORES
-    Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);   
-    
+Route::post('/guardar-firma', [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']);
+Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);   
+
+// 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR) 👇
+Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])->name('precio.publico');
+
+// 👇 NUEVA RUTA: PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL) 👇
+Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])->name('precio.descargar');

@@ -15,7 +15,7 @@
         .fade-in { animation: fadeIn ease 1.2s; }
         @keyframes fadeIn { 0% { opacity:0; } 100% { opacity:1; } }
         
-        /* ESTILO LIMPIO "HOJA DE PAPEL" */
+        
         .pdf-paper {
             width: 100%;
             height: 1150px; /* Altura perfecta para A4 */
