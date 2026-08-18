@@ -13,6 +13,7 @@
         $misModulos = session('modulos_permitidos', []);
     @endphp
 
+    {{-- DASHBOARD --}}
     @if(in_array('Dashboard', $misModulos))
         <li class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
             <a class="nav-link" href="{{ url('/dashboard') }}">
@@ -22,6 +23,7 @@
         </li>
     @endif
 
+    {{-- USUARIOS --}}
     @if(in_array('Usuarios', $misModulos) || in_array('Roles', $misModulos))
         <li class="nav-item">
             <a class="nav-link" href="{{ url('/usuarios') }}">
@@ -31,6 +33,7 @@
         </li>
     @endif
 
+    {{-- GESTIÓN DE HOTEL --}}
     @if(in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Sección</div>
@@ -61,6 +64,7 @@
         </li>
     @endif
 
+    {{-- ADMINISTRACIÓN --}}
     @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos) || true)
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Configuración</div>
@@ -101,6 +105,7 @@
         </li>
     @endif
 
+    {{-- LOGÍSTICA --}}
     @if(in_array('Solicitar Viaje', $misModulos) || in_array('Gestion Viajes', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Logística</div>
@@ -128,6 +133,67 @@
                            <i class="fas fa-clipboard-list mr-2 text-primary"></i> Viajes Solicitados
                         </a>
                     @endif
+                </div>
+            </div>
+        </li>
+    @endif
+
+    {{-- MEDIO AMBIENTE --}}
+    @if(in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Medio Ambiente</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAmbiental"
+                aria-expanded="true" aria-controls="collapseAmbiental">
+                <i class="fas fa-fw fa-leaf"></i>
+                <span>Gestión ambiental</span>
+            </a>
+            <div id="collapseAmbiental" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Formatos:</h6>
+                    
+                    @if(in_array('Hotel', $misModulos))
+                        <a class="collapse-item" href="{{ route('inspeccion.quimica') }}">
+                            <i class="fas fa-flask mr-2 text-gray-500"></i> Inspección Química
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </li>
+    @endif
+
+    {{-- MÓDULO MANIFIESTO --}}
+    @if(in_array('Manifiesto', $misModulos) || in_array('Manifiestos', $misModulos) || in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Gestion Logistica</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseManifiesto"
+                aria-expanded="true" aria-controls="collapseManifiesto">
+                
+                {{-- OPCIÓN A: Ícono FontAwesome alusivo a manifiestos y planillas de carga --}}
+                <i class="fas fa-fw fa-file-invoice"></i>
+
+                {{-- OPCIÓN B: Si deseas usar una imagen propia, descomenta la siguiente línea y ajusta la ruta --}}
+                {{-- <img src="{{ asset('img/manifiesto_icon.svg') }}" alt="Manifiesto" width="18" class="mr-2"> --}}
+
+                <span>Manifiesto</span>
+            </a>
+
+            <div id="collapseManifiesto" class="collapse" aria-labelledby="headingManifiesto" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Gestión de Manifiestos:</h6>
+                    
+                    {{-- Enlace principal a la vista de manifiesto --}}
+                    <a class="collapse-item {{ request()->is('manifiestos') ? 'active' : '' }}" href="{{ url('/manifiestos') }}">
+                        <i class="fas fa-clipboard-list mr-2 text-gray-500"></i> Validacion de Manifiestos
+                    </a>
+
+                    {{-- Enlace secundario (Opcional, para crear un nuevo manifiesto) --}}
+                    <a class="collapse-item {{ request()->is('manifiestos/crear') ? 'active' : '' }}" href="{{ url('/manifiestos/crear') }}">
+                        <i class="fas fa-plus-circle mr-2 text-success"></i> Silogtran
+                    </a>
                 </div>
             </div>
         </li>

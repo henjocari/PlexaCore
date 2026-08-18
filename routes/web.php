@@ -13,12 +13,15 @@ use App\Http\Controllers\PrecioGlpController;
 use App\Http\Controllers\CarruselController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TratamientoDatosController;
+use App\Http\Controllers\InspeccionQuimicaController;
+use App\Http\Controllers\ManifiestosController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
 // ----------------------
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ----------------------
 // RUTAS PROTEGIDAS (requieren sesión)
@@ -30,8 +33,8 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     
     // 🚫 Módulo Dashboard
     Route::get('/dashboard', function () { return view('dashboard'); })
-    ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Dashboard')
-    ->name('dashboard');
+        ->middleware(VerificarModulo::class . ':Dashboard')
+        ->name('dashboard');
 
     // 🚫 Módulo Tabla Conductores
     Route::get('/tablas', [ConductorController::class, 'tablas'])
@@ -70,7 +73,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->name('precio.store');
     
     Route::patch('/precio-glp/{id}/inactivar', [PrecioGlpController::class, 'inactivar'])
-        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Precio GLP')
+        ->middleware(VerificarModulo::class . ':Precio GLP')
         ->name('precio.inactivar');
 
     // ==========================================
@@ -100,26 +103,26 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     //--------------CARRUSEL------------\\
     Route::get('/carrusel', [CarruselController::class, 'carrusel'])
-        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.index');
 
     Route::post('/carrusel/guardar', [CarruselController::class, 'store'])
-        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.store');
 
     Route::post('/carrusel/{id}/update-imagen', [CarruselController::class, 'updateImagen'])
-        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.update_imagen');
 
     Route::patch('/carrusel/{id}/inactivar', [CarruselController::class, 'inactivar'])
-        ->middleware(\App\Http\Middleware\VerificarModulo::class . ':Carrusel')
+        ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.inactivar');
 
     Route::patch('/carrusel/{id}/activar', [CarruselController::class, 'activar'])
         ->middleware(VerificarModulo::class . ':Carrusel')
         ->name('carrusel.activar');
 
- //--------------TRATAMIENTO DE DATOS------------\\
+    //--------------TRATAMIENTO DE DATOS------------\\
     Route::get('/tratamientodedatos', [TratamientoDatosController::class, 'index'])
         ->name('tratamientodedatos.index');
 
@@ -129,8 +132,8 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
         ->name('firma.documento');
 
-   // ==========================================
-    //       RUTAS DE TICKETS (PAPELERA)    
+    // ==========================================
+    //        RUTAS DE TICKETS (PAPELERA)    
     // ==========================================
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
@@ -161,12 +164,24 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Historial Habitacion')
         ->name('historial.habitaciones');
+    
+    // ==========================================
+    //        MÓDULO DE GESTIÓN AMBIENTAL
+    // ==========================================
+    Route::get('/inspeccion-quimica', [InspeccionQuimicaController::class, 'create'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('inspeccion.quimica');
 
-    // CloudFleet
-    Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])->name('actualizarconductores');
+    Route::post('/inspeccion-quimica', [InspeccionQuimicaController::class, 'store'])->name('inspecciones.store');
+    Route::get('/inspeccion-quimica/historico', [InspeccionQuimicaController::class, 'index'])->name('inspecciones.index');
 
-    // Logout
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // ==========================================
+    //           MÓDULO DE MANIFIESTO
+    // ==========================================
+    Route::get('/manifiestos', [ManifiestosController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('manifiestos');
+
 });
 
 // ==========================================

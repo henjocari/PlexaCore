@@ -55,7 +55,7 @@
                                             <input type="text" name="beneficiario_nombre" class="form-control" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="text-secondary small font-weight-bold">Cédula / ID *</label>
+                                            <label class="text-secondary small font-weight-bold">Cédula*</label>
                                             <input type="text" name="beneficiario_cedula" class="form-control" required inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                         </div>
                                         <div class="col-md-6 mb-3">
