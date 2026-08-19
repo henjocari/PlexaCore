@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Manifiesto;
 use Illuminate\Http\Request;
 
 class ManifiestosController extends Controller
 {
     /**
-     * Muestra la vista principal de manifiestos.
-     *
-     * @return \Illuminate\View\View
+     * Carga la vista de manifiestos con los datos de la base de datos.
      */
     public function index()
     {
-        // Carga el archivo ubicado en resources/views/manifiestos.blade.php
-        return view('manifiestos');
+        // Consulta todos los registros ordenados por id descendente
+        $manifiestos = Manifiesto::orderBy('id', 'desc')->get();
+
+        // Retorna la vista enviando la variable $manifiestos
+        return view('manifiestos', compact('manifiestos'));
     }
 }

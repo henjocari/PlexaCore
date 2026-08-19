@@ -181,6 +181,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/manifiestos', [ManifiestosController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('manifiestos');
+        
 
 });
 
