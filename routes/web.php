@@ -93,9 +93,17 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/probar-email', function() {
         try {
             $miCorreo = 'roisroisomg@gmail.com'; 
-            $datos = ['empleado' => 'Usuario de Prueba', 'destino' => 'Destino Test', 'fecha' => '2026-12-31'];
-            Illuminate\Support\Facades\Mail::to($miCorreo)->send(new App\Mail\SolicitudViajeMail($datos));
+            $datos = [
+                'empleado' => 'Usuario de Prueba',
+                'destino' => 'Destino Test',
+                'fecha' => '2026-12-31'
+            ];
+
+            Illuminate\Support\Facades\Mail::to($miCorreo)
+                ->send(new App\Mail\SolicitudViajeMail($datos));
+
             return "✅ ¡ÉXITO! Laravel dice que envió el correo.";
+
         } catch (\Exception $e) {
             return "❌ ERROR DETECTADO: " . $e->getMessage();
         }
@@ -129,11 +137,8 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/tratamientodedatos/actualizar', [TratamientoDatosController::class, 'update'])
         ->name('tratamientodedatos.update');
 
-    Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
-        ->name('firma.documento');
-
     // ==========================================
-    //        RUTAS DE TICKETS (PAPELERA)    
+    //        RUTAS DE TICKETS (PAPELERA)
     // ==========================================
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
@@ -149,12 +154,18 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/conductores', [ConductorController::class, 'store']);
     Route::put('/conductores/{id}', [ConductorController::class, 'update']);
     Route::delete('/conductores/{id}', [ConductorController::class, 'destroy']);
-    Route::get('/conductores/buscar', [ConductorController::class, 'buscarDisponibles'])->name('conductores.buscar');
+    Route::get('/conductores/buscar', [ConductorController::class, 'buscarDisponibles'])
+        ->name('conductores.buscar');
 
     // Habitaciones
-    Route::put('/habitaciones/{numero}', [HabitacionController::class, 'update'])->name('habitaciones.update');
-    Route::post('/habitaciones/{id}/asignar', [HabitacionController::class, 'asignarConductor'])->name('habitaciones.asignar');
-    Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])->name('habitaciones.desasignar');
+    Route::put('/habitaciones/{numero}', [HabitacionController::class, 'update'])
+        ->name('habitaciones.update');
+
+    Route::post('/habitaciones/{id}/asignar', [HabitacionController::class, 'asignarConductor'])
+        ->name('habitaciones.asignar');
+
+    Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])
+        ->name('habitaciones.desasignar');
 
     // HISTORIAL DE HABITACIONES
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])
@@ -172,8 +183,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('inspeccion.quimica');
 
-    Route::post('/inspeccion-quimica', [InspeccionQuimicaController::class, 'store'])->name('inspecciones.store');
-    Route::get('/inspeccion-quimica/historico', [InspeccionQuimicaController::class, 'index'])->name('inspecciones.index');
+    Route::post('/inspeccion-quimica', [InspeccionQuimicaController::class, 'store'])
+        ->name('inspecciones.store');
+
+    Route::get('/inspeccion-quimica/historico', [InspeccionQuimicaController::class, 'index'])
+        ->name('inspecciones.index');
 
     // ==========================================
     //           MÓDULO DE MANIFIESTO
@@ -182,18 +196,48 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('manifiestos');
         
-
 });
+
 
 // ==========================================
 //   RUTAS PÚBLICAS DE LA API Y RECURSOS
 // ==========================================
 
+// Guardar firma desde PlexaWeb / Flask
 Route::post('/guardar-firma', [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']);
-Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);   
 
-// 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR) 👇
-Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])->name('precio.publico');
+// Ver documento firmado en HTML
+Route::get(
+    '/tratamiento-datos/documento/{id}',
+    [\App\Http\Controllers\TratamientoDatosController::class, 'verDocumento']
+)->name('firma.documento');
 
-// 👇 NUEVA RUTA: PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL) 👇
-Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])->name('precio.descargar');
+// Descargar documento firmado como PDF
+Route::get(
+    '/tratamiento-datos/documento/{id}/descargar',
+    [\App\Http\Controllers\TratamientoDatosController::class, 'descargarDocumento']
+)->name('firma.descargar');
+
+// Obtener textos y colores de tratamiento de datos
+Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);
+
+// ==========================================
+//       DOCUMENTO DE TRATAMIENTO DE DATOS
+// ==========================================
+
+// 👇 RUTA PÚBLICA PARA VISUALIZAR EL DOCUMENTO FIRMADO
+Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
+    ->name('firma.documento');
+
+// 👇 RUTA PÚBLICA PARA DESCARGAR EL PDF REAL
+Route::get('/tratamiento-datos/documento/{id}/descargar', [TratamientoDatosController::class, 'descargarDocumento'])
+    ->name('firma.descargar');
+
+
+// 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR)
+Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])
+    ->name('precio.publico');
+
+// 👇 NUEVA RUTA: PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL)
+Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])
+    ->name('precio.descargar');
