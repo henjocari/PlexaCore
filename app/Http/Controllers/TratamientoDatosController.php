@@ -6,13 +6,16 @@ use App\Models\TratamientoFirma;
 use App\Models\TratamientoTexto;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TratamientoDatosController extends Controller
 {
     public function index()
     {
         $firmas = TratamientoFirma::orderBy('created_at', 'desc')->get();
+        
         $texto = TratamientoTexto::first();
         if (!$texto) {
             $texto = TratamientoTexto::create([
@@ -24,6 +27,7 @@ class TratamientoDatosController extends Controller
                 'color_boton' => '#378E77',
             ]);
         }
+        
         return view('tratamientodedatos', compact('firmas', 'texto'));
     }
 
@@ -33,6 +37,7 @@ class TratamientoDatosController extends Controller
         if (!$texto) {
             $texto = new TratamientoTexto();
         }
+        
         $texto->titulo = $request->input('titulo');
         $texto->subtitulo = $request->input('subtitulo');
         $texto->terminos_legales = $request->input('terminos_legales');
@@ -40,6 +45,7 @@ class TratamientoDatosController extends Controller
         $texto->color_texto = $request->input('color_texto');
         $texto->color_boton = $request->input('color_boton');
         $texto->save();
+        
         return back()->with('success', 'Texto actualizado correctamente.');
     }
 
@@ -55,26 +61,42 @@ class TratamientoDatosController extends Controller
                 'firma'             => 'required|string',
             ]);
 
-            $firmaBase64 = $this->normalizarFirma($validated['firma']);
+            // Procesar la firma (Base64 directo desde el frontend)
+            $firmaBase64 = $validated['firma'];
+            if (strpos($firmaBase64, 'base64,') !== false) {
+                $firmaBase64 = explode('base64,', $firmaBase64)[1];
+            }
+            $firmaDecodificada = base64_decode($firmaBase64);
+            if ($firmaDecodificada === false) {
+                throw new \Exception('La firma no es válida');
+            }
 
+            $nombreFirma = 'firma_' . time() . '_' . Str::random(10) . '.png';
+            $rutaFirma = 'firmas/' . $nombreFirma;
+            Storage::disk('public')->put($rutaFirma, $firmaDecodificada);
+
+            // ✅ GUARDAR LA URL PÚBLICA EN LA BD
+            $urlFirma = Storage::url($rutaFirma);
+            
             $firma = TratamientoFirma::create([
                 'nombre'            => $validated['nombre'],
                 'cedula'            => $validated['cedula'],
                 'lugar_expedicion'  => $validated['lugar_expedicion'],
                 'ciudad_firma'      => $validated['ciudad_firma'],
                 'acepto_terminos'   => 1,
-                'firma'             => $firmaBase64,
+                'firma'             => $urlFirma, // URL pública
             ]);
 
-            // 🔍 LOG: Verificar si el logo existe
+            // ✅ OBTENER LA FIRMA EN BASE64 PARA EL PDF
+            $firmaBase64Pdf = $this->getFirmaBase64($firma);
+
             $logoBase64 = $this->getLogoBase64();
-            Log::info('Logo Base64: ' . ($logoBase64 ? 'CARGADO' : 'NO CARGADO'));
 
             $pdf = Pdf::loadView('documentofirmapdf', [
                 'firma'          => $firma,
                 'esPdf'          => true,
                 'logoBase64'     => $logoBase64,
-                'firmaBase64Pdf' => $firma->firma,
+                'firmaBase64Pdf' => $firmaBase64Pdf, // ✅ FIRMA EN BASE64
             ]);
 
             $pdf->setPaper('A4', 'portrait');
@@ -123,8 +145,9 @@ class TratamientoDatosController extends Controller
     {
         try {
             $firma = TratamientoFirma::findOrFail($id);
+            
             $logoBase64 = $this->getLogoBase64();
-            $firmaBase64Pdf = $this->normalizarFirma($firma->firma);
+            $firmaBase64Pdf = $this->getFirmaBase64($firma);
 
             $pdf = Pdf::loadView('documentofirmapdf', [
                 'firma'          => $firma,
@@ -156,8 +179,9 @@ class TratamientoDatosController extends Controller
     {
         try {
             $firma = TratamientoFirma::findOrFail($id);
+            
             $logoBase64 = $this->getLogoBase64();
-            $firmaBase64Pdf = $this->normalizarFirma($firma->firma);
+            $firmaBase64Pdf = $this->getFirmaBase64($firma);
 
             $pdf = Pdf::loadView('documentofirmapdf', [
                 'firma'          => $firma,
@@ -185,6 +209,33 @@ class TratamientoDatosController extends Controller
         }
     }
 
+    /**
+     * ✅ CONVIERTE LA FIRMA (URL) A BASE64 PARA EL PDF
+     */
+    private function getFirmaBase64($firma)
+    {
+        if (!$firma->firma) {
+            return null;
+        }
+
+        // Intentar obtener la ruta física desde la URL pública
+        $relativePath = str_replace('/storage/', 'storage/', $firma->firma);
+        $path = public_path($relativePath);
+
+        // Si no existe, intentar desde Storage
+        if (!file_exists($path)) {
+            $filename = basename($firma->firma);
+            $path = Storage::disk('public')->path('firmas/' . $filename);
+        }
+
+        if (file_exists($path)) {
+            $data = file_get_contents($path);
+            return 'data:image/png;base64,' . base64_encode($data);
+        }
+
+        return null;
+    }
+
     private function normalizarFirma($firma)
     {
         if (!$firma) {
@@ -207,39 +258,18 @@ class TratamientoDatosController extends Controller
 
     private function getLogoBase64()
     {
-        // 🔍 1. Intentar con la ruta correcta
         $path = public_path('img/formato.png');
-        Log::info("🔍 Buscando logo en: " . $path);
-        
         if (file_exists($path)) {
             $data = file_get_contents($path);
-            if ($data !== false) {
-                $base64 = 'data:image/png;base64,' . base64_encode($data);
-                Log::info("✅ Logo convertido a Base64. Tamaño: " . strlen($base64) . " bytes");
-                return $base64;
-            }
+            return 'data:image/png;base64,' . base64_encode($data);
         }
-
-        // 🔍 2. Si no funciona, intentar con base_path
-        $path = base_path('public/img/formato.png');
-        if (file_exists($path)) {
-            $data = file_get_contents($path);
-            if ($data !== false) {
-                $base64 = 'data:image/png;base64,' . base64_encode($data);
-                Log::info("✅ Logo convertido a Base64 (base_path). Tamaño: " . strlen($base64) . " bytes");
-                return $base64;
-            }
-        }
-
-        Log::error("❌ Logo NO encontrado en ninguna ruta");
         return null;
     }
 
     public function obtenerTextosApi()
     {
-        $texto = TratamientoTexto::first();
         return response()->json([
-            'titulo' => $texto ? $texto->titulo : 'Autorización de Tratamiento de Datos',
+            'titulo' => 'Autorización de Tratamiento de Datos',
         ]);
     }
 }
