@@ -200,11 +200,14 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
 
 // ==========================================
-//   RUTAS PÚBLICAS DE LA API Y RECURSOS
+//     RUTAS PÚBLICAS DE LA API Y RECURSOS
 // ==========================================
 
 // Guardar firma desde PlexaWeb / Flask
-Route::post('/guardar-firma', [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']);
+Route::post(
+    '/guardar-firma',
+    [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']
+);
 
 // Ver documento firmado en HTML
 Route::get(
@@ -219,7 +222,10 @@ Route::get(
 )->name('firma.descargar');
 
 // Obtener textos y colores de tratamiento de datos
-Route::get('/obtener-textos', [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']);
+Route::get(
+    '/obtener-textos',
+    [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']
+);
 
 // ==========================================
 //       DOCUMENTO DE TRATAMIENTO DE DATOS
