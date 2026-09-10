@@ -87,9 +87,9 @@
                                             <label for="filtroOperacion" class="small font-weight-bold text-muted mb-1 d-block">Tipo Operación</label>
                                             <select class="form-control form-control-sm" id="filtroOperacion">
                                                 <option value="">Todas</option>
-                                                <option value="Carga">Carga</option>
-                                                <option value="Descarga">Descarga</option>
-                                                <option value="Tránsito">Tránsito</option>
+                                                <option value="Carga">PGR</option>
+                                                <option value="Descarga">Transporte Liquido</option>
+                                                <option value="Tránsito">GLP</option>
                                             </select>
                                         </div>
 
@@ -171,9 +171,9 @@
                                             <th>Peso</th>                 <!-- 8 -->
                                             <th>Flete Neto</th>           <!-- 9 -->
                                             <th>Anticipo</th>             <!-- 10 -->
-                                            <th>Saldo a Pagar</th>        <!-- 11 -->
-                                            <th>ReteIca</th>              <!-- 12 -->
-                                            <th>Fopat</th>                <!-- 13 -->
+                                            <th>ReteIca</th>              <!-- 11 -->
+                                            <th>Fopat</th>             <!-- 12 -->
+                                            <th>Saldo a Pagar</th>        <!-- 13 -->
                                         </tr>
                                     </thead>
                                     <tbody>

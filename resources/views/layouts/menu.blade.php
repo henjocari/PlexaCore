@@ -158,6 +158,14 @@
                             <i class="fas fa-flask mr-2 text-gray-500"></i> Inspección Química
                         </a>
                     @endif
+
+                    {{-- ✅ NUEVO: PLAN DE SEGUIMIENTO - SOSTENIBILIDAD --}}
+                    @if(in_array('Hotel', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('plandeprocedimiento.index') ? 'active' : '' }}" 
+                           href="{{ route('plandeprocedimiento.index') }}">
+                           <i class="fas fa-calendar-check mr-2 text-success"></i> Plan de Seguimiento
+                        </a>
+                    @endif
                 </div>
             </div>
         </li>

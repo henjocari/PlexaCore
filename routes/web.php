@@ -15,6 +15,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TratamientoDatosController;
 use App\Http\Controllers\InspeccionQuimicaController;
 use App\Http\Controllers\ManifiestosController;
+use App\Http\Controllers\PlanDeProcedimientoController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -30,7 +31,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::get('/', function () { return view('index'); })->name('index');
     Route::get('/index', function () { return view('index'); });
-    
+
     // 🚫 Módulo Dashboard
     Route::get('/dashboard', function () { return view('dashboard'); })
         ->middleware(VerificarModulo::class . ':Dashboard')
@@ -50,7 +51,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/usuarios', [UsuarioController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios');
-    
+
     Route::post('/usuarios', [UsuarioController::class, 'store'])
         ->middleware(VerificarModulo::class . ':Usuarios')
         ->name('usuarios.store');
@@ -67,11 +68,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/precio-glp', [PrecioGlpController::class, 'precioglp'])
         ->middleware(VerificarModulo::class . ':Precio GLP')
         ->name('precio.glp');
-    
+
     Route::post('/precio-glp/store', [PrecioGlpController::class, 'store'])
         ->middleware(VerificarModulo::class . ':Precio GLP')
         ->name('precio.store');
-    
+
     Route::patch('/precio-glp/{id}/inactivar', [PrecioGlpController::class, 'inactivar'])
         ->middleware(VerificarModulo::class . ':Precio GLP')
         ->name('precio.inactivar');
@@ -82,7 +83,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/solicitar-viaje', [TicketController::class, 'verSolicitar'])
         ->middleware(VerificarModulo::class . ':Solicitar Viaje')
         ->name('tickets.solicitar');
-    
+
     Route::get('/gestion-viajes', [TicketController::class, 'verGestion'])
         ->middleware(VerificarModulo::class . ':Gestion Viajes')
         ->name('tickets.gestion');
@@ -92,7 +93,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::get('/probar-email', function() {
         try {
-            $miCorreo = 'roisroisomg@gmail.com'; 
+            $miCorreo = 'roisroisomg@gmail.com';
             $datos = [
                 'empleado' => 'Usuario de Prueba',
                 'destino' => 'Destino Test',
@@ -171,11 +172,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])
         ->middleware(VerificarModulo::class . ':Historial Habitacion')
         ->name('historial.export.excel');
-        
+
     Route::get('/historial-habitaciones', [HistorialHabitacionController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Historial Habitacion')
         ->name('historial.habitaciones');
-    
+
     // ==========================================
     //        MÓDULO DE GESTIÓN AMBIENTAL
     // ==========================================
@@ -190,12 +191,36 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->name('inspecciones.index');
 
     // ==========================================
+    //   MÓDULO PLAN DE SEGUIMIENTO - SOSTENIBILIDAD
+    // ==========================================
+
+    // Vista principal (Cuadro de Mando + Cronograma)
+    Route::get('/plan-de-procedimiento', [PlanDeProcedimientoController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('plandeprocedimiento.index');
+
+    // API: cargar el último estado guardado del cronograma (desde la BD)
+    Route::get('/plan-de-procedimiento/datos', [PlanDeProcedimientoController::class, 'datos'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('plandeprocedimiento.datos');
+
+    // API: guardar el estado del cronograma en la BD
+    Route::post('/plan-de-procedimiento/guardar', [PlanDeProcedimientoController::class, 'guardar'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('plandeprocedimiento.guardar');
+
+    // ✅ NUEVA: PDF con TEXTO REAL (Dompdf) - Cuadro de Mando + Cronograma
+    Route::get('/plan-de-procedimiento/pdf', [PlanDeProcedimientoController::class, 'exportarPdf'])
+        ->middleware(VerificarModulo::class . ':Hotel')
+        ->name('plandeprocedimiento.pdf');
+
+    // ==========================================
     //           MÓDULO DE MANIFIESTO
     // ==========================================
     Route::get('/manifiestos', [ManifiestosController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('manifiestos');
-        
+
 });
 
 
@@ -226,19 +251,6 @@ Route::get(
     '/obtener-textos',
     [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']
 );
-
-// ==========================================
-//       DOCUMENTO DE TRATAMIENTO DE DATOS
-// ==========================================
-
-// 👇 RUTA PÚBLICA PARA VISUALIZAR EL DOCUMENTO FIRMADO
-Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'verDocumento'])
-    ->name('firma.documento');
-
-// 👇 RUTA PÚBLICA PARA DESCARGAR EL PDF REAL
-Route::get('/tratamiento-datos/documento/{id}/descargar', [TratamientoDatosController::class, 'descargarDocumento'])
-    ->name('firma.descargar');
-
 
 // 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR)
 Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])

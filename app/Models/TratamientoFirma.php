@@ -10,13 +10,19 @@ class TratamientoFirma extends Model
     use HasFactory;
 
     protected $table = 'tratamiento_firmas';
-    
+
     protected $fillable = [
-        'nombre', 
-        'cedula', 
-        'lugar_expedicion', 
-        'ciudad_firma', 
+        'nombre',
+        'cedula',
         'acepto_terminos',
-        'firma' 
+        'firma',
+        'autorizo_personales',
+        'autorizo_sensibles',
+        'fecha_autorizacion',
+        'url_pdf',
+    ];
+
+    protected $casts = [
+        'fecha_autorizacion' => 'date',
     ];
 }

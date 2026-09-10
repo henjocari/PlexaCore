@@ -7,7 +7,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'DejaVu Sans', 'Helvetica', 'Arial', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             padding: 10px;
             background: #fff;
             color: #000;
@@ -15,76 +15,43 @@
         .a4-paper {
             max-width: 850px;
             margin: 0 auto;
-            padding: 25px 35px;
-            line-height: 1.4;
+            padding: 20px 30px;
+            line-height: 1.5;
         }
-        .pdf-header {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+        .page-break { page-break-after: always; }
+        .pdf-header { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
         .pdf-header th, .pdf-header td {
             border: 1px solid #000;
             padding: 6px 8px;
             text-align: center;
             vertical-align: middle;
         }
-        .pdf-title {
-            font-weight: bold;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-        .pdf-meta {
-            font-size: 11px;
-            line-height: 1.3;
-        }
-        .pdf-text {
-            text-align: justify;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-        .pdf-list {
-            text-align: justify;
-            font-size: 13px;
-            margin-bottom: 10px;
-            padding-left: 20px;
-        }
-        .pdf-list li {
-            margin-bottom: 5px;
-        }
-        .inline-input {
-            border: none;
-            border-bottom: 1px solid #000;
-            background: transparent;
-            font-weight: bold;
-            padding: 0 5px;
+        .pdf-title { font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        .pdf-meta { font-size: 10px; line-height: 1.3; }
+        .pdf-text { text-align: justify; font-size: 12px; margin-bottom: 10px; }
+        .pdf-list { text-align: justify; font-size: 12px; margin-bottom: 10px; padding-left: 20px; }
+        .pdf-list li { margin-bottom: 5px; }
+        .pdf-list-arrows { list-style: none; text-align: justify; font-size: 12px; margin-bottom: 10px; padding-left: 5px; }
+        .pdf-list-arrows li { margin-bottom: 5px; }
+        .autorizacion-line { margin-top: 8px; padding: 6px 0; font-size: 12px; }
+        .checkbox-marcado {
             display: inline-block;
-            min-height: 18px;
-        }
-        .auto-text {
+            width: 15px; height: 15px;
+            border: 1.5px solid #000;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            line-height: 13px;
+            font-size: 11px;
             font-weight: bold;
-            text-decoration: underline;
+            vertical-align: middle;
+            margin-right: 4px;
         }
-        .signature-area {
-            margin-top: 15px;
-            font-size: 13px;
-            page-break-inside: avoid;
-        }
-        .signature-line {
-            border-top: 1px solid #000;
-            width: 200px;
-            margin-bottom: 5px;
-        }
-        .logo-img {
-            max-width: 80px;
-            height: auto;
-        }
-        .firma-img {
-            max-height: 60px;
-            width: auto;
-            display: block;
-            margin-bottom: 2px;
-        }
+        .checkbox-text { font-weight: bold; margin-right: 18px; }
+        .signature-area { margin-top: 15px; font-size: 12px; page-break-inside: avoid; }
+        .signature-line { border-top: 1px solid #000; width: 220px; margin-bottom: 5px; margin-top: 2px; }
+        .logo-img { max-width: 80px; height: auto; }
+        .firma-img { max-height: 70px; width: auto; display: block; margin-bottom: 2px; }
         @if(isset($esPdf) && $esPdf)
             .no-print { display: none !important; }
         @endif
@@ -97,81 +64,191 @@
 </head>
 <body>
 
-    <div class="a4-paper">
+@php
+    $fechaAut = $firma->fecha_autorizacion
+        ? \Illuminate\Support\Carbon::parse($firma->fecha_autorizacion)->format('d/m/Y')
+        : $firma->created_at->format('d/m/Y');
+    $p = $firma->autorizo_personales ?? '';
+    $s = $firma->autorizo_sensibles ?? '';
+@endphp
 
-        <table class="pdf-header">
-            <tr>
-                <td rowspan="2" style="width: 25%;">
-                    <!-- INTENTO 1: Usar el Base64 pasado desde el controlador -->
-                    @if(isset($logoBase64) && $logoBase64)
-                        <img src="{{ $logoBase64 }}" class="logo-img" alt="Logo Plexa">
-                    @else
-                        @php
-                            $rutaLogo = public_path('img/formato.png');
-                            $rutaLogo = str_replace('\\', '/', $rutaLogo);
-                            $logoBase64Directo = null;
-                            if (file_exists($rutaLogo)) {
-                                $data = file_get_contents($rutaLogo);
-                                if ($data !== false) {
-                                    $logoBase64Directo = 'data:image/png;base64,' . base64_encode($data);
-                                }
-                            }
-                        @endphp
-                        @if($logoBase64Directo)
-                            <img src="{{ $logoBase64Directo }}" class="logo-img" alt="">
-                        @else
-                            <!-- INTENTO 3: Usar URL pública (asset) -->
-                            <img src="{{ asset('img/formato.png') }}" class="logo-img" alt="Logo Plexa" style="max-width:80px;">
-                        @endif
-                    @endif
-                </td>
-                <td rowspan="2" style="width: 50%;" class="pdf-title">AUTORIZACIÓN DE TRATAMIENTO DE DATOS PERSONALES</td>
-                <td style="width: 25%;" class="pdf-meta"><strong>FORMATO</strong><br>SGI-PS1-P1-F8</td>
-            </tr>
-            <tr>
-                <td class="pdf-meta"><strong>Versión:</strong> 1<br>20 DE ENERO DE 2022</td>
-            </tr>
-        </table>
+<div class="a4-paper">
 
-        <div class="pdf-text">
-            Yo <span class="inline-input" style="width: 250px;">{{ $firma->nombre }}</span>
-            identificado (a) con cédula de ciudadanía No. <span class="inline-input" style="width: 120px;">{{ $firma->cedula }}</span>
-            expedida en <span class="inline-input" style="width: 150px;">{{ $firma->lugar_expedicion }}</span>
-            dando cumplimiento a lo dispuesto en la Ley 1581 de 2012, "Por el cual se dictan disposiciones generales para la protección de datos personales" y de conformidad con lo señalado en el Decreto 1377 de 2013, con la firma de este documento manifiesto que he sido informado por PLEXA SAS ESP de lo siguiente:
+    <!-- ==================== PÁGINA 1 ==================== -->
+    <table class="pdf-header">
+        <tr>
+            <td rowspan="3" style="width: 20%;">
+                @if(isset($logoBase64) && $logoBase64)
+                    <img src="{{ $logoBase64 }}" class="logo-img" alt="Logo Plexa">
+                @else
+                    <span style="color:#999; font-size:10px;">Logo no disponible</span>
+                @endif
+            </td>
+            <td rowspan="3" style="width: 50%;" class="pdf-title">AVISO DE PRIVACIDAD Y AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES DE COLABORADORES / CANDIDATOS</td>
+            <td style="width: 30%;" class="pdf-meta"><strong>Código:</strong> F-GH-01<br><strong>Versión:</strong> 2</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">01 DE SEPTIEMBRE DE 2026</td>
+            <td rowspan="2" class="pdf-meta"><strong>Página:</strong> 1 de 3</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">GESTIÓN HUMANA</td>
+        </tr>
+    </table>
+
+    <div class="pdf-text">
+        En cumplimiento de la Ley 1581 de 2012, del decreto 1377 de 2013, del decreto 1074 de 2015 y demás normativa complementaria de protección de datos personales en Colombia, <strong>PLEXA SAS ESP</strong> (en adelante, el Responsable), identificada con NIT 860.515.802-1, con domicilio comercial en Calle 113 No. 7-21 Oficina 903 Torre A, en la ciudad de Bogotá, Colombia, número de contacto (1) 629 2026, organización que será el Responsable del tratamiento de datos personales.
+    </div>
+
+    <div class="pdf-text">
+        <strong>✓ Autorizo</strong> de manera previa, expresa, voluntaria e informada al Responsable y al (los) Encargado(s) que se mencionen en la presente autorización, al tratamiento de los datos personales que Yo <strong style="text-decoration: underline;">{{ $firma->nombre }}</strong> "como aparece en el pie de firma" facilite para las siguientes finalidades:
+    </div>
+
+    <div class="pdf-text" style="font-weight: bold; margin-bottom: 4px;">Procesos de selección y vacantes de empleo:</div>
+    <ol class="pdf-list">
+        <li><strong>Postulación y participación de la vacante:</strong> Información personal necesaria para envío de pruebas técnicas y psicotécnicas, entrevistas y visitas domiciliares.</li>
+        <li><strong>Ejecución del Contrato:</strong> Datos para formalizar y desarrollar la relación laboral (nombre, documento de identificación, datos bancarios, formación, etc).</li>
+        <li><strong>Obligaciones Legales:</strong> Cumplimiento de deberes como cotizaciones a la Seguridad Social, retenciones fiscales, registro de jornada, prevención de riesgos laborales, estudios de seguridad.</li>
+        <li><strong>Gestión de Recursos Humanos:</strong> Planificación de horarios, vacaciones, formación, evaluación del desempeño, control de acceso y protección de bienes. Gestión de la seguridad y prevención de fraude.</li>
+        <li><strong>Salud y Seguridad en el trabajo:</strong> Tratamiento estrictamente limitado de la información necesaria relativa a la aptitud laboral del empleado y a la aplicación de las medidas de prevención y adaptación del puesto recomendadas por el servicio de salud laboral, sin acceso a diagnósticos ni patologías, con el único fin de cumplir las obligaciones legales y reglamentarias en materia de salud y seguridad en el trabajo.</li>
+    </ol>
+
+    <div class="pdf-text" style="font-weight: bold; margin-bottom: 2px;">Autorizo:</div>
+    <div class="autorizacion-line">
+        <span class="checkbox-marcado">@if($p === 'SI')✓@endif</span><span class="checkbox-text">SI</span>
+        <span class="checkbox-marcado">@if($p === 'NO')✓@endif</span><span class="checkbox-text">NO</span>
+    </div>
+
+    <!-- ==================== PÁGINA 2 ==================== -->
+    <div class="page-break"></div>
+
+    <table class="pdf-header">
+        <tr>
+            <td rowspan="3" style="width: 20%;">
+                @if(isset($logoBase64) && $logoBase64)
+                    <img src="{{ $logoBase64 }}" class="logo-img" alt="Logo Plexa">
+                @else
+                    <span style="color:#999; font-size:10px;">Logo no disponible</span>
+                @endif
+            </td>
+            <td rowspan="3" style="width: 50%;" class="pdf-title">AVISO DE PRIVACIDAD Y AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES DE COLABORADORES / CANDIDATOS</td>
+            <td style="width: 30%;" class="pdf-meta"><strong>Código:</strong> F-GH-01<br><strong>Versión:</strong> 2</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">01 DE SEPTIEMBRE DE 2026</td>
+            <td rowspan="2" class="pdf-meta"><strong>Página:</strong> 2 de 3</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">GESTIÓN HUMANA</td>
+        </tr>
+    </table>
+
+    <div class="pdf-text" style="font-weight: bold;">TRATAMIENTO DATOS SENSIBLES:</div>
+
+    <div class="pdf-text">
+        <strong>✓ Autorizo</strong> de manera previa, expresa, voluntaria e informada al Responsable, al tratamiento de mis datos personales de <strong>carácter sensible</strong> que Yo <strong style="text-decoration: underline;">{{ $firma->nombre }}</strong> "como aparece en el pie de firma" facilite para las siguientes finalidades:
+    </div>
+
+    <div class="pdf-text">
+        <strong>Naturaleza de los Datos:</strong> Que, para la ejecución del contrato laboral, PLEXA S.A.S E.S.P requiere recolectar y tratar datos de carácter sensible, tales como: huellas dactilares, reconocimiento facial, fotografías, videos de seguridad, videos eventos organizacionales, videos para contenido en redes sociales de la compañía, datos de salud (historias clínicas, exámenes ocupacionales); para los candidatos PLEXA S.A.S E.S.P realizará el tratamiento de datos personales sensibles únicamente y exclusivamente para el proceso de selección.
+    </div>
+
+    <div class="pdf-text" style="font-weight: bold;">Finalidades del Tratamiento: Que mis datos sensibles serán tratados para:</div>
+    <ul class="pdf-list-arrows">
+        <li>➢ Dar cumplimiento a las obligaciones de seguridad social y salud ocupacional (SGSST).</li>
+        <li>➢ Realizar controles de acceso biométrico a las instalaciones.</li>
+        <li>➢ Gestión de nómina, prestaciones sociales y beneficios extralegales.</li>
+        <li>➢ Procesos de seguridad y videovigilancia.</li>
+        <li>➢ Mantener registro fotográfico, grabaciones de video y/o audio de los eventos y capacitaciones realizados por la organización, videos para contenido en redes sociales de la compañía.</li>
+    </ul>
+
+    <div class="pdf-text">
+        <strong>Carácter Facultativo:</strong> Es importante señalar que el suministro de datos relacionados con información de <strong>Datos Sensibles</strong>, entendidos como aquellos que afectan la intimidad o que puedan generar algún tipo de discriminación, así como datos concernientes a menores de edad, es de carácter facultativo.
+    </div>
+    <div class="pdf-text">
+        Que se me ha informado expresamente que, por tratarse de datos sensibles, no estoy obligado(a) a autorizar su tratamiento, salvo que exista un deber legal o contractual que lo exija.
+    </div>
+    <div class="pdf-text">
+        La información médica detallada será tratada exclusivamente por el servicio de salud laboral, en el marco de la medicina del trabajo, y no será comunicada al empleador.
+    </div>
+
+    <div class="pdf-text" style="font-weight: bold; margin-bottom: 2px;">Autorizo:</div>
+    <div class="autorizacion-line">
+        <span class="checkbox-marcado">@if($s === 'SI')✓@endif</span><span class="checkbox-text">SI</span>
+        <span class="checkbox-marcado">@if($s === 'NO')✓@endif</span><span class="checkbox-text">NO</span>
+    </div>
+
+    <div class="pdf-text">
+        <strong>Protección de Derechos:</strong> Ejercicio de derechos y disfrute de beneficios laborales, así como protección de intereses vitales.
+    </div>
+
+    <!-- ==================== PÁGINA 3 ==================== -->
+    <div class="page-break"></div>
+
+    <table class="pdf-header">
+        <tr>
+            <td rowspan="3" style="width: 20%;">
+                @if(isset($logoBase64) && $logoBase64)
+                    <img src="{{ $logoBase64 }}" class="logo-img" alt="Logo Plexa">
+                @else
+                    <span style="color:#999; font-size:10px;">Logo no disponible</span>
+                @endif
+            </td>
+            <td rowspan="3" style="width: 50%;" class="pdf-title">AVISO DE PRIVACIDAD Y AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES DE COLABORADORES / CANDIDATOS</td>
+            <td style="width: 30%;" class="pdf-meta"><strong>Código:</strong> F-GH-01<br><strong>Versión:</strong> 2</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">01 DE SEPTIEMBRE DE 2026</td>
+            <td rowspan="2" class="pdf-meta"><strong>Página:</strong> 3 de 3</td>
+        </tr>
+        <tr>
+            <td class="pdf-meta" style="font-weight: bold;">GESTIÓN HUMANA</td>
+        </tr>
+    </table>
+
+    <div class="pdf-text">
+        <strong>Período de retención:</strong> Conservaremos sus datos durante el tiempo que se tenga el vínculo laboral, sí se trata de un exempleado máximo 10 años tras la finalización del contrato únicamente para efectos de tipo legal.
+    </div>
+
+    <div class="pdf-text">
+        Los datos recolectados por el Responsable serán tratados de acuerdo con lo dispuesto en la Política de Privacidad del Responsable, disponible para consulta en el sitio web oficial www.plexa.co, la cual he podido consultar previamente.
+    </div>
+
+    <div class="pdf-text">
+        El Responsable encarga el servicio de consulta de listas restrictivas y antecedentes judiciales, disciplinarios, comerciales y de comportamiento social que hace parte del estudio de seguridad, dicho encargo se delega a RISK INTERNATIONAL S.A.S, identificado con NIT 900.352.786-5 de Colombia, como Encargado para consultar, validar, almacenar, procesar, tratar y reportar mis datos personales.
+    </div>
+
+    <div class="pdf-text">
+        Manifiesto conocer mis derechos como titular de los datos personales, entre ellos: acceder, rectificar, actualizar, revocar tratamiento, y/o suprimir mis datos personales, salvo que exista un deber legal o contractual que lo impida. Para ejercer cualquiera de estos derechos, podré dirigirme al canal habilitado: protecciondedatos@plexa.co o enviar comunicación escrita al domicilio del responsable ya indicado anteriormente. Asimismo, tengo derecho a presentar una reclamación ante la Superintendencia de Industria y Comercio, autoridad de control competente en Colombia.
+    </div>
+
+    <div class="pdf-text">
+        Con la suscripción del presente documento y como titular de la información que he suministrado a PLEXA S.A.S ESP, y en señal de aceptación se firma.
+    </div>
+
+    <div class="signature-area">
+        <div style="margin-bottom: 10px;">
+            <strong>NOMBRE COMPLETO DEL TITULAR:</strong> {{ $firma->nombre }}
         </div>
-
-        <ol class="pdf-list">
-            <li>Consultar, verificar, reportar suministrar, analizar la información a partir de mi hoja de vida y/o documentos personales, a partir de mi solicitud de empleo durante la vigencia de mi contrato de trabajo en cualquier momento y/o prestación de algún servicio, a las centrales de información debidamente constituidas.</li>
-            <li>Aplicar en cualquier momento pruebas de alcoholimetría y de detección de consumo de narcóticos o sustancias psicoactivas (en caso de ser conductor).</li>
-            <li>De igual manera que dicha información pueda ser utilizada para efectos de remitir los resultados a terceros, todo ello respetando las limitaciones impuestas por las normas legales, la constitución y las autoridades competentes.</li>
-        </ol>
-
-        <div class="pdf-text">
-            Teniendo en cuenta lo anterior, autorizo de manera voluntaria, previa, explícita, informada e inequívoca a PLEXA SAS ESP para tratar mis datos personales y tomar mi huella y fotografía de acuerdo con su Política de Tratamiento de Datos Personales para los fines relacionados con su objeto y en especial para fines legales, contractuales.
+        <div style="margin-bottom: 10px;">
+            <strong>DOCUMENTO DE IDENTIDAD NO.:</strong> {{ $firma->cedula }}
         </div>
-
-        <div class="pdf-text">
-            La información obtenida para el Tratamiento de mis datos personales la he suministrado de forma voluntaria y es verídica.
+        <div style="margin-bottom: 10px;">
+            <strong>FECHA DE AUTORIZACIÓN:</strong> {{ $fechaAut }}
         </div>
-
-        <div class="pdf-text">
-            Se firma en la ciudad de <span class="inline-input" style="width: 120px;">{{ $firma->ciudad_firma }}</span>
-            a los <span class="auto-text">{{ $firma->created_at->format('d') }}</span> días del mes de <span class="auto-text">{{ ucfirst($firma->created_at->locale('es')->isoFormat('MMMM')) }}</span> del <span class="auto-text">{{ $firma->created_at->format('Y') }}</span>
-        </div>
-
-        <div class="signature-area">
+        <div style="margin-top: 15px;">
+            <strong>FIRMA TITULAR:</strong><br>
             @if(isset($firmaBase64Pdf) && $firmaBase64Pdf)
                 <img src="{{ $firmaBase64Pdf }}" class="firma-img" alt="Firma">
             @else
-                <p style="color:#999; font-size:12px;">Firma no disponible</p>
+                <p style="color:#999; font-size:11px;">Firma no disponible</p>
             @endif
             <div class="signature-line"></div>
-            <strong>FIRMA</strong><br>
-            Nombre: <span style="color: #64748b; font-weight: bold;">{{ $firma->nombre }}</span><br>
-            C.C. <span style="color: #64748b; font-weight: bold;">{{ $firma->cedula }}</span>
-            De <span style="color: #64748b; font-weight: bold;">{{ $firma->lugar_expedicion }}</span>
+            <strong>{{ $firma->nombre }}</strong><br>
+            C.C. {{ $firma->cedula }}
         </div>
-
     </div>
+
+</div>
 </body>
 </html>

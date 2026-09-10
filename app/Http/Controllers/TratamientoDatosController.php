@@ -15,7 +15,6 @@ class TratamientoDatosController extends Controller
     public function index()
     {
         $firmas = TratamientoFirma::orderBy('created_at', 'desc')->get();
-        
         $texto = TratamientoTexto::first();
         if (!$texto) {
             $texto = TratamientoTexto::create([
@@ -27,17 +26,13 @@ class TratamientoDatosController extends Controller
                 'color_boton' => '#378E77',
             ]);
         }
-        
         return view('tratamientodedatos', compact('firmas', 'texto'));
     }
 
     public function update(Request $request)
     {
         $texto = TratamientoTexto::first();
-        if (!$texto) {
-            $texto = new TratamientoTexto();
-        }
-        
+        if (!$texto) $texto = new TratamientoTexto();
         $texto->titulo = $request->input('titulo');
         $texto->subtitulo = $request->input('subtitulo');
         $texto->terminos_legales = $request->input('terminos_legales');
@@ -45,7 +40,6 @@ class TratamientoDatosController extends Controller
         $texto->color_texto = $request->input('color_texto');
         $texto->color_boton = $request->input('color_boton');
         $texto->save();
-        
         return back()->with('success', 'Texto actualizado correctamente.');
     }
 
@@ -53,106 +47,43 @@ class TratamientoDatosController extends Controller
     {
         try {
             $validated = $request->validate([
-                'nombre'            => 'required|string|max:255',
-                'cedula'            => 'required|string|max:20',
-                'lugar_expedicion'  => 'required|string|max:255',
-                'ciudad_firma'      => 'required|string|max:255',
-                'acepto_terminos'   => 'required|in:1,true,on,True',
-                'firma'             => 'required|string',
+                'nombre' => 'required|string|max:255',
+                'cedula' => 'required|string|max:20',
+                'lugar_expedicion' => 'required|string|max:255',
+                'ciudad_firma' => 'required|string|max:255',
+                'acepto_terminos' => 'required|in:1,true,on,True',
+                'firma' => 'required|string',
             ]);
 
-            // Procesar la firma (Base64 directo desde el frontend)
             $firmaBase64 = $validated['firma'];
             if (strpos($firmaBase64, 'base64,') !== false) {
                 $firmaBase64 = explode('base64,', $firmaBase64)[1];
             }
             $firmaDecodificada = base64_decode($firmaBase64);
             if ($firmaDecodificada === false) {
-                throw new \Exception('La firma no es válida');
+                throw new \Exception('Firma inválida');
             }
 
             $nombreFirma = 'firma_' . time() . '_' . Str::random(10) . '.png';
             $rutaFirma = 'firmas/' . $nombreFirma;
             Storage::disk('public')->put($rutaFirma, $firmaDecodificada);
 
-            // ✅ GUARDAR LA URL PÚBLICA EN LA BD
-            $urlFirma = Storage::url($rutaFirma);
-            
             $firma = TratamientoFirma::create([
-                'nombre'            => $validated['nombre'],
-                'cedula'            => $validated['cedula'],
-                'lugar_expedicion'  => $validated['lugar_expedicion'],
-                'ciudad_firma'      => $validated['ciudad_firma'],
-                'acepto_terminos'   => 1,
-                'firma'             => $urlFirma, // URL pública
+                'nombre' => $validated['nombre'],
+                'cedula' => $validated['cedula'],
+                'lugar_expedicion' => $validated['lugar_expedicion'],
+                'ciudad_firma' => $validated['ciudad_firma'],
+                'acepto_terminos' => 1,
+                'firma' => Storage::url($rutaFirma),
             ]);
 
-            // ✅ OBTENER LA FIRMA EN BASE64 PARA EL PDF
-            $firmaBase64Pdf = $this->getFirmaBase64($firma);
-
-            $logoBase64 = $this->getLogoBase64();
-
-            $pdf = Pdf::loadView('documentofirmapdf', [
-                'firma'          => $firma,
-                'esPdf'          => true,
-                'logoBase64'     => $logoBase64,
-                'firmaBase64Pdf' => $firmaBase64Pdf, // ✅ FIRMA EN BASE64
-            ]);
-
-            $pdf->setPaper('A4', 'portrait');
-            $pdf->setOptions([
-                'defaultFont' => 'sans-serif',
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'margin_top'    => 10,
-                'margin_bottom' => 10,
-                'margin_left'   => 15,
-                'margin_right'  => 15,
-            ]);
-
-            $urlVer = route('firma.documento', ['id' => $firma->id]);
-            $urlDescargar = route('firma.descargar', ['id' => $firma->id]);
-
-            return response()->json([
-                'success'       => true,
-                'message'       => 'Autorización guardada exitosamente.',
-                'url_pdf'       => $urlVer,
-                'url_descarga'  => $urlDescargar,
-                'data'          => [
-                    'id'        => $firma->id,
-                    'nombre'    => $firma->nombre,
-                    'cedula'    => $firma->cedula,
-                    'fecha'     => $firma->created_at,
-                ]
-            ], 200);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación.',
-                'errors'  => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Error en guardarFirmaApi: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al guardar: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function verDocumento($id)
-    {
-        try {
-            $firma = TratamientoFirma::findOrFail($id);
-            
             $logoBase64 = $this->getLogoBase64();
             $firmaBase64Pdf = $this->getFirmaBase64($firma);
 
             $pdf = Pdf::loadView('documentofirmapdf', [
-                'firma'          => $firma,
-                'esPdf'          => true,
-                'logoBase64'     => $logoBase64,
+                'firma' => $firma,
+                'esPdf' => true,
+                'logoBase64' => $logoBase64,
                 'firmaBase64Pdf' => $firmaBase64Pdf,
             ]);
 
@@ -161,14 +92,62 @@ class TratamientoDatosController extends Controller
                 'defaultFont' => 'sans-serif',
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
-                'margin_top'    => 10,
+                'margin_top' => 10,
                 'margin_bottom' => 10,
-                'margin_left'   => 15,
-                'margin_right'  => 15,
+                'margin_left' => 15,
+                'margin_right' => 15,
+            ]);
+
+            $urlVer = route('firma.documento', ['id' => $firma->id]);
+            $urlDescargar = route('firma.descargar', ['id' => $firma->id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Autorización guardada exitosamente.',
+                'url_pdf' => $urlVer,
+                'url_descarga' => $urlDescargar,
+                'data' => [
+                    'id' => $firma->id,
+                    'nombre' => $firma->nombre,
+                    'cedula' => $firma->cedula,
+                    'fecha' => $firma->created_at,
+                ]
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'message' => 'Error de validación.', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            Log::error('Error en guardarFirmaApi: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al guardar: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function verDocumento($id)
+    {
+        try {
+            $firma = TratamientoFirma::findOrFail($id);
+            $logoBase64 = $this->getLogoBase64();
+            $firmaBase64Pdf = $this->getFirmaBase64($firma);
+
+            $pdf = Pdf::loadView('documentofirmapdf', [
+                'firma' => $firma,
+                'esPdf' => true,
+                'logoBase64' => $logoBase64,
+                'firmaBase64Pdf' => $firmaBase64Pdf,
+            ]);
+
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->setOptions([
+                'defaultFont' => 'sans-serif',
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'margin_top' => 10,
+                'margin_bottom' => 10,
+                'margin_left' => 15,
+                'margin_right' => 15,
             ]);
 
             return $pdf->stream('autorizacion_' . $id . '.pdf');
-
         } catch (\Exception $e) {
             Log::error('Error al ver documento: ' . $e->getMessage());
             abort(404, 'Documento no encontrado');
@@ -179,14 +158,13 @@ class TratamientoDatosController extends Controller
     {
         try {
             $firma = TratamientoFirma::findOrFail($id);
-            
             $logoBase64 = $this->getLogoBase64();
             $firmaBase64Pdf = $this->getFirmaBase64($firma);
 
             $pdf = Pdf::loadView('documentofirmapdf', [
-                'firma'          => $firma,
-                'esPdf'          => true,
-                'logoBase64'     => $logoBase64,
+                'firma' => $firma,
+                'esPdf' => true,
+                'logoBase64' => $logoBase64,
                 'firmaBase64Pdf' => $firmaBase64Pdf,
             ]);
 
@@ -195,65 +173,33 @@ class TratamientoDatosController extends Controller
                 'defaultFont' => 'sans-serif',
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
-                'margin_top'    => 10,
+                'margin_top' => 10,
                 'margin_bottom' => 10,
-                'margin_left'   => 15,
-                'margin_right'  => 15,
+                'margin_left' => 15,
+                'margin_right' => 15,
             ]);
 
             return $pdf->download('autorizacion_' . $id . '.pdf');
-
         } catch (\Exception $e) {
             Log::error('Error al descargar documento: ' . $e->getMessage());
             abort(404, 'Documento no encontrado');
         }
     }
 
-    /**
-     * ✅ CONVIERTE LA FIRMA (URL) A BASE64 PARA EL PDF
-     */
     private function getFirmaBase64($firma)
     {
-        if (!$firma->firma) {
-            return null;
-        }
-
-        // Intentar obtener la ruta física desde la URL pública
+        if (!$firma->firma) return null;
         $relativePath = str_replace('/storage/', 'storage/', $firma->firma);
         $path = public_path($relativePath);
-
-        // Si no existe, intentar desde Storage
         if (!file_exists($path)) {
             $filename = basename($firma->firma);
             $path = Storage::disk('public')->path('firmas/' . $filename);
         }
-
         if (file_exists($path)) {
             $data = file_get_contents($path);
             return 'data:image/png;base64,' . base64_encode($data);
         }
-
         return null;
-    }
-
-    private function normalizarFirma($firma)
-    {
-        if (!$firma) {
-            return null;
-        }
-        if (str_starts_with($firma, 'data:image/')) {
-            return $firma;
-        }
-        if (str_starts_with($firma, 'data:in:')) {
-            return str_replace('data:in:', 'data:image/png;base64,', $firma);
-        }
-        if (str_starts_with($firma, 'data:image')) {
-            return str_replace('data:image', 'data:image/', $firma);
-        }
-        if (base64_decode($firma, true) !== false) {
-            return 'data:image/png;base64,' . $firma;
-        }
-        return $firma;
     }
 
     private function getLogoBase64()
@@ -268,8 +214,6 @@ class TratamientoDatosController extends Controller
 
     public function obtenerTextosApi()
     {
-        return response()->json([
-            'titulo' => 'Autorización de Tratamiento de Datos',
-        ]);
+        return response()->json(['titulo' => 'Autorización de Tratamiento de Datos']);
     }
 }

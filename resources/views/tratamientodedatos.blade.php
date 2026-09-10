@@ -29,6 +29,10 @@
         .table-modern td:last-child { border-radius: 0 12px 12px 0; }
         .avatar-circle { width: 40px; height: 40px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; margin-right: 12px; }
         .badge-success-soft { background-color: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
+        .badge-aut { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.72rem; display: inline-block; margin-bottom: 3px; margin-right: 3px; }
+        .badge-aut-si { background-color: #dcfce7; color: #166534; }
+        .badge-aut-no { background-color: #fee2e2; color: #991b1b; }
+        .badge-aut-na { background-color: #f1f5f9; color: #64748b; }
     </style>
 </head>
 
@@ -129,6 +133,7 @@
                                                 <tr>
                                                     <th>Firmante</th>
                                                     <th>Documento</th>
+                                                    <th>Autorizaciones</th>
                                                     <th>Fecha Firma</th>
                                                     <th>Estado</th>
                                                 </tr>
@@ -152,6 +157,20 @@
                                                         </td>
                                                         <td><div class="font-weight-bold"><i class="far fa-id-card text-gray-400 mr-2"></i>{{ $firma->cedula }}</div></td>
                                                         <td>
+                                                            @php
+                                                                $p = $firma->autorizo_personales;
+                                                                $s = $firma->autorizo_sensibles;
+                                                                $claseP = ($p === 'SI') ? 'badge-aut-si' : (($p === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                                $claseS = ($s === 'SI') ? 'badge-aut-si' : (($s === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                            @endphp
+                                                            <span class="badge-aut {{ $claseP }}">
+                                                                Personales: {{ $p ?? '—' }}
+                                                            </span>
+                                                            <span class="badge-aut {{ $claseS }}">
+                                                                Sensibles: {{ $s ?? '—' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
                                                             <div class="text-gray-800">{{ $firma->created_at->format('d M, Y') }}</div>
                                                             <div class="small text-muted">{{ $firma->created_at->format('h:i A') }}</div>
                                                         </td>
@@ -161,7 +180,7 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="4" class="text-center py-5">
+                                                        <td colspan="5" class="text-center py-5">
                                                             <i class="fas fa-box-open text-gray-300 mb-3" style="font-size: 4rem;"></i>
                                                             <h5 class="font-weight-bold text-gray-500">Sin datos aún</h5>
                                                             <p class="text-muted">Las firmas aparecerán aquí.</p>
@@ -209,14 +228,17 @@
                         <div class="col-sm-7 text-dark font-weight-bold" id="modalCedula"></div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Expedida en:</div>
-                        <div class="col-sm-7 text-dark font-weight-bold" id="modalLugarExp"></div>
+                        <div class="col-sm-5 text-muted font-weight-bold small">Autoriza Datos Personales:</div>
+                        <div class="col-sm-7" id="modalPersonales"></div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Ciudad de Firma:</div>
-                        <div class="col-sm-7 text-dark font-weight-bold" id="modalCiudadFirma"></div>
+                        <div class="col-sm-5 text-muted font-weight-bold small">Autoriza Datos Sensibles:</div>
+                        <div class="col-sm-7" id="modalSensibles"></div>
                     </div>
-
+                    <div class="row mb-3">
+                        <div class="col-sm-5 text-muted font-weight-bold small">Fecha de Autorización:</div>
+                        <div class="col-sm-7 text-dark font-weight-bold" id="modalFechaAut"></div>
+                    </div>
                     <div class="mt-4 pt-3 text-center" style="border-top: 1px dashed #e2e8f0;">
                         <span class="text-muted font-weight-bold small d-block mb-2">FIRMA REGISTRADA:</span>
                         <img id="modalFirmaImg" src="" alt="Firma" style="max-height: 80px; display: block; margin: 0 auto;">
@@ -238,30 +260,55 @@
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
     <script>
+        // Badges de color para SI / NO / — (en el modal)
+        function badgeSINO(valor) {
+            if (!valor) return '<span class="badge-aut badge-aut-na">—</span>';
+            return valor === 'SI'
+                ? '<span class="badge-aut badge-aut-si"><i class="fas fa-check mr-1"></i>SI</span>'
+                : '<span class="badge-aut badge-aut-no"><i class="fas fa-times mr-1"></i>NO</span>';
+        }
+
         function abrirModalDetalle(firmaData) {
             // Llenar los textos
-            document.getElementById('modalNombre').innerText = firmaData.nombre;
-            document.getElementById('modalCedula').innerText = firmaData.cedula;
-            document.getElementById('modalLugarExp').innerText = firmaData.lugar_expedicion;
-            document.getElementById('modalCiudadFirma').innerText = firmaData.ciudad_firma;
-            
-            // Formatear fecha
-            let fecha = new Date(firmaData.created_at);
-            document.getElementById('modalFechaInfo').innerText = "Firmado el: " + fecha.toLocaleDateString('es-ES') + " a las " + fecha.toLocaleTimeString('es-ES');
+            document.getElementById('modalNombre').innerText = firmaData.nombre || '—';
+            document.getElementById('modalCedula').innerText = firmaData.cedula || '—';
 
-            // Cargar imagen de la firma si existe
+            // Badges SI/NO
+            document.getElementById('modalPersonales').innerHTML = badgeSINO(firmaData.autorizo_personales);
+            document.getElementById('modalSensibles').innerHTML  = badgeSINO(firmaData.autorizo_sensibles);
+
+            // Fecha de autorización (YYYY-MM-DD)
+            document.getElementById('modalFechaAut').innerText = firmaData.fecha_autorizacion
+                ? firmaData.fecha_autorizacion.substring(0, 10)
+                : '—';
+
+            // Formatear fecha de registro (created_at)
+            if (firmaData.created_at) {
+                let fecha = new Date(firmaData.created_at);
+                document.getElementById('modalFechaInfo').innerText = "Firmado el: " + fecha.toLocaleDateString('es-ES') + " a las " + fecha.toLocaleTimeString('es-ES');
+            } else {
+                document.getElementById('modalFechaInfo').innerText = '';
+            }
+
+            // Cargar imagen de la firma si existe (Base64)
             let imgEl = document.getElementById('modalFirmaImg');
-            if(firmaData.firma) {
+            if (firmaData.firma) {
                 imgEl.src = firmaData.firma;
                 imgEl.style.display = 'block';
             } else {
                 imgEl.style.display = 'none';
             }
 
-            // Asignar el enlace al botón de descargar
-            document.getElementById('btnDescargarPdf').href = '/tratamiento-datos/documento/' + firmaData.id;
+            // Botón de descarga: usa la URL guardada en la BD (url_pdf apunta a plexaweb)
+            const btnPdf = document.getElementById('btnDescargarPdf');
+            if (firmaData.url_pdf) {
+                btnPdf.href = firmaData.url_pdf;
+                btnPdf.style.display = 'inline-block';
+            } else {
+                btnPdf.style.display = 'none';
+            }
 
-            // Mostrar el modal (usando jQuery que ya viene en tu proyecto)
+            // Mostrar el modal
             $('#modalDetalleFirma').modal('show');
         }
     </script>
