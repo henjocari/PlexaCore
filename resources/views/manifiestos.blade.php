@@ -25,6 +25,13 @@
         .dataTables_filter {
             display: none;
         }
+        .link-recibo {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .link-recibo:hover {
+            color: #115c48 !important;
+        }
     </style>
 </head>
 
@@ -172,16 +179,22 @@
                                             <th>Flete Neto</th>           <!-- 9 -->
                                             <th>Anticipo</th>             <!-- 10 -->
                                             <th>ReteIca</th>              <!-- 11 -->
-                                            <th>Fopat</th>             <!-- 12 -->
-                                            <th>Saldo a Pagar</th>        <!-- 13 -->
+                                            <th>ReteFuente</th>           <!-- 12 ← antes decía "Fopat" -->
+                                            <th>Fopat</th>                <!-- 13 ← NUEVA -->
+                                            <th>Saldo a Pagar</th>        <!-- 14 -->
                                         </tr>
                                     </thead>
                                     <tbody>
                                     @forelse($manifiestos as $manifiesto)
                                         <tr>
-                                            <!-- Código del Manifiesto -->
-                                            <td class="font-weight-bold text-success text-center">
-                                                {{ $manifiesto->manifiesto_codigo ?? 'Sin N°' }}
+                                            <!-- ✅ Número clicable: abre el recibo DENTRO de la misma página -->
+                                            <td class="text-center">
+                                                <a href="javascript:void(0);"
+                                                   onclick="verRecibo({{ $manifiesto->id }}, '{{ $manifiesto->manifiesto_codigo ?? 'Sin N°' }}')"
+                                                   class="font-weight-bold text-success link-recibo"
+                                                   title="Ver recibo de liquidación">
+                                                    {{ $manifiesto->manifiesto_codigo ?? 'Sin N°' }}
+                                                </a>
                                             </td>
                                             
                                             <!-- Nombre del Conductor/Poseedor -->
@@ -224,29 +237,34 @@
                                                 $ {{ number_format($manifiesto->anticipo ?? 0, 0, ',', '.') }}
                                             </td>
                                             
-                                            <!-- Saldo a Pagar -->
-                                            <td class="text-right font-weight-bold text-danger">
-                                                $ {{ number_format($manifiesto->saldoPagar ?? 0, 0, ',', '.') }}
-                                            </td>
-                                            
                                             <!-- ReteICA -->
                                             <td class="text-right">
                                                 $ {{ number_format($manifiesto->reteIca ?? 0, 0, ',', '.') }}
                                             </td>
                                             
-                                            <!-- ReteFuente -->
+                                            <!-- ✅ ReteFuente (la columna que antes decía "Fopat") -->
                                             <td class="text-right">
                                                 $ {{ number_format($manifiesto->reteFuente ?? 0, 0, ',', '.') }}
+                                            </td>
+                                            
+                                            <!-- ✅ FOPAT real (BD; si no existe, fleteNeto * 0.001) -->
+                                            <td class="text-right">
+                                                $ {{ number_format($manifiesto->fopat ?? (($manifiesto->fleteNeto ?? 0) * 0.001), 0, ',', '.') }}
+                                            </td>
+                                            
+                                            <!-- Saldo a Pagar -->
+                                            <td class="text-right font-weight-bold text-danger">
+                                                $ {{ number_format($manifiesto->saldoPagar ?? 0, 0, ',', '.') }}
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="14" class="text-center text-muted py-4">
+                                            <td colspan="15" class="text-center text-muted py-4">
                                                 No hay registros de manifiestos disponibles.
                                             </td>
                                         </tr>
                                     @endforelse
-                                </tbody>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -258,6 +276,31 @@
             <!-- FOOTER -->
             @include('layouts.pie')
 
+        </div>
+    </div>
+
+    <!-- ===== MODAL RECIBO (PDF dentro de la misma página) ===== -->
+    <div class="modal fade" id="modalRecibo" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 900px;">
+            <div class="modal-content" style="border-radius: 12px; border: none; overflow: hidden;">
+                <div class="modal-header bg-dark text-white py-2" style="border: none;">
+                    <h5 class="modal-title font-weight-bold" style="font-size: 1rem;">
+                        <i class="fas fa-file-invoice mr-2"></i>Recibo de Liquidación — <span id="reciboTitulo"></span>
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0" style="height: 75vh; background: #525659;">
+                    <iframe id="iframeRecibo" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+                <div class="modal-footer py-2">
+                    <a href="#" id="btnDescargarRecibo" class="btn btn-success btn-sm" target="_blank">
+                        <i class="fas fa-download mr-1"></i> Descargar PDF
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -299,7 +342,7 @@
 
         table.buttons().container().appendTo('#export-buttons-container');
 
-        // Mapeo exacto de los filtros por índice de columna (0 a 11)
+        // Mapeo exacto de los filtros por índice de columna (0 a 14)
         $('#filtroNumManifiesto').on('keyup change', function() { table.column(0).search(this.value).draw(); });
         $('#filtroNombre').on('keyup change',        function() { table.column(1).search(this.value).draw(); });
         $('#filtroCliente').on('keyup change',       function() { table.column(2).search(this.value).draw(); });
@@ -311,12 +354,26 @@
         $('#filtroPeso').on('keyup change',          function() { table.column(8).search(this.value).draw(); });
         $('#filtroFlete').on('keyup change',         function() { table.column(9).search(this.value).draw(); });
         $('#filtroAnticipo').on('keyup change',      function() { table.column(10).search(this.value).draw(); });
-        $('#filtroSaldo').on('keyup change',         function() { table.column(11).search(this.value).draw(); });
+        $('#filtroSaldo').on('keyup change',         function() { table.column(14).search(this.value).draw(); });
 
         $('#btnLimpiarFiltros').on('click', function() {
             $('#formFiltros')[0].reset();
             table.columns().search('').draw();
         });
+    });
+
+    // 🧾 Abre el recibo en el modal (misma página, sin pestaña nueva)
+    function verRecibo(id, codigo) {
+        var base = "{{ url('/manifiestos/recibo') }}/" + id;
+        $('#reciboTitulo').text(codigo);
+        $('#iframeRecibo').attr('src', base);
+        $('#btnDescargarRecibo').attr('href', base + '?download=1');
+        $('#modalRecibo').modal('show');
+    }
+
+    // Al cerrar el modal se limpia el iframe
+    $('#modalRecibo').on('hidden.bs.modal', function() {
+        $('#iframeRecibo').attr('src', '');
     });
     </script>
 

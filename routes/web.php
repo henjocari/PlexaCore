@@ -221,6 +221,9 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
         ->middleware(VerificarModulo::class . ':Hotel')
         ->name('manifiestos');
 
+
+    Route::get('/manifiestos/recibo/{id}', [ManifiestosController::class, 'recibo'])->name('manifiestos.recibo');
+
 });
 
 
