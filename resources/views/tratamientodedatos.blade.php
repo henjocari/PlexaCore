@@ -247,7 +247,7 @@
 
                 <div class="modal-footer" style="background-color: #f8fafc; border-radius: 0 0 16px 16px;">
                     <button type="button" class="btn btn-secondary" style="border-radius: 8px;" data-dismiss="modal">Cerrar</button>
-                    <a href="#" id="btnDescargarPdf" target="_blank" class="btn btn-plexa">
+                    <a href="#" id="btnDescargarPdf" class="btn btn-plexa">
                         <i class="fas fa-file-pdf mr-1"></i> Descargar Documento
                     </a>
                 </div>
@@ -299,14 +299,11 @@
                 imgEl.style.display = 'none';
             }
 
-            // Botón de descarga: usa la URL guardada en la BD (url_pdf apunta a plexaweb)
+            // ✅ DESCARGA AUTÓNOMA: el PDF lo genera el PROPIO plexacore
+            //    (ruta interna /tratamiento-datos/documento/{id} → vista documentofirmapdf)
             const btnPdf = document.getElementById('btnDescargarPdf');
-            if (firmaData.url_pdf) {
-                btnPdf.href = firmaData.url_pdf;
-                btnPdf.style.display = 'inline-block';
-            } else {
-                btnPdf.style.display = 'none';
-            }
+            btnPdf.href = "{{ url('/tratamiento-datos/documento') }}/" + firmaData.id;
+            btnPdf.style.display = 'inline-block';
 
             // Mostrar el modal
             $('#modalDetalleFirma').modal('show');

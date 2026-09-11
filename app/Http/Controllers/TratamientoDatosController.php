@@ -186,6 +186,32 @@ class TratamientoDatosController extends Controller
         }
     }
 
+    /**
+     * 📄 Descarga el documento F-GH-01 diligenciado y firmado.
+     * 100% autónomo: se genera en plexacore con su propia vista y sus propios datos.
+     * Ruta: /tratamiento-datos/documento/{id}
+     */
+    public function documento($id)
+    {
+        try {
+            $firma = TratamientoFirma::findOrFail($id);
+
+            // Logo en Base64 desde los propios recursos de plexacore
+            $logoBase64 = $this->getLogoBase64();
+
+            $pdf = Pdf::loadView('documentofirmapdf', [
+                'firma'      => $firma,
+                'logoBase64' => $logoBase64,
+            ])->setPaper('letter', 'portrait');
+
+            return $pdf->download('Autorizacion_Tratamiento_' . $firma->cedula . '.pdf');
+
+        } catch (\Exception $e) {
+            Log::error('Error en documento(): ' . $e->getMessage());
+            abort(404, 'Documento no encontrado');
+        }
+    }
+
     private function getFirmaBase64($firma)
     {
         if (!$firma->firma) return null;

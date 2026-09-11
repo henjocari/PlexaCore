@@ -237,6 +237,8 @@ Route::post(
     [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']
 );
 
+Route::get('/tratamiento-datos/documento/{id}', [TratamientoDatosController::class, 'documento'])->name('tratamientodedatos.documento');
+
 // Ver documento firmado en HTML
 Route::get(
     '/tratamiento-datos/documento/{id}',
