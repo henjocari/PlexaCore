@@ -9,10 +9,10 @@ class Permiso extends Model
     protected $table = 'permisos';
     public $timestamps = false;
 
-    protected $fillable = ['rol', 'permiso'];
+    protected $fillable = ['paginas', 'permiso'];
 
-    public function role()
+    public function modulo()
     {
-        return $this->belongsTo(Role::class, 'rol');
+        return $this->belongsTo(PermisoModulo::class, 'paginas');
     }
 }

@@ -24,8 +24,8 @@
     @endif
 
     {{-- USUARIOS --}}
-    @if(in_array('Usuarios', $misModulos) || in_array('Roles', $misModulos))
-        <li class="nav-item">
+    @if(in_array('Usuarios', $misModulos))
+        <li class="nav-item {{ request()->is('usuarios') ? 'active' : '' }}">
             <a class="nav-link" href="{{ url('/usuarios') }}">
                 <i class="fas fa-fw fa-users"></i>
                 <span>Usuarios</span>
@@ -47,15 +47,15 @@
             <div id="collapseHotel" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Navegación:</h6>
-                    
+
                     @if(in_array('Hotel', $misModulos))
-                        <a class="collapse-item" href="{{ url('/hotel') }}">
+                        <a class="collapse-item {{ request()->is('hotel') ? 'active' : '' }}" href="{{ url('/hotel') }}">
                             <i class="fas fa-bed mr-2 text-gray-500"></i> Hotel
                         </a>
                     @endif
 
                     @if(in_array('Historial Habitacion', $misModulos))
-                        <a class="collapse-item" href="{{ route('historial.habitaciones') }}">
+                        <a class="collapse-item {{ request()->routeIs('historial.habitaciones') ? 'active' : '' }}" href="{{ route('historial.habitaciones') }}">
                             <i class="fas fa-history mr-2 text-gray-500"></i> Historial
                         </a>
                     @endif
@@ -65,7 +65,7 @@
     @endif
 
     {{-- ADMINISTRACIÓN --}}
-    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos) || true)
+    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos) || in_array('Tratamiento Datos', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Configuración</div>
 
@@ -78,25 +78,27 @@
             <div id="collapseAdmin" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Opciones Admin:</h6>
-                    
+
                     @if(in_array('Precio GLP', $misModulos))
-                        <a class="collapse-item" href="{{ url('/precio-glp') }}">
+                        <a class="collapse-item {{ request()->is('precio-glp') ? 'active' : '' }}" href="{{ url('/precio-glp') }}">
                             <i class="fas fa-gas-pump mr-2 text-gray-500"></i> Precio GLP
                         </a>
                     @endif
 
                     @if(in_array('Carrusel', $misModulos))
-                        <a class="collapse-item" href="{{ url('/carrusel') }}">
+                        <a class="collapse-item {{ request()->is('carrusel') ? 'active' : '' }}" href="{{ url('/carrusel') }}">
                             <i class="fas fa-images mr-2 text-gray-500"></i> Carrusel
                         </a>
                     @endif
 
-                    <a class="collapse-item" href="{{ url('/tratamientodedatos') }}">
-                        <i class="fas fa-file-signature mr-2 text-gray-500"></i> Tratamiento de Datos
-                    </a>
+                    @if(in_array('Tratamiento Datos', $misModulos))
+                        <a class="collapse-item {{ request()->is('tratamientodedatos') ? 'active' : '' }}" href="{{ url('/tratamientodedatos') }}">
+                            <i class="fas fa-file-signature mr-2 text-gray-500"></i> Tratamiento de Datos
+                        </a>
+                    @endif
 
                     @if(in_array('Tabla Conductores', $misModulos))
-                        <a class="collapse-item" href="{{ url('/tablas') }}">
+                        <a class="collapse-item {{ request()->is('tablas') ? 'active' : '' }}" href="{{ url('/tablas') }}">
                             <i class="fas fa-table mr-2 text-gray-500"></i> Conductores
                         </a>
                     @endif
@@ -119,16 +121,16 @@
             <div id="collapseViajes" class="collapse" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Solicitudes:</h6>
-                    
+
                     @if(in_array('Solicitar Viaje', $misModulos))
-                        <a class="collapse-item {{ request()->routeIs('tickets.solicitar') ? 'active' : '' }}" 
+                        <a class="collapse-item {{ request()->routeIs('tickets.solicitar') ? 'active' : '' }}"
                            href="{{ route('tickets.solicitar') }}">
                            <i class="fas fa-plus-circle mr-2 text-success"></i> Solicitar Viaje
                         </a>
                     @endif
 
                     @if(in_array('Gestion Viajes', $misModulos))
-                        <a class="collapse-item {{ request()->routeIs('tickets.gestion') ? 'active' : '' }}" 
+                        <a class="collapse-item {{ request()->routeIs('tickets.gestion') ? 'active' : '' }}"
                            href="{{ route('tickets.gestion') }}">
                            <i class="fas fa-clipboard-list mr-2 text-primary"></i> Viajes Solicitados
                         </a>
@@ -139,7 +141,7 @@
     @endif
 
     {{-- MEDIO AMBIENTE --}}
-    @if(in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
+    @if(in_array('Inspecciones Quimicas', $misModulos) || in_array('Plan de Procedimiento', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Medio Ambiente</div>
 
@@ -149,19 +151,18 @@
                 <i class="fas fa-fw fa-leaf"></i>
                 <span>Gestión ambiental</span>
             </a>
-            <div id="collapseAmbiental" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div id="collapseAmbiental" class="collapse" aria-labelledby="headingAmbiental" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Formatos:</h6>
-                    
-                    @if(in_array('Hotel', $misModulos))
-                        <a class="collapse-item" href="{{ route('inspeccion.quimica') }}">
+
+                    @if(in_array('Inspecciones Quimicas', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('inspeccion.quimica') ? 'active' : '' }}" href="{{ route('inspeccion.quimica') }}">
                             <i class="fas fa-flask mr-2 text-gray-500"></i> Inspección Química
                         </a>
                     @endif
 
-                    {{-- ✅ NUEVO: PLAN DE SEGUIMIENTO - SOSTENIBILIDAD --}}
-                    @if(in_array('Hotel', $misModulos))
-                        <a class="collapse-item {{ request()->routeIs('plandeprocedimiento.index') ? 'active' : '' }}" 
+                    @if(in_array('Plan de Procedimiento', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('plandeprocedimiento.index') ? 'active' : '' }}"
                            href="{{ route('plandeprocedimiento.index') }}">
                            <i class="fas fa-calendar-check mr-2 text-success"></i> Plan de Seguimiento
                         </a>
@@ -172,36 +173,26 @@
     @endif
 
     {{-- MÓDULO MANIFIESTO --}}
-    @if(in_array('Manifiesto', $misModulos) || in_array('Manifiestos', $misModulos) || in_array('Hotel', $misModulos) || in_array('Historial Habitacion', $misModulos))
+    @if(in_array('Manifiestos', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Gestion Logistica</div>
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseManifiesto"
                 aria-expanded="true" aria-controls="collapseManifiesto">
-                
-                {{-- OPCIÓN A: Ícono FontAwesome alusivo a manifiestos y planillas de carga --}}
                 <i class="fas fa-fw fa-file-invoice"></i>
-
-                {{-- OPCIÓN B: Si deseas usar una imagen propia, descomenta la siguiente línea y ajusta la ruta --}}
-                {{-- <img src="{{ asset('img/manifiesto_icon.svg') }}" alt="Manifiesto" width="18" class="mr-2"> --}}
-
                 <span>Manifiesto</span>
             </a>
 
             <div id="collapseManifiesto" class="collapse" aria-labelledby="headingManifiesto" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Gestión de Manifiestos:</h6>
-                    
-                    {{-- Enlace principal a la vista de manifiesto --}}
-                    <a class="collapse-item {{ request()->is('manifiestos') ? 'active' : '' }}" href="{{ url('/manifiestos') }}">
-                        <i class="fas fa-clipboard-list mr-2 text-gray-500"></i> Validacion de Manifiestos
-                    </a>
 
-                    {{-- Enlace secundario (Opcional, para crear un nuevo manifiesto) --}}
-                    <a class="collapse-item {{ request()->is('manifiestos/crear') ? 'active' : '' }}" href="{{ url('/manifiestos/crear') }}">
-                        <i class="fas fa-plus-circle mr-2 text-success"></i> Silogtran
-                    </a>
+                    @if(in_array('Manifiestos', $misModulos))
+                        <a class="collapse-item {{ request()->is('manifiestos') ? 'active' : '' }}" href="{{ url('/manifiestos') }}">
+                            <i class="fas fa-clipboard-list mr-2 text-gray-500"></i> Validacion de Manifiestos
+                        </a>
+                    @endif
                 </div>
             </div>
         </li>
