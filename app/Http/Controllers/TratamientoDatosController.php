@@ -14,7 +14,9 @@ class TratamientoDatosController extends Controller
 {
     public function index()
     {
-        $firmas = TratamientoFirma::orderBy('created_at', 'desc')->get();
+        // ✅ PAGINACIÓN de 10 firmas por página
+        $firmas = TratamientoFirma::orderBy('created_at', 'desc')->paginate(10);
+
         $texto = TratamientoTexto::first();
         if (!$texto) {
             $texto = TratamientoTexto::create([

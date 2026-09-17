@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.png') }}">
     <title>Plexa Core - Dashboard Tratamiento de Datos</title>
-    
+
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -23,8 +23,7 @@
         .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
         .table-modern th { border: none; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; padding: 10px 20px; }
         .table-modern td { background: #ffffff; border: none; padding: 15px 20px; vertical-align: middle; color: #334155; font-weight: 500; }
-        .table-modern tbody tr { box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: all 0.2s; }
-        .table-modern tbody tr:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); transform: scale(1.01); }
+        .table-modern tbody tr { box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: box-shadow 0.2s ease; }
         .table-modern td:first-child { border-radius: 12px 0 0 12px; }
         .table-modern td:last-child { border-radius: 0 12px 12px 0; }
         .avatar-circle { width: 40px; height: 40px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; margin-right: 12px; }
@@ -33,6 +32,57 @@
         .badge-aut-si { background-color: #dcfce7; color: #166534; }
         .badge-aut-no { background-color: #fee2e2; color: #991b1b; }
         .badge-aut-na { background-color: #f1f5f9; color: #64748b; }
+
+        /* ===== Paginación estilo Plexa (sin animación) ===== */
+        .pagination { margin-bottom: 0; }
+        .page-link {
+            color: #378E77;
+            border-radius: 8px;
+            margin: 0 3px;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            font-weight: 600;
+            font-size: .85rem;
+            transition: all .2s ease;
+        }
+        .page-item.active .page-link { background: #378E77; border-color: #378E77; color: #fff; }
+        .page-link:hover { background: #e8f7f1; color: #248b6f; }
+        .page-item.disabled .page-link { color: #cbd5e1; background: transparent; }
+
+        /* =====================================================
+           ANIMACIONES — SOLO EN LA TABLA (sin desborde horizontal)
+           ===================================================== */
+        @keyframes filaIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Entrada escalonada VERTICAL (no genera scrollbar horizontal) */
+        .table-modern tbody tr { animation: filaIn .4s ease-out both; }
+        .table-modern tbody tr:nth-child(1)  { animation-delay: .03s; }
+        .table-modern tbody tr:nth-child(2)  { animation-delay: .07s; }
+        .table-modern tbody tr:nth-child(3)  { animation-delay: .11s; }
+        .table-modern tbody tr:nth-child(4)  { animation-delay: .15s; }
+        .table-modern tbody tr:nth-child(5)  { animation-delay: .19s; }
+        .table-modern tbody tr:nth-child(6)  { animation-delay: .23s; }
+        .table-modern tbody tr:nth-child(7)  { animation-delay: .27s; }
+        .table-modern tbody tr:nth-child(8)  { animation-delay: .31s; }
+        .table-modern tbody tr:nth-child(9)  { animation-delay: .35s; }
+        .table-modern tbody tr:nth-child(10) { animation-delay: .39s; }
+
+        /* Hover: solo sombra (SIN translateX para no desbordar) */
+        .table-modern tbody tr:hover {
+            box-shadow: 0 8px 25px rgba(55, 142, 119, 0.18) !important;
+        }
+
+        /* El avatar reacciona al pasar por la fila (contenido dentro de la celda) */
+        .avatar-circle { transition: all .3s cubic-bezier(.22,1,.36,1); }
+        .table-modern tbody tr:hover .avatar-circle {
+            transform: scale(1.1) rotate(4deg);
+            background-color: #378E77;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(55, 142, 119, .4);
+        }
     </style>
 </head>
 
@@ -56,7 +106,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-uppercase mb-1" style="color: #378E77;">Firmas Recibidas</div>
-                                            <div class="h3 mb-0 font-weight-bold text-gray-800">{{ $firmas->count() }}</div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-800">{{ $firmas->total() }}</div>
                                         </div>
                                         <div class="col-auto"><i class="fas fa-file-signature fa-2x text-gray-300"></i></div>
                                     </div>
@@ -99,7 +149,7 @@
 
                                         <hr class="mt-4 mb-3">
                                         <h6 class="font-weight-bold text-gray-800 mb-3"><i class="fas fa-palette mr-2 text-primary"></i>Personalización Visual</h6>
-                                        
+
                                         <div class="row mb-4">
                                             <div class="col-md-4 text-center">
                                                 <label class="custom-label small">Fondo Pág.</label>
@@ -140,12 +190,12 @@
                                             </thead>
                                             <tbody>
                                                 @forelse($firmas as $firma)
-                                                    <tr onclick="abrirModalDetalle({{ $firma }})" 
-                                                        style="cursor: pointer; transition: all 0.2s ease;" 
+                                                    <tr onclick="abrirModalDetalle({{ $firma }})"
+                                                        style="cursor: pointer;"
                                                         title="Clic para ver detalles del registro"
-                                                        onmouseover="this.style.backgroundColor='#f8fafc'" 
+                                                        onmouseover="this.style.backgroundColor='#f8fafc'"
                                                         onmouseout="this.style.backgroundColor='transparent'">
-                                                        
+
                                                         <td>
                                                             <div class="d-flex align-items-center">
                                                                 <div class="avatar-circle"><i class="fas fa-user"></i></div>
@@ -158,17 +208,13 @@
                                                         <td><div class="font-weight-bold"><i class="far fa-id-card text-gray-400 mr-2"></i>{{ $firma->cedula }}</div></td>
                                                         <td>
                                                             @php
-                                                                $p = $firma->autorizo_personales;
-                                                                $s = $firma->autorizo_sensibles;
+                                                                $p = $firma->autorizo_personales ?? null;
+                                                                $s = $firma->autorizo_sensibles ?? null;
                                                                 $claseP = ($p === 'SI') ? 'badge-aut-si' : (($p === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
                                                                 $claseS = ($s === 'SI') ? 'badge-aut-si' : (($s === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
                                                             @endphp
-                                                            <span class="badge-aut {{ $claseP }}">
-                                                                Personales: {{ $p ?? '—' }}
-                                                            </span>
-                                                            <span class="badge-aut {{ $claseS }}">
-                                                                Sensibles: {{ $s ?? '—' }}
-                                                            </span>
+                                                            <span class="badge-aut {{ $claseP }}">Personales: {{ $p ?? '—' }}</span>
+                                                            <span class="badge-aut {{ $claseS }}">Sensibles: {{ $s ?? '—' }}</span>
                                                         </td>
                                                         <td>
                                                             <div class="text-gray-800">{{ $firma->created_at->format('d M, Y') }}</div>
@@ -190,6 +236,20 @@
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    {{-- ===== PAGINACIÓN 10 por página ===== --}}
+                                    @if($firmas->hasPages())
+                                        <div class="mt-4 d-flex flex-column flex-md-row align-items-center justify-content-between">
+                                            <div class="small text-muted mb-2 mb-md-0">
+                                                Mostrando {{ $firmas->firstItem() ?? 0 }} a {{ $firmas->lastItem() ?? 0 }}
+                                                de <b>{{ $firmas->total() }}</b> firmas
+                                            </div>
+                                            <div>
+                                                {{ $firmas->links('pagination::bootstrap-4') }}
+                                            </div>
+                                        </div>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -203,14 +263,14 @@
     <div class="modal fade" id="modalDetalleFirma" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
-                
+
                 <div class="modal-header bg-plexa-gradient text-white" style="border-radius: 16px 16px 0 0; border-bottom: none;">
                     <h5 class="modal-title font-weight-bold"><i class="fas fa-file-signature mr-2"></i>Detalle de Autorización</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                
+
                 <div class="modal-body p-4">
                     <div class="text-center mb-4">
                         <span class="badge badge-success mb-2 px-3 py-2" style="font-size: 0.9rem; border-radius: 20px;">
@@ -247,7 +307,7 @@
 
                 <div class="modal-footer" style="background-color: #f8fafc; border-radius: 0 0 16px 16px;">
                     <button type="button" class="btn btn-secondary" style="border-radius: 8px;" data-dismiss="modal">Cerrar</button>
-                    <a href="#" id="btnDescargarPdf" class="btn btn-plexa">
+                    <a href="#" id="btnDescargarPdf" class="btn btn-plexa" target="_blank" rel="noopener noreferrer">
                         <i class="fas fa-file-pdf mr-1"></i> Descargar Documento
                     </a>
                 </div>
@@ -260,7 +320,6 @@
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
     <script>
-        // Badges de color para SI / NO / — (en el modal)
         function badgeSINO(valor) {
             if (!valor) return '<span class="badge-aut badge-aut-na">—</span>';
             return valor === 'SI'
@@ -269,20 +328,16 @@
         }
 
         function abrirModalDetalle(firmaData) {
-            // Llenar los textos
             document.getElementById('modalNombre').innerText = firmaData.nombre || '—';
             document.getElementById('modalCedula').innerText = firmaData.cedula || '—';
 
-            // Badges SI/NO
             document.getElementById('modalPersonales').innerHTML = badgeSINO(firmaData.autorizo_personales);
             document.getElementById('modalSensibles').innerHTML  = badgeSINO(firmaData.autorizo_sensibles);
 
-            // Fecha de autorización (YYYY-MM-DD)
             document.getElementById('modalFechaAut').innerText = firmaData.fecha_autorizacion
                 ? firmaData.fecha_autorizacion.substring(0, 10)
                 : '—';
 
-            // Formatear fecha de registro (created_at)
             if (firmaData.created_at) {
                 let fecha = new Date(firmaData.created_at);
                 document.getElementById('modalFechaInfo').innerText = "Firmado el: " + fecha.toLocaleDateString('es-ES') + " a las " + fecha.toLocaleTimeString('es-ES');
@@ -290,7 +345,6 @@
                 document.getElementById('modalFechaInfo').innerText = '';
             }
 
-            // Cargar imagen de la firma si existe (Base64)
             let imgEl = document.getElementById('modalFirmaImg');
             if (firmaData.firma) {
                 imgEl.src = firmaData.firma;
@@ -299,15 +353,30 @@
                 imgEl.style.display = 'none';
             }
 
-            // ✅ DESCARGA AUTÓNOMA: el PDF lo genera el PROPIO plexacore
-            //    (ruta interna /tratamiento-datos/documento/{id} → vista documentofirmapdf)
             const btnPdf = document.getElementById('btnDescargarPdf');
-            btnPdf.href = "{{ url('/tratamiento-datos/documento') }}/" + firmaData.id;
+            btnPdf.href = "{{ url('/tratamiento-datos/documento') }}/" + firmaData.id + "/descargar";
             btnPdf.style.display = 'inline-block';
 
-            // Mostrar el modal
             $('#modalDetalleFirma').modal('show');
         }
+
+        // ===== Congelar la animación de cada fila al terminar =====
+        // Corre una sola vez por carga de página; abrir el modal NO la re-dispara.
+        document.querySelectorAll('.table-modern tbody tr').forEach(function (fila) {
+            fila.addEventListener('animationend', function () {
+                fila.style.animation = 'none';
+            }, { once: true });
+        });
+
+        // ===== Scroll suave al cambiar de página =====
+        document.querySelectorAll('.pagination a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                setTimeout(function () {
+                    var tabla = document.querySelector('.table-modern');
+                    if (tabla) tabla.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        });
     </script>
 </body>
 </html>

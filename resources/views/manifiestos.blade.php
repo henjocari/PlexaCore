@@ -43,14 +43,14 @@
         @include('layouts.menu')
 
         <div id="content-wrapper" class="d-flex flex-column">
-            
+
             <div id="content">
                 <!-- NAVBAR / CABECERA -->
                 @include('layouts.cabecera')
 
                 <!-- CONTENIDO PRINCIPAL -->
                 <div class="container-fluid py-3">
-                    
+
                     <div class="d-sm-flex align-items-center justify-content-between mb-3">
                         <h2 class="h4 mb-0 text-gray-800 font-weight-bold">Gestión de Manifiestos</h2>
                         <div id="export-buttons-container" class="d-flex align-items-center"></div>
@@ -70,7 +70,7 @@
                             <div class="card-body bg-light p-3">
                                 <form id="formFiltros">
                                     <div class="d-flex flex-wrap align-items-end" style="gap: 10px;">
-                                        
+
                                         <!-- Col 0: N° Manifiesto -->
                                         <div style="flex: 1 1 130px;">
                                             <label for="filtroNumManifiesto" class="small font-weight-bold text-muted mb-1 d-block">N° Manifiesto</label>
@@ -89,14 +89,14 @@
                                             <input type="text" class="form-control form-control-sm" id="filtroCliente" placeholder="Nombre cliente...">
                                         </div>
 
-                                        <!-- Col 3: Tipo Operación -->
+                                        <!-- ✅ Col 3: Tipo Operación (DINÁMICO desde la BD) -->
                                         <div style="flex: 1 1 130px;">
                                             <label for="filtroOperacion" class="small font-weight-bold text-muted mb-1 d-block">Tipo Operación</label>
                                             <select class="form-control form-control-sm" id="filtroOperacion">
                                                 <option value="">Todas</option>
-                                                <option value="Carga">PGR</option>
-                                                <option value="Descarga">Transporte Liquido</option>
-                                                <option value="Tránsito">GLP</option>
+                                                @foreach($tiposOperacion as $tipo)
+                                                    <option value="{{ $tipo }}">{{ $tipo }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
 
@@ -111,49 +111,6 @@
                                             <label for="filtroFecha" class="small font-weight-bold text-muted mb-1 d-block">Fecha</label>
                                             <input type="date" class="form-control form-control-sm" id="filtroFecha">
                                         </div>
-
-                                        <!-- Col 6: Hora -->
-                                        <div style="flex: 1 1 100px;">
-                                            <label for="filtroHora" class="small font-weight-bold text-muted mb-1 d-block">Hora</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroHora" placeholder="HH:MM">
-                                        </div>
-
-                                        <!-- Col 7: Cantidad -->
-                                        <div style="flex: 1 1 100px;">
-                                            <label for="filtroCantidad" class="small font-weight-bold text-muted mb-1 d-block">Cantidad</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroCantidad" placeholder="Cantidad...">
-                                        </div>
-
-                                        <!-- Col 8: Peso -->
-                                        <div style="flex: 1 1 100px;">
-                                            <label for="filtroPeso" class="small font-weight-bold text-muted mb-1 d-block">Peso</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroPeso" placeholder="Peso...">
-                                        </div>
-
-                                        <!-- Col 9: Flete Neto -->
-                                        <div style="flex: 1 1 110px;">
-                                            <label for="filtroFlete" class="small font-weight-bold text-muted mb-1 d-block">Flete Neto</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroFlete" placeholder="Flete...">
-                                        </div>
-
-                                        <!-- Col 10: Anticipo -->
-                                        <div style="flex: 1 1 110px;">
-                                            <label for="filtroAnticipo" class="small font-weight-bold text-muted mb-1 d-block">Anticipo</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroAnticipo" placeholder="Anticipo...">
-                                        </div>
-
-                                        <!-- Col 11: Saldo a Pagar -->
-                                        <div style="flex: 1 1 110px;">
-                                            <label for="filtroSaldo" class="small font-weight-bold text-muted mb-1 d-block">Saldo a Pagar</label>
-                                            <input type="text" class="form-control form-control-sm" id="filtroSaldo" placeholder="Saldo...">
-                                        </div>
-
-                                        <div class="ml-auto mt-2" style="flex: 0 0 auto;">
-                                            <button type="button" id="btnLimpiarFiltros" class="btn btn-sm btn-outline-secondary">
-                                                <i class="fas fa-undo mr-1"></i> Limpiar Filtros
-                                            </button>
-                                        </div>
-
                                     </div>
                                 </form>
                             </div>
@@ -179,8 +136,8 @@
                                             <th>Flete Neto</th>           <!-- 9 -->
                                             <th>Anticipo</th>             <!-- 10 -->
                                             <th>ReteIca</th>              <!-- 11 -->
-                                            <th>ReteFuente</th>           <!-- 12 ← antes decía "Fopat" -->
-                                            <th>Fopat</th>                <!-- 13 ← NUEVA -->
+                                            <th>ReteFuente</th>           <!-- 12 -->
+                                            <th>Fopat</th>                <!-- 13 -->
                                             <th>Saldo a Pagar</th>        <!-- 14 -->
                                         </tr>
                                     </thead>
@@ -196,62 +153,62 @@
                                                     {{ $manifiesto->manifiesto_codigo ?? 'Sin N°' }}
                                                 </a>
                                             </td>
-                                            
+
                                             <!-- Nombre del Conductor/Poseedor -->
                                             <td>{{ $manifiesto->nombre ?? '' }}</td>
-                                            
+
                                             <!-- Cliente -->
                                             <td>{{ $manifiesto->cliente ?? '' }}</td>
-                                            
+
                                             <!-- Tipo de Operación -->
                                             <td class="text-center">
                                                 <span class="badge badge-success px-2 py-1">
                                                     {{ $manifiesto->tipoOperacion ?? 'N/A' }}
                                                 </span>
                                             </td>
-                                            
+
                                             <!-- Producto -->
                                             <td>{{ $manifiesto->producto ?? '' }}</td>
-                                            
+
                                             <!-- Fecha (formateada sin hora) -->
                                             <td class="text-center">
                                                 {{ !empty($manifiesto->fecha) ? \Carbon\Carbon::parse($manifiesto->fecha)->format('Y-m-d') : '' }}
                                             </td>
-                                            
+
                                             <!-- Hora -->
                                             <td class="text-center">{{ $manifiesto->hora ?? '' }}</td>
-                                            
+
                                             <!-- Cantidad -->
                                             <td class="text-right">{{ $manifiesto->cantidad ?? 0 }}</td>
-                                            
+
                                             <!-- Peso -->
                                             <td class="text-right">{{ $manifiesto->peso ?? 0 }}</td>
-                                            
+
                                             <!-- Flete Neto -->
                                             <td class="text-right font-weight-bold text-dark">
                                                 $ {{ number_format($manifiesto->fleteNeto ?? 0, 0, ',', '.') }}
                                             </td>
-                                            
+
                                             <!-- Anticipo -->
                                             <td class="text-right text-info">
                                                 $ {{ number_format($manifiesto->anticipo ?? 0, 0, ',', '.') }}
                                             </td>
-                                            
+
                                             <!-- ReteICA -->
                                             <td class="text-right">
                                                 $ {{ number_format($manifiesto->reteIca ?? 0, 0, ',', '.') }}
                                             </td>
-                                            
-                                            <!-- ✅ ReteFuente (la columna que antes decía "Fopat") -->
+
+                                            <!-- ReteFuente -->
                                             <td class="text-right">
                                                 $ {{ number_format($manifiesto->reteFuente ?? 0, 0, ',', '.') }}
                                             </td>
-                                            
+
                                             <!-- ✅ FOPAT real (BD; si no existe, fleteNeto * 0.001) -->
                                             <td class="text-right">
                                                 $ {{ number_format($manifiesto->fopat ?? (($manifiesto->fleteNeto ?? 0) * 0.001), 0, ',', '.') }}
                                             </td>
-                                            
+
                                             <!-- Saldo a Pagar -->
                                             <td class="text-right font-weight-bold text-danger">
                                                 $ {{ number_format($manifiesto->saldoPagar ?? 0, 0, ',', '.') }}
@@ -349,12 +306,6 @@
         $('#filtroOperacion').on('change',           function() { table.column(3).search(this.value).draw(); });
         $('#filtroProducto').on('keyup change',      function() { table.column(4).search(this.value).draw(); });
         $('#filtroFecha').on('change',               function() { table.column(5).search(this.value).draw(); });
-        $('#filtroHora').on('keyup change',          function() { table.column(6).search(this.value).draw(); });
-        $('#filtroCantidad').on('keyup change',      function() { table.column(7).search(this.value).draw(); });
-        $('#filtroPeso').on('keyup change',          function() { table.column(8).search(this.value).draw(); });
-        $('#filtroFlete').on('keyup change',         function() { table.column(9).search(this.value).draw(); });
-        $('#filtroAnticipo').on('keyup change',      function() { table.column(10).search(this.value).draw(); });
-        $('#filtroSaldo').on('keyup change',         function() { table.column(14).search(this.value).draw(); });
 
         $('#btnLimpiarFiltros').on('click', function() {
             $('#formFiltros')[0].reset();

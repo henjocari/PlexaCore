@@ -15,7 +15,15 @@ class ManifiestosController extends Controller
     {
         $manifiestos = Manifiesto::orderBy('id', 'desc')->get();
 
-        return view('manifiestos', compact('manifiestos'));
+        // ✅ Valores únicos y reales de tipoOperacion (para el filtro dinámico)
+        // Así el filtro coincide con lo que realmente hay en BD (PGR, GLP, etc.)
+        $tiposOperacion = Manifiesto::distinct()
+            ->whereNotNull('tipoOperacion')
+            ->where('tipoOperacion', '!=', '')
+            ->orderBy('tipoOperacion')
+            ->pluck('tipoOperacion');
+
+        return view('manifiestos', compact('manifiestos', 'tiposOperacion'));
     }
 
     /**
