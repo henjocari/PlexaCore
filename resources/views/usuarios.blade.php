@@ -41,6 +41,7 @@
         .ux-chip { background: #eef2f7; color: #64748b; border-radius: 6px; font-size: .68rem; font-weight: 700; padding: 2px 6px; margin-left: 6px; }
 
         .badge-rol { background: #eaf2fd; color: #2f6fdb; border-radius: 20px; padding: 5px 12px; font-size: .72rem; font-weight: 700; }
+        .badge-op  { background: #fdf6e3; color: #c99a2e; border-radius: 20px; padding: 5px 12px; font-size: .72rem; font-weight: 700; margin-left: 4px; }
         .badge-on  { background: #eaf7e6; color: #4c9a3f; border-radius: 20px; padding: 5px 12px; font-size: .72rem; font-weight: 700; }
         .badge-off { background: #eef1f5; color: #8a94a6; border-radius: 20px; padding: 5px 12px; font-size: .72rem; font-weight: 700; }
 
@@ -174,7 +175,7 @@
                     <div class="ux-card-head">
                         <div>
                             <h6 class="ux-card-title">Usuarios</h6>
-                            <p class="ux-card-sub">Personas con acceso al sistema y el rol que tienen asignado.</p>
+                            <p class="ux-card-sub">Personas con acceso al sistema, su rol y su tipo de operación.</p>
                         </div>
                         <button class="ux-btn ux-btn-primary" data-toggle="modal" data-target="#modalUsuario" onclick="abrirUsuarioModal(null)">
                             <i class="fas fa-plus mr-1"></i> Nuevo usuario
@@ -192,7 +193,7 @@
                                         <th>Usuario</th>
                                         <th>Correo</th>
                                         <th>Celular</th>
-                                        <th>Rol</th>
+                                        <th>Rol / Operación</th>
                                         <th>Estado</th>
                                         <th class="text-right">Acciones</th>
                                     </tr>
@@ -213,7 +214,12 @@
                                         </td>
                                         <td>{{ $u->email ?? '—' }}</td>
                                         <td class="text-muted">{{ $u->cel ?? '—' }}</td>
-                                        <td><span class="badge-rol">{{ $u->rolInfo->nombre ?? 'Sin rol' }}</span></td>
+                                        <td>
+                                            <span class="badge-rol">{{ $u->rolInfo->nombre ?? 'Sin rol' }}</span>
+                                            @if(!empty($u->tipo_operacion))
+                                                <span class="badge-op">{{ $u->tipo_operacion }}</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($u->estado) <span class="badge-on">Activo</span>
                                             @else <span class="badge-off">Inactivo</span>
@@ -350,7 +356,7 @@
                     <div class="ux-modal-ico"><i class="fas fa-user-plus"></i></div>
                     <div>
                         <h5 class="ux-modal-title" id="usuarioModalTitle">Nuevo usuario</h5>
-                        <p class="ux-modal-sub">Crea un usuario y asígnale un rol fijo</p>
+                        <p class="ux-modal-sub">Crea un usuario, asígnale rol y tipo de operación</p>
                     </div>
                     <button type="button" class="ux-close" data-dismiss="modal" aria-label="Cerrar">&times;</button>
                 </div>
@@ -373,6 +379,14 @@
                             <select name="estado" id="u_estado" class="ux-input" required>
                                 <option value="1">Activo</option>
                                 <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="col-12 form-group"><label class="ux-label">Tipo Operación (filtro de manifiestos)</label>
+                            <select name="tipo_operacion" id="u_tipo_operacion" class="ux-input">
+                                <option value="">Todas (sin restricción)</option>
+                                <option value="PGR">PGR</option>
+                                <option value="GLP">GLP</option>
+                                <option value="Transporte Liquido">Transporte Liquido</option>
                             </select>
                         </div>
                         <div class="col-12 form-group mb-0"><label class="ux-label">Contraseña <span id="u_pass_hint">*</span></label><input type="password" name="contraseña" id="u_password" class="ux-input"></div>
@@ -449,7 +463,6 @@
     const BASE_USUARIOS = "{{ url('/usuarios') }}";
     const BASE_ROLES    = "{{ url('/usuarios/roles') }}";
 
-    // Decodificación base64 (evita parse errors de Blade)
     window.usuariosData = JSON.parse(atob("{{ $usuariosJsonB64 }}"));
     window.rolesData    = JSON.parse(atob("{{ $rolesDataB64 }}"));
     window.rolesInfo    = JSON.parse(atob("{{ $rolesInfoB64 }}"));
@@ -457,7 +470,7 @@
     // ===== Modal usuario =====
     function abrirUsuarioModal(cedula) {
         const form = document.getElementById('formUsuario');
-        ['u_cedula','u_cel','u_nombre','u_apellido','u_email','u_password'].forEach(function (id) {
+        ['u_cedula','u_cel','u_nombre','u_apellido','u_email','u_password','u_tipo_operacion'].forEach(function (id) {
             document.getElementById(id).value = '';
         });
 
@@ -476,6 +489,7 @@
             document.getElementById('u_cel').value      = u.cel ?? '';
             document.getElementById('u_rol').value      = u.rol ?? '';
             document.getElementById('u_estado').value   = u.estado ? '1' : '0';
+            document.getElementById('u_tipo_operacion').value = u.tipo_operacion ?? '';
             document.getElementById('u_pass_hint').innerText = '(opcional)';
         } else {
             document.getElementById('usuarioModalTitle').innerText = 'Nuevo usuario';
@@ -484,6 +498,7 @@
             form.action = BASE_USUARIOS;
             document.getElementById('u_cedula').disabled = false;
             document.getElementById('u_estado').value = '1';
+            document.getElementById('u_tipo_operacion').value = '';
             document.getElementById('u_pass_hint').innerText = '*';
         }
     }
@@ -516,7 +531,6 @@
         actualizarContador();
     }
 
-    // ===== Marcar / desmarcar todos =====
     function toggleTodos() {
         const checks = document.querySelectorAll('.rol-pagina-check');
         const todos = Array.from(checks).every(c => c.checked);
@@ -524,7 +538,6 @@
         actualizarContador();
     }
 
-    // ===== Contador de pantallas =====
     function actualizarContador() {
         const p = document.querySelectorAll('.rol-pagina-check:checked').length;
         const el = document.getElementById('rolCounter');

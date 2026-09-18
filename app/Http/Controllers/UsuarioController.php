@@ -10,15 +10,14 @@ use App\Models\PermisosModulo;
 class UsuarioController extends Controller
 {
     /**
-     * Panel "Usuarios y roles": estadísticas, tabla de usuarios,
-     * tarjetas de roles y matriz de permisos (tabla única permisos_modulos).
+     * Panel "Usuarios y roles".
      */
     public function index()
     {
         $usuarios = Usuario::with('rolInfo')->orderBy('cedula')->get();
         $roles    = Roles::orderBy('id')->get();
 
-        // Catálogo de pantallas/módulos (única fuente: permisos_modulos)
+        // Catálogo de pantallas/módulos
         $paginas = PermisosModulo::distinct()->orderBy('paginas')->pluck('paginas');
 
         // Qué pantallas tiene cada rol
@@ -45,13 +44,14 @@ class UsuarioController extends Controller
         $usuariosJson = [];
         foreach ($usuarios as $u) {
             $usuariosJson[(string) $u->cedula] = [
-                'cedula'   => $u->cedula,
-                'Nombre'   => $u->Nombre,
-                'Apellido' => $u->Apellido,
-                'email'    => $u->email,
-                'cel'      => $u->cel,
-                'rol'      => $u->rol,
-                'estado'   => (int) $u->estado,
+                'cedula'         => $u->cedula,
+                'Nombre'         => $u->Nombre,
+                'Apellido'       => $u->Apellido,
+                'email'          => $u->email,
+                'cel'            => $u->cel,
+                'rol'            => $u->rol,
+                'estado'         => (int) $u->estado,
+                'tipo_operacion' => $u->tipo_operacion,   // ⚠️ CLAVE: sin esto el modal abre en "Todas" y guarda NULL
             ];
         }
 
@@ -79,17 +79,18 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'cedula'     => 'required|numeric|unique:usuarios,cedula',
-            'Nombre'     => 'required|string|max:50',
-            'Apellido'   => 'required|string|max:50',
-            'email'      => 'nullable|email|max:250',
-            'cel'        => 'nullable|string|max:30',
-            'contraseña' => 'required|string|min:6',
-            'rol'        => 'required|integer',
-            'estado'     => 'required|boolean',
+            'cedula'         => 'required|numeric|unique:usuarios,cedula',
+            'Nombre'         => 'required|string|max:50',
+            'Apellido'       => 'required|string|max:50',
+            'email'          => 'nullable|email|max:250',
+            'cel'            => 'nullable|string|max:30',
+            'contraseña'     => 'required|string|min:6',
+            'rol'            => 'required|integer',
+            'estado'         => 'required|boolean',
+            'tipo_operacion' => 'nullable|string|max:50',
         ]);
 
-        Usuario::create([
+        $usuario = Usuario::create([
             'cedula'     => $request->cedula,
             'Nombre'     => $request->Nombre,
             'Apellido'   => $request->Apellido,
@@ -100,6 +101,10 @@ class UsuarioController extends Controller
             'estado'     => $request->estado,
         ]);
 
+        // ✅ Asignación directa: garantiza que se guarde aunque fillable falle
+        $usuario->tipo_operacion = $request->tipo_operacion ?: null;
+        $usuario->save();
+
         return redirect()->back()->with('success', 'Usuario creado correctamente.');
     }
 
@@ -108,28 +113,32 @@ class UsuarioController extends Controller
         $usuario = Usuario::findOrFail($cedula);
 
         $request->validate([
-            'Nombre'     => 'required|string|max:50',
-            'Apellido'   => 'required|string|max:50',
-            'email'      => 'nullable|email|max:250',
-            'cel'        => 'nullable|string|max:30',
-            'rol'        => 'required|integer',
-            'estado'     => 'required|boolean',
-            'contraseña' => 'nullable|string|min:6',
+            'Nombre'         => 'required|string|max:50',
+            'Apellido'       => 'required|string|max:50',
+            'email'          => 'nullable|email|max:250',
+            'cel'            => 'nullable|string|max:30',
+            'rol'            => 'required|integer',
+            'estado'         => 'required|boolean',
+            'contraseña'     => 'nullable|string|min:6',
+            'tipo_operacion' => 'nullable|string|max:50',
         ]);
 
-        $datos = [
-            'Nombre'   => $request->Nombre,
-            'Apellido' => $request->Apellido,
-            'email'    => $request->email,
-            'cel'      => $request->cel,
-            'rol'      => $request->rol,
-            'estado'   => $request->estado,
-        ];
+        $usuario->Nombre   = $request->Nombre;
+        $usuario->Apellido = $request->Apellido;
+        $usuario->email    = $request->email;
+        $usuario->cel      = $request->cel;
+        $usuario->rol      = $request->rol;
+        $usuario->estado   = $request->estado;
+
         if ($request->filled('contraseña')) {
-            $datos['contraseña'] = $request->contraseña;
+            $usuario->contraseña = $request->contraseña;
         }
 
-        $usuario->update($datos);
+        // ✅ Asignación directa del tipo de operación
+        $usuario->tipo_operacion = $request->tipo_operacion ?: null;
+
+        $usuario->save();
+
         return redirect()->back()->with('success', 'Usuario actualizado correctamente.');
     }
 
@@ -150,7 +159,7 @@ class UsuarioController extends Controller
 
     public function storeRol(Request $request)
     {
-        $request->validate(['nombre' => 'required|string|max:60|unique:permisos_roles,nombre']);
+        $request->validate(['nombre' => 'required|string|max:100|unique:permisos_roles,nombre']);
 
         $rol = Roles::create(['nombre' => $request->nombre]);
         $this->guardarPermisosRol($rol->id, $request);
@@ -162,7 +171,7 @@ class UsuarioController extends Controller
     {
         $rol = Roles::findOrFail($id);
 
-        $request->validate(['nombre' => 'required|string|max:60|unique:permisos_roles,nombre,' . $id]);
+        $request->validate(['nombre' => 'required|string|max:100|unique:permisos_roles,nombre,' . $id]);
 
         $rol->nombre = $request->nombre;
         $rol->save();
@@ -195,12 +204,10 @@ class UsuarioController extends Controller
     {
         $paginasSel = (array) $request->input('paginas', []);
 
-        // Elimina las que ya no están marcadas
         PermisosModulo::where('roles', $rolId)
             ->whereNotIn('paginas', $paginasSel)
             ->delete();
 
-        // Agrega las nuevas marcadas
         $existentes = PermisosModulo::where('roles', $rolId)->pluck('paginas')->toArray();
         foreach ($paginasSel as $pagina) {
             if (!in_array($pagina, $existentes)) {

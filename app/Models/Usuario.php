@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -9,9 +9,9 @@ class Usuario extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'usuarios'; // 👈 tu tabla personalizada
-    protected $primaryKey = 'cedula'; // 👈 campo clave primaria
-    public $timestamps = false; // 👈 tu tabla no tiene created_at/updated_at
+    protected $table = 'usuarios';
+    protected $primaryKey = 'cedula';
+    public $timestamps = false;
 
     protected $fillable = [
         'cedula',
@@ -21,7 +21,8 @@ class Usuario extends Authenticatable
         'cel',
         'contraseña',
         'rol',
-        'estado'
+        'estado',
+        'tipo_operacion',   // ✅ CLAVE para create/update
     ];
 
     protected $hidden = [
@@ -29,17 +30,14 @@ class Usuario extends Authenticatable
     ];
 
     /**
-     * Laravel usa "password" por defecto, así que redirigimos el campo.
+     * Laravel usa "password" por defecto; redirigimos al campo real.
      */
     public function getAuthPassword()
     {
         return $this->contraseña;
     }
 
-    /**
-     * Relación con la tabla roles.
-     */
-    public function role()  
+    public function role()
     {
         return $this->belongsTo(\App\Models\Roles::class, 'rol');
     }
@@ -48,5 +46,4 @@ class Usuario extends Authenticatable
     {
         return $this->belongsTo(\App\Models\Roles::class, 'rol', 'id');
     }
-
 }

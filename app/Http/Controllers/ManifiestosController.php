@@ -10,20 +10,38 @@ class ManifiestosController extends Controller
 {
     /**
      * Carga la vista de manifiestos con los datos de la base de datos.
+     * Si el usuario tiene tipo_operacion fijado, SOLO ve ese tipo.
      */
     public function index()
     {
-        $manifiestos = Manifiesto::orderBy('id', 'desc')->get();
+        $usuario     = auth()->user();
+        $tipoUsuario = $usuario->tipo_operacion ?? null;
 
-        // ✅ Valores únicos y reales de tipoOperacion (para el filtro dinámico)
-        // Así el filtro coincide con lo que realmente hay en BD (PGR, GLP, etc.)
-        $tiposOperacion = Manifiesto::distinct()
+        // ✅ Si el usuario tiene tipo fijado, SOLO ve ese tipo (restricción real en BD)
+        if ($tipoUsuario && $tipoUsuario !== '' && $tipoUsuario !== 'Todos') {
+            $manifiestos = Manifiesto::where('tipoOperacion', $tipoUsuario)
+                ->orderBy('id', 'desc')
+                ->get();
+            $tipoFijo = $tipoUsuario;
+        } else {
+            $manifiestos = Manifiesto::orderBy('id', 'desc')->get();
+            $tipoFijo = null;
+        }
+
+        // Tipos base que SIEMPRE deben aparecer + los que existan en BD (sin duplicados por mayúsculas)
+        $tiposBase = ['PGR', 'Transporte Liquido', 'GLP'];
+        $tiposBD   = Manifiesto::distinct()
             ->whereNotNull('tipoOperacion')
             ->where('tipoOperacion', '!=', '')
-            ->orderBy('tipoOperacion')
-            ->pluck('tipoOperacion');
+            ->pluck('tipoOperacion')
+            ->toArray();
 
-        return view('manifiestos', compact('manifiestos', 'tiposOperacion'));
+        $tiposOperacion = collect(array_merge($tiposBase, $tiposBD))
+            ->unique(fn($t) => mb_strtolower($t))
+            ->sort()
+            ->values();
+
+        return view('manifiestos', compact('manifiestos', 'tiposOperacion', 'tipoFijo'));
     }
 
     /**
@@ -45,7 +63,6 @@ class ManifiestosController extends Controller
         $data['reteIca']    = (float)($data['reteIca']    ?? 0);
 
         // ✅ FOPAT VERDADERO: fleteNeto * 0.001
-        // Se usa el valor guardado en BD; si no existe, se calcula
         $data['fopat'] = isset($data['fopat']) && $data['fopat'] !== null
             ? (float)$data['fopat']
             : round($data['fleteNeto'] * 0.001, 2);
