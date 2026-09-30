@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Roles;
 use App\Models\PermisosModulo;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
 {
@@ -60,6 +61,18 @@ class UsuarioController extends Controller
         $rolesDataB64    = base64_encode(json_encode($rolPaginas, JSON_UNESCAPED_UNICODE));
         $rolesInfoB64    = base64_encode(json_encode($rolesInfo, JSON_UNESCAPED_UNICODE));
 
+        // Extraer y unificar las operaciones dinámicas para el formulario
+        $operacionesRaw = DB::table('silog_manifiestos')
+            ->whereRaw("UPPER(estado) != 'ANULADO'")
+            ->distinct()
+            ->pluck('tipoOperacion')
+            ->filter();
+
+        $operacionesUnificadas = $operacionesRaw->map(function ($op) {
+            $opTrim = trim($op);
+            return str_contains(strtoupper($opTrim), 'GLP') ? 'GLP' : $opTrim;
+        })->unique()->sort()->values();
+
         $stats = [
             'roles'    => $roles->count(),
             'permisos' => $paginas->count(),
@@ -70,7 +83,7 @@ class UsuarioController extends Controller
 
         return view('usuarios', compact(
             'usuarios', 'roles', 'paginas', 'rolPaginas', 'matriz', 'stats', 'tuRol',
-            'usuariosJsonB64', 'rolesDataB64', 'rolesInfoB64'
+            'usuariosJsonB64', 'rolesDataB64', 'rolesInfoB64', 'operacionesUnificadas'
         ));
     }
 
@@ -87,7 +100,7 @@ class UsuarioController extends Controller
             'contraseña'     => 'required|string|min:6',
             'rol'            => 'required|integer',
             'estado'         => 'required|boolean',
-            'tipo_operacion' => 'nullable|string|max:50',
+            'tipo_operacion' => 'nullable|array',
         ]);
 
         $usuario = Usuario::create([
@@ -102,7 +115,7 @@ class UsuarioController extends Controller
         ]);
 
         // ✅ Asignación directa: garantiza que se guarde aunque fillable falle
-        $usuario->tipo_operacion = $request->tipo_operacion ?: null;
+        $usuario->tipo_operacion = $request->filled('tipo_operacion') ? implode(',', $request->tipo_operacion) : null;
         $usuario->save();
 
         return redirect()->back()->with('success', 'Usuario creado correctamente.');
@@ -120,7 +133,7 @@ class UsuarioController extends Controller
             'rol'            => 'required|integer',
             'estado'         => 'required|boolean',
             'contraseña'     => 'nullable|string|min:6',
-            'tipo_operacion' => 'nullable|string|max:50',
+            'tipo_operacion' => 'nullable|array', // ¡EL ERROR ESTABA AQUÍ! Ahora acepta múltiples opciones
         ]);
 
         $usuario->Nombre   = $request->Nombre;
@@ -134,8 +147,10 @@ class UsuarioController extends Controller
             $usuario->contraseña = $request->contraseña;
         }
 
-        // ✅ Asignación directa del tipo de operación
-        $usuario->tipo_operacion = $request->tipo_operacion ?: null;
+        // ✅ Asignación segura: Convierte el array ['GLP', 'PGR'] en texto "GLP,PGR"
+        $usuario->tipo_operacion = is_array($request->tipo_operacion) && count($request->tipo_operacion) > 0 
+                                    ? implode(',', $request->tipo_operacion) 
+                                    : null;
 
         $usuario->save();
 

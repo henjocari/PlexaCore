@@ -81,22 +81,15 @@
                                             <input type="text" class="form-control form-control-sm" id="filtroCliente" placeholder="Nombre cliente...">
                                         </div>
 
-                                        <!-- ✅ Tipo Operación: bloqueado si el usuario tiene tipo fijado -->
+                                        <!-- ✅ Tipo Operación filtrado por permisos multi-operación -->
                                         <div style="flex: 1 1 130px;">
                                             <label for="filtroOperacion" class="small font-weight-bold text-muted mb-1 d-block">Tipo Operación</label>
-                                            @if($tipoFijo)
-                                                <input type="text" class="form-control form-control-sm"
-                                                       value="{{ $tipoFijo }}" disabled
-                                                       title="Tu usuario solo puede ver: {{ $tipoFijo }}">
-                                                <input type="hidden" id="filtroOperacion" value="{{ $tipoFijo }}">
-                                            @else
-                                                <select class="form-control form-control-sm" id="filtroOperacion">
-                                                    <option value="">Todas</option>
-                                                    @foreach($tiposOperacion as $tipo)
-                                                        <option value="{{ $tipo }}">{{ $tipo }}</option>
-                                                    @endforeach
-                                                </select>
-                                            @endif
+                                            <select class="form-control form-control-sm" id="filtroOperacion">
+                                                <option value="">Todas</option>
+                                                @foreach($tiposOperacion as $tipo)
+                                                    <option value="{{ $tipo }}">{{ $tipo }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div style="flex: 1 1 120px;">

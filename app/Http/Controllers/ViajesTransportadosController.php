@@ -22,6 +22,21 @@ class ViajesTransportadosController extends Controller
             ->whereRaw("UPPER(estado) != 'ANULADO'")
             ->whereBetween('fecha', [$fechaInicial, $fechaFinal]);
 
+        // =====================================================================
+        // ¡FILTRO DE SEGURIDAD MULTI-OPERACIÓN AÑADIDO AL DASHBOARD!
+        // =====================================================================
+        $userOp = auth()->user()->tipo_operacion;
+        if (!empty($userOp)) {
+            $opsAsignadas = explode(',', $userOp); // Convierte "PGR,TRANSPORTE LIQUIDO" en array
+            
+            $baseQuery->where(function ($q) use ($opsAsignadas) {
+                foreach ($opsAsignadas as $op) {
+                    $q->orWhere('tipoOperacion', 'LIKE', '%' . trim($op) . '%');
+                }
+            });
+        }
+        // =====================================================================
+
         // FILTRO NUEVO: Manifiesto (Se aplica a la base para filtrar todo el dashboard)
         if ($request->filled('manifiesto')) {
             $baseQuery->where('manifiesto', 'LIKE', '%' . trim($request->manifiesto) . '%');
@@ -40,10 +55,20 @@ class ViajesTransportadosController extends Controller
         if ($request->filled('tipo_operacion')) $qPoseedores->where('tipoOperacion', 'LIKE', '%' . trim($request->tipo_operacion) . '%');
         if ($request->filled('producto')) $qPoseedores->where('producto', 'LIKE', '%' . trim($request->producto) . '%');
 
+        // UNIFICACIÓN DE GLP Y LIMPIEZA DE LISTAS
+        $operacionesUnificadas = $qOperaciones->distinct()->pluck('tipoOperacion')->filter()->map(function ($op) {
+            $opTrim = trim($op);
+            // Si contiene la palabra GLP, lo renombramos a solo "GLP"
+            return str_contains(strtoupper($opTrim), 'GLP') ? 'GLP' : $opTrim;
+        })->unique()->sort()->values();
+
+        $productosLimpios = $qProductos->distinct()->pluck('producto')->filter()->map(fn($p) => trim($p))->unique()->sort()->values();
+        $poseedoresLimpios = $qPoseedores->distinct()->pluck('poseedor')->filter()->map(fn($p) => trim($p))->unique()->sort()->values();
+
         $filtrosOpciones = [
-            'operaciones' => $qOperaciones->distinct()->pluck('tipoOperacion')->filter()->sort(),
-            'productos'   => $qProductos->distinct()->pluck('producto')->filter()->sort(),
-            'poseedores'  => $qPoseedores->distinct()->pluck('poseedor')->filter()->sort(),
+            'operaciones' => $operacionesUnificadas,
+            'productos'   => $productosLimpios,
+            'poseedores'  => $poseedoresLimpios,
         ];
 
         // Consulta de datos final
@@ -146,6 +171,23 @@ class ViajesTransportadosController extends Controller
         $baseQuery = DB::table('silog_manifiestos')
             ->whereRaw("UPPER(estado) != 'ANULADO'")
             ->whereBetween('fecha', [$fechaInicial, $fechaFinal]);
+
+        // FILTRO DE SEGURIDAD MULTI-OPERACIÓN (Aplica restricciones al dashboard)
+        $userOp = auth()->user()->tipo_operacion;
+        if (!empty($userOp)) {
+            $opsAsignadas = explode(',', $userOp); // Convierte "GLP,PGR" en ['GLP', 'PGR']
+            
+            $baseQuery->where(function ($q) use ($opsAsignadas) {
+                foreach ($opsAsignadas as $op) {
+                    $q->orWhere('tipoOperacion', 'LIKE', '%' . trim($op) . '%');
+                }
+            });
+        }
+
+        // FILTRO NUEVO: Manifiesto (Se aplica a la base para filtrar todo el dashboard)
+        if ($request->filled('manifiesto')) {
+            $baseQuery->where('manifiesto', 'LIKE', '%' . trim($request->manifiesto) . '%');
+        }
 
         if ($request->filled('manifiesto')) $baseQuery->where('manifiesto', 'LIKE', '%' . trim($request->manifiesto) . '%');
         if ($request->filled('tipo_operacion')) $baseQuery->where('tipoOperacion', 'LIKE', '%' . trim($request->tipo_operacion) . '%');

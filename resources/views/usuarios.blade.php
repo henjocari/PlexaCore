@@ -113,6 +113,20 @@
         .ux-group-toggle { font-size: .7rem; font-weight: 800; color: #378E77; text-decoration: none; transition: all .2s; }
         .ux-group-toggle:hover { color: #115c48; text-decoration: underline; }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Estilos para adaptar Select2 múltiple a tu diseño UX */
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #dfe4ea;
+            border-radius: 9px;
+            min-height: 38px;
+            padding: 2px 4px;
+        }
+        .select2-container--focus .select2-selection--multiple {
+            border-color: #378E77 !important;
+            box-shadow: 0 0 0 3px rgba(55,142,119,.12) !important;
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -216,8 +230,14 @@
                                         <td class="text-muted">{{ $u->cel ?? '—' }}</td>
                                         <td>
                                             <span class="badge-rol">{{ $u->rolInfo->nombre ?? 'Sin rol' }}</span>
-                                            @if(!empty($u->tipo_operacion))
-                                                <span class="badge-op">{{ $u->tipo_operacion }}</span>
+                                            @if(empty($u->tipo_operacion))
+                                                <span class="badge-on" style="background:#e8f7f1; color:#248b6f; margin-left:4px;"><i class="fas fa-globe mr-1"></i>Todas</span>
+                                            @else
+                                                @php
+                                                    $ops = explode(',', $u->tipo_operacion);
+                                                    $textoOp = count($ops) > 2 ? count($ops) . ' asignadas' : $u->tipo_operacion;
+                                                @endphp
+                                                <span class="badge-op" title="{{ $u->tipo_operacion }}">{{ $textoOp }}</span>
                                             @endif
                                         </td>
                                         <td>
@@ -382,12 +402,12 @@
                             </select>
                         </div>
                         <div class="col-12 form-group"><label class="ux-label">Tipo Operación (filtro de manifiestos)</label>
-                            <select name="tipo_operacion" id="u_tipo_operacion" class="ux-input">
-                                <option value="">Todas (sin restricción)</option>
-                                <option value="PGR">PGR</option>
-                                <option value="GLP">GLP</option>
-                                <option value="Transporte Liquido">Transporte Liquido</option>
+                            <select name="tipo_operacion[]" id="u_tipo_operacion" class="ux-input" multiple="multiple" data-placeholder="Todas (sin restricción)">
+                                @foreach($operacionesUnificadas as $op)
+                                    <option value="{{ $op }}">{{ $op }}</option>
+                                @endforeach
                             </select>
+                            <small class="text-muted" style="font-size: 0.7rem; display:block; margin-top:4px;">Si dejas el campo vacío, el usuario verá toda la operación.</small>
                         </div>
                         <div class="col-12 form-group mb-0"><label class="ux-label">Contraseña <span id="u_pass_hint">*</span></label><input type="password" name="contraseña" id="u_password" class="ux-input"></div>
                     </div>
@@ -454,12 +474,26 @@
 
 <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
+<!-- 1. PRIMERO JQUERY Y BOOTSTRAP -->
 <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
+<!-- 2. DESPUÉS SELECT2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+    $(document).ready(function() {
+        // Inicializar Select2 corrigiendo el bug del modal
+        $('#u_tipo_operacion').select2({
+            width: '100%',
+            allowClear: true,
+            placeholder: "Todas (sin restricción)",
+            dropdownParent: $('#modalUsuario')
+        });
+    });
+
     const BASE_USUARIOS = "{{ url('/usuarios') }}";
     const BASE_ROLES    = "{{ url('/usuarios/roles') }}";
 
@@ -469,8 +503,7 @@
 
     // ===== Modal usuario =====
     function abrirUsuarioModal(cedula) {
-        const form = document.getElementById('formUsuario');
-        ['u_cedula','u_cel','u_nombre','u_apellido','u_email','u_password','u_tipo_operacion'].forEach(function (id) {
+        ['u_cedula','u_cel','u_nombre','u_apellido','u_email','u_password'].forEach(function (id) {
             document.getElementById(id).value = '';
         });
 
@@ -480,7 +513,7 @@
             document.getElementById('usuarioModalTitle').innerText = 'Editar usuario';
             document.getElementById('usuarioSubmit').innerText = 'Guardar cambios';
             document.getElementById('usuarioMethod').value = 'PUT';
-            form.action = BASE_USUARIOS + '/' + u.cedula;
+            document.getElementById('formUsuario').action = BASE_USUARIOS + '/' + u.cedula;
             document.getElementById('u_cedula').value = u.cedula ?? '';
             document.getElementById('u_cedula').disabled = true;
             document.getElementById('u_nombre').value   = u.Nombre ?? '';
@@ -489,17 +522,22 @@
             document.getElementById('u_cel').value      = u.cel ?? '';
             document.getElementById('u_rol').value      = u.rol ?? '';
             document.getElementById('u_estado').value   = u.estado ? '1' : '0';
-            document.getElementById('u_tipo_operacion').value = u.tipo_operacion ?? '';
             document.getElementById('u_pass_hint').innerText = '(opcional)';
+            
+            // Cargar datos en Select2
+            const opsAsignadas = u.tipo_operacion ? u.tipo_operacion.split(',') : [];
+            $('#u_tipo_operacion').val(opsAsignadas).trigger('change');
         } else {
             document.getElementById('usuarioModalTitle').innerText = 'Nuevo usuario';
             document.getElementById('usuarioSubmit').innerText = 'Crear usuario';
             document.getElementById('usuarioMethod').value = 'POST';
-            form.action = BASE_USUARIOS;
+            document.getElementById('formUsuario').action = BASE_USUARIOS;
             document.getElementById('u_cedula').disabled = false;
             document.getElementById('u_estado').value = '1';
-            document.getElementById('u_tipo_operacion').value = '';
             document.getElementById('u_pass_hint').innerText = '*';
+            
+            // Limpiar Select2
+            $('#u_tipo_operacion').val([]).trigger('change');
         }
     }
 

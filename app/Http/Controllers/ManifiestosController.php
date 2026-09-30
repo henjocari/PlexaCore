@@ -17,31 +17,39 @@ class ManifiestosController extends Controller
         $usuario     = auth()->user();
         $tipoUsuario = $usuario->tipo_operacion ?? null;
 
-        // ✅ Si el usuario tiene tipo fijado, SOLO ve ese tipo (restricción real en BD)
-        if ($tipoUsuario && $tipoUsuario !== '' && $tipoUsuario !== 'Todos') {
-            $manifiestos = Manifiesto::where('tipoOperacion', $tipoUsuario)
-                ->orderBy('id', 'desc')
-                ->get();
-            $tipoFijo = $tipoUsuario;
-        } else {
-            $manifiestos = Manifiesto::orderBy('id', 'desc')->get();
-            $tipoFijo = null;
+        $query = Manifiesto::orderBy('id', 'desc');
+        $opsAsignadas = [];
+
+        // ✅ Si el usuario tiene tipos de operación asignados, se filtran de forma múltiple
+        if (!empty($tipoUsuario)) {
+            $opsAsignadas = array_map('trim', explode(',', $tipoUsuario));
+            $query->where(function ($q) use ($opsAsignadas) {
+                foreach ($opsAsignadas as $op) {
+                    $q->orWhere('tipoOperacion', 'LIKE', '%' . $op . '%');
+                }
+            });
         }
 
-        // Tipos base que SIEMPRE deben aparecer + los que existan en BD (sin duplicados por mayúsculas)
-        $tiposBase = ['PGR', 'Transporte Liquido', 'GLP'];
-        $tiposBD   = Manifiesto::distinct()
-            ->whereNotNull('tipoOperacion')
-            ->where('tipoOperacion', '!=', '')
-            ->pluck('tipoOperacion')
-            ->toArray();
+        $manifiestos = $query->get();
 
-        $tiposOperacion = collect(array_merge($tiposBase, $tiposBD))
-            ->unique(fn($t) => mb_strtolower($t))
-            ->sort()
-            ->values();
+        // ✅ Definir las opciones que aparecerán en el selector de la vista
+        if (!empty($opsAsignadas)) {
+            $tiposOperacion = collect($opsAsignadas)->sort()->values();
+        } else {
+            $tiposBase = ['PGR', 'Transporte Liquido', 'GLP'];
+            $tiposBD   = Manifiesto::distinct()
+                ->whereNotNull('tipoOperacion')
+                ->where('tipoOperacion', '!=', '')
+                ->pluck('tipoOperacion')
+                ->toArray();
 
-        return view('manifiestos', compact('manifiestos', 'tiposOperacion', 'tipoFijo'));
+            $tiposOperacion = collect(array_merge($tiposBase, $tiposBD))
+                ->unique(fn($t) => mb_strtolower($t))
+                ->sort()
+                ->values();
+        }
+
+        return view('manifiestos', compact('manifiestos', 'tiposOperacion'));
     }
 
     /**

@@ -13,6 +13,60 @@
     
     <!-- LIBRERÍA SELECT2 (Buscador en listas) -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* ================================================= */
+        /* ESTILOS TEMPORALES EXCLUSIVOS PARA EL PDF         */
+        /* ================================================= */
+        .pdf-exporting { background-color: #ffffff !important; padding: 15px !important; }
+        .pdf-exporting .cabezote-fondo { min-height: 85px !important; padding: 0.5rem 1.5rem !important; }
+        .pdf-exporting .camion-difuminado { width: 220px !important; height: 65px !important; right: 150px !important; }
+        
+        /* 1. CLAVE: Evitar que las columnas se apilen verticalmente al reducir el ancho */
+        .pdf-exporting .col-lg-5 { flex: 0 0 41.66667% !important; max-width: 41.66667% !important; }
+        .pdf-exporting .col-lg-7 { flex: 0 0 58.33333% !important; max-width: 58.33333% !important; }
+        .pdf-exporting .col-lg-6 { flex: 0 0 50% !important; max-width: 50% !important; }
+        
+        /* Reducción general de fuentes */
+        .pdf-exporting h1.h2 { font-size: 1.1rem !important; }
+        .pdf-exporting h2.h4 { font-size: 0.85rem !important; }
+        .pdf-exporting h3 { font-size: 0.8rem !important; }
+        .pdf-exporting .h3 { font-size: 0.95rem !important; }
+        .pdf-exporting .h4 { font-size: 0.85rem !important; }
+        .pdf-exporting .h5 { font-size: 0.75rem !important; }
+        .pdf-exporting .text-lg { font-size: 0.7rem !important; }
+        .pdf-exporting .text-sm { font-size: 0.6rem !important; }
+        .pdf-exporting .text-xs { font-size: 0.55rem !important; }
+        
+        /* Reducción agresiva de espacios (paddings y margins) */
+        .pdf-exporting .card-body { padding: 0.4rem !important; }
+        .pdf-exporting .card-header { padding: 0.3rem !important; }
+        .pdf-exporting .mb-4 { margin-bottom: 0.4rem !important; }
+        .pdf-exporting .py-3 { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
+        .pdf-exporting .fa-2x { font-size: 1.1em !important; }
+        
+        /* Compactar tablas y gráficos */
+        .pdf-exporting .table th, .pdf-exporting .table td { padding: 0.2rem !important; font-size: 0.55rem !important; }
+        
+        .pdf-exporting .chart-bar { 
+            height: 110px !important; 
+            width: 100% !important; 
+            max-width: 100% !important;
+            padding: 0 !important; 
+            overflow: hidden !important; 
+        }
+        
+        .pdf-exporting canvas { 
+            max-height: 110px !important; 
+            max-width: 100% !important; 
+            width: 100% !important; 
+            height: auto !important;
+        }
+
+        /* Ajuste del footer para que quepa en la misma hoja */
+        .pdf-exporting .footer-pdf { padding: 0.2rem 1rem !important; }
+        .pdf-exporting .footer-pdf span { font-size: 0.65rem !important; }
+        .pdf-exporting .footer-pdf .fa-envira { font-size: 1.2rem !important; margin-right: 0.5rem !important; }
+    </style>
 </head>
 
 <body id="page-top">
@@ -83,7 +137,99 @@
                             color: white !important;
                         }
                     </style>
-                    <div id="reporte-pdf">
+
+                    <!-- ===================================================== -->
+                    <!-- FORMULARIO DE FILTROS (FUERA DEL PDF - SÓLO PANTALLA) -->
+                    <!-- ===================================================== -->
+                    <div class="card shadow mb-4 border-0">
+                        <div class="bg-light p-3 d-flex flex-wrap justify-content-start align-items-center border-bottom">
+                            <div class="bg-white text-dark py-1 px-3 border rounded mr-3 mb-2 shadow-sm d-flex align-items-center">
+                                <i class="far fa-calendar-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
+                                <div>
+                                    <small class="text-muted d-block" style="line-height: 1;">Desde</small>
+                                    <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::parse($fechaInicial)->format('d.m.Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="bg-white text-dark py-1 px-3 border rounded mr-3 mb-2 shadow-sm d-flex align-items-center">
+                                <i class="far fa-calendar-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
+                                <div>
+                                    <small class="text-muted d-block" style="line-height: 1;">Hasta</small>
+                                    <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::parse($fechaFinal)->format('d.m.Y') }}</span>
+                                </div>
+                            </div>
+                            <div class="border-left pl-3 mr-3 mb-2" style="height: 40px;"></div>
+                            <div class="bg-white text-dark py-1 px-3 border rounded mb-2 shadow-sm d-flex align-items-center">
+                                <i class="far fa-file-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
+                                <div>
+                                    <small class="text-muted d-block" style="line-height: 1;">Corte del informe:</small>
+                                    <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::now()->format('d.m.Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body py-3">
+                            <form method="POST" action="{{ route('viajes.transportados') }}" class="row g-2 align-items-end m-0">
+                                @csrf
+                                <div class="col" style="min-width: 130px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Desde</label>
+                                    <input type="date" name="fecha_inicial" class="form-control form-control-sm" value="{{ $fechaInicial }}">
+                                </div>
+                                <div class="col" style="min-width: 130px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Hasta</label>
+                                    <input type="date" name="fecha_final" class="form-control form-control-sm" value="{{ $fechaFinal }}">
+                                </div>
+                                <div class="col" style="min-width: 120px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Manifiesto</label>
+                                    <input type="text" name="manifiesto" class="form-control form-control-sm" placeholder="Ej: 12345" value="{{ request('manifiesto') }}" onkeypress="if(event.keyCode == 13) this.form.submit();">
+                                </div>
+                                <div class="col" style="min-width: 140px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Tipo Oper.</label>
+                                    <select name="tipo_operacion" class="form-control form-control-sm select2-buscador">
+                                        <option value="">Todos</option>
+                                        @foreach($filtrosOpciones['operaciones'] as $opcion)
+                                            <option value="{{ trim($opcion) }}" {{ trim(request('tipo_operacion')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col" style="min-width: 140px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Producto</label>
+                                    <select name="producto" class="form-control form-control-sm select2-buscador">
+                                        <option value="">Todos</option>
+                                        @foreach($filtrosOpciones['productos'] as $opcion)
+                                            <option value="{{ trim($opcion) }}" {{ trim(request('producto')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col" style="min-width: 160px;">
+                                    <label class="form-label text-xs font-weight-bold mb-1">Poseedor</label>
+                                    <select name="poseedor" class="form-control form-control-sm select2-buscador">
+                                        <option value="">Todos</option>
+                                        @foreach($filtrosOpciones['poseedores'] as $opcion)
+                                            <option value="{{ trim($opcion) }}" {{ trim(request('poseedor')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-auto d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary btn-sm px-3 bg-plexa-dark border-0 mr-1" title="Aplicar filtros">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
+                                    <button type="submit" formaction="{{ route('viajes.excel') }}" class="btn btn-success btn-sm px-3 border-0 mr-1" title="Exportar a Excel">
+                                        <i class="fas fa-file-excel"></i>
+                                    </button>
+                                    <button type="button" onclick="exportarPDF()" class="btn btn-danger btn-sm px-3 border-0" title="Descargar PDF">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <!-- ===================================================== -->
+                    <!-- CONTENEDOR PARA EXPORTAR A PDF (INICIO)               -->
+                    <!-- ===================================================== -->
+                    <div id="reporte-pdf" style="background-color: #ffffff; padding: 10px;">
+                        
                         <!-- CABEZOTE PRINCIPAL -->
                         <div class="card shadow mb-4 border-0">
                             <div class="cabezote-fondo">
@@ -92,98 +238,13 @@
                                     <h1 class="h2 font-weight-bold mb-0" style="letter-spacing: 1px;">INFORME GERENCIAL</h1>
                                     <h2 class="h4 mb-3" style="font-weight: 300;">DE VIAJES TRANSPORTADOS</h2>
                                     <p class="mb-0 text-sm font-weight-bold">Periodo operativo: {{ \Carbon\Carbon::parse($fechaInicial)->format('d/m/Y') }} al {{ \Carbon\Carbon::parse($fechaFinal)->format('d/m/Y') }}</p>
-                                    <small class="text-light">Fuente: SEGUIMIENTO DIARIO</small>
+                                    <!--<small class="text-light">Fuente: SEGUIMIENTO DIARIO</small>-->
                                 </div>
                                 <div class="text-right d-none d-md-block pr-2" style="z-index: 2; position: relative;">
                                     <h3 class="font-weight-bolder text-white mb-0" style="line-height: 1.1; font-style: italic; letter-spacing: 1px; text-shadow: 2px 2px 6px rgba(0,0,0,0.6);">
                                         MOVEMOS<br>ENERGÍA<br>QUE IMPULSA<br>EL FUTURO
                                     </h3>
                                 </div>
-                            </div>
-
-                            <!-- BARRA DE FECHAS Y CORTE -->
-                            <div class="bg-light p-3 d-flex flex-wrap justify-content-start align-items-center border-bottom">
-                                <div class="bg-white text-dark py-1 px-3 border rounded mr-3 mb-2 shadow-sm d-flex align-items-center">
-                                    <i class="far fa-calendar-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
-                                    <div>
-                                        <small class="text-muted d-block" style="line-height: 1;">Desde</small>
-                                        <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::parse($fechaInicial)->format('d.m.Y') }}</span>
-                                    </div>
-                                </div>
-                                <div class="bg-white text-dark py-1 px-3 border rounded mr-3 mb-2 shadow-sm d-flex align-items-center">
-                                    <i class="far fa-calendar-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
-                                    <div>
-                                        <small class="text-muted d-block" style="line-height: 1;">Hasta</small>
-                                        <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::parse($fechaFinal)->format('d.m.Y') }}</span>
-                                    </div>
-                                </div>
-                                <div class="border-left pl-3 mr-3 mb-2" style="height: 40px;"></div>
-                                <div class="bg-white text-dark py-1 px-3 border rounded mb-2 shadow-sm d-flex align-items-center">
-                                    <i class="far fa-file-alt fa-2x text-primary mr-2" style="color: #114372 !important;"></i>
-                                    <div>
-                                        <small class="text-muted d-block" style="line-height: 1;">Corte del informe:</small>
-                                        <span class="font-weight-bold h6 mb-0">{{ \Carbon\Carbon::now()->format('d.m.Y') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- FORMULARIO DE FILTROS DINÁMICOS -->
-                            <div class="card-body py-3">
-                                <form method="POST" action="{{ route('viajes.transportados') }}" class="row g-2 align-items-end m-0">
-                                    @csrf
-                                    <div class="col" style="min-width: 130px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Desde</label>
-                                        <input type="date" name="fecha_inicial" class="form-control form-control-sm" value="{{ $fechaInicial }}">
-                                    </div>
-                                    <div class="col" style="min-width: 130px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Hasta</label>
-                                        <input type="date" name="fecha_final" class="form-control form-control-sm" value="{{ $fechaFinal }}">
-                                    </div>
-                                    <div class="col" style="min-width: 120px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Manifiesto</label>
-                                        <input type="text" name="manifiesto" class="form-control form-control-sm" placeholder="Ej: 12345" value="{{ request('manifiesto') }}" onkeypress="if(event.keyCode == 13) this.form.submit();">
-                                    </div>
-                                    <div class="col" style="min-width: 140px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Tipo Oper.</label>
-                                        <select name="tipo_operacion" class="form-control form-control-sm select2-buscador">
-                                            <option value="">Todos</option>
-                                            @foreach($filtrosOpciones['operaciones'] as $opcion)
-                                                <option value="{{ trim($opcion) }}" {{ trim(request('tipo_operacion')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col" style="min-width: 140px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Producto</label>
-                                        <select name="producto" class="form-control form-control-sm select2-buscador">
-                                            <option value="">Todos</option>
-                                            @foreach($filtrosOpciones['productos'] as $opcion)
-                                                <option value="{{ trim($opcion) }}" {{ trim(request('producto')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col" style="min-width: 160px;">
-                                        <label class="form-label text-xs font-weight-bold mb-1">Poseedor</label>
-                                        <select name="poseedor" class="form-control form-control-sm select2-buscador">
-                                            <option value="">Todos</option>
-                                            @foreach($filtrosOpciones['poseedores'] as $opcion)
-                                                <option value="{{ trim($opcion) }}" {{ trim(request('poseedor')) == trim($opcion) ? 'selected' : '' }}>{{ trim($opcion) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-auto d-flex gap-2">
-                                        <button type="submit" class="btn btn-primary btn-sm px-3 bg-plexa-dark border-0 mr-1" title="Aplicar filtros">
-                                            <i class="fas fa-filter"></i>
-                                        </button>
-                                        <!-- Botón Excel (Usa el mismo form pero va a otra ruta) -->
-                                        <button type="submit" formaction="{{ route('viajes.excel') }}" class="btn btn-success btn-sm px-3 border-0 mr-1" title="Exportar a Excel">
-                                            <i class="fas fa-file-excel"></i>
-                                        </button>
-                                        <!-- Botón PDF (Ejecuta JS) -->
-                                        <button type="button" onclick="exportarPDF()" class="btn btn-danger btn-sm px-3 border-0" title="Descargar PDF">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
 
@@ -252,7 +313,7 @@
                                     </div>
                                     <div class="card-body text-center p-3">
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $dashboardData['margen'] }}</div>
-                                        <div class="text-sm font-weight-bold text-plexa-dark mt-1">({{ $dashboardData['margen_pct'] }})</div>
+                                        <!--<div class="text-sm font-weight-bold text-plexa-dark mt-1">({{ $dashboardData['margen_pct'] }})</div>-->
                                     </div>
                                 </div>
                             </div>
@@ -383,27 +444,28 @@
                                 </div>
                             </div>
                         </div>
-                    </div> <!-- FIN CONTENEDOR PDF -->
-                    <!-- FOOTER / BANNER INFERIOR -->
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="card shadow border-0 bg-plexa-dark text-white">
-                                <div class="card-body d-flex justify-content-between align-items-center py-3 px-4">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fab fa-envira fa-2x mr-3 text-success"></i>
-                                        <div style="line-height: 1.2;">
-                                            <span class="d-block font-weight-bold">TRANSPORTE SEGURO,</span>
-                                            <span class="font-weight-light">OPERACIONES EFICIENTES</span>
+
+                        <!-- FOOTER / BANNER INFERIOR -->
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <div class="card shadow border-0 bg-plexa-dark text-white">
+                                    <div class="card-body d-flex justify-content-between align-items-center py-3 px-4">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fab fa-envira fa-2x mr-3 text-success"></i>
+                                            <div style="line-height: 1.2;">
+                                                <span class="d-block font-weight-bold">TRANSPORTE SEGURO,</span>
+                                                <span class="font-weight-light">OPERACIONES EFICIENTES</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="text-right" style="line-height: 1.2;">
-                                        <span class="d-block font-weight-bold">COMPROMETIDOS</span>
-                                        <span class="font-weight-light">CON RESULTADOS</span>
+                                        <div class="text-right" style="line-height: 1.2;">
+                                            <span class="d-block font-weight-bold">COMPROMETIDOS</span>
+                                            <span class="font-weight-light">CON RESULTADOS</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> <!-- FIN CONTENEDOR PDF -->
 
                 </div>
             </div>
@@ -421,23 +483,48 @@
     <!-- LIBRERÍA SELECT2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <script>
         function exportarPDF() {
+            // 1. Subir el scroll al tope
+            window.scrollTo(0, 0);
+
             const elemento = document.getElementById('reporte-pdf');
-            const opciones = {
-                margin:       [5, 5, 5, 5], // Márgenes pequeños en mm
-                filename:     'Informe_Gerencial.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { 
-                    scale: 1.5, 
-                    useCORS: true, 
-                    letterRendering: true,
-                    windowWidth: 1200 // Fuerza el diseño de escritorio para que no se amontone
-                },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
             
-            html2pdf().set(opciones).from(elemento).save();
+            // 2. Añadir la clase temporal que encoge los elementos
+            elemento.classList.add('pdf-exporting');
+
+            // 3. Pausa para recalcular dimensiones reales
+            setTimeout(() => {
+                // 👈 Usamos scrollHeight y sumamos 15px de respiro para que el footer no se corte
+                const altoReal = elemento.scrollHeight + 15;
+
+                const opciones = {
+                    margin:       0,
+                    filename:     'Informe_Gerencial.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        letterRendering: true,
+                        windowWidth: 794,
+                        width: 794,
+                        x: 0,
+                        y: 0,
+                        scrollY: 0
+                    },
+                    jsPDF: { 
+                        unit: 'px', 
+                        format: [794, altoReal], // Altura dinámica precisa con espacio seguro para el footer
+                        orientation: 'portrait' 
+                    }
+                };
+                
+                // 4. Generar y remover la clase al terminar
+                html2pdf().set(opciones).from(elemento).save().then(() => {
+                    elemento.classList.remove('pdf-exporting');
+                });
+            }, 100);
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -449,7 +536,6 @@
                     noResults: function() { return "No se encontraron coincidencias"; }
                 }
             }).on('change', function(e) {
-                // Al seleccionar un item de la lista, envía el formulario automáticamente
                 $(this).closest('form').submit();
             });
 
