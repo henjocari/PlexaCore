@@ -16,6 +16,7 @@ use App\Http\Controllers\TratamientoDatosController;
 use App\Http\Controllers\InspeccionQuimicaController;
 use App\Http\Controllers\ManifiestosController;
 use App\Http\Controllers\PlanDeProcedimientoController;
+use App\Http\Controllers\ViajesTransportadosController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -274,3 +275,14 @@ Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF
 // 👇 RUTA PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL)
 Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])
     ->name('precio.descargar');
+
+// ==========================================
+//  MÓDULO INFORME GERENCIAL (SILOGTRAN)
+// ==========================================
+Route::match(['get', 'post'], '/viajes-transportados', [\App\Http\Controllers\ViajesTransportadosController::class, 'index'])
+    ->middleware(VerificarModulo::class . ':Informe Gerencial')
+    ->name('viajes.transportados');
+
+Route::post('/viajes-transportados/excel', [\App\Http\Controllers\ViajesTransportadosController::class, 'exportarExcel'])
+        ->middleware(VerificarModulo::class . ':Informe Gerencial')
+        ->name('viajes.excel');

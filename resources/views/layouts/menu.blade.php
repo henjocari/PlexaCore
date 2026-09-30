@@ -172,25 +172,31 @@
         </li>
     @endif
 
-    {{-- MÓDULO MANIFIESTO --}}
-    @if(in_array('Manifiestos', $misModulos))
+    {{-- MÓDULOS DE GESTIÓN LOGÍSTICA E INFORMES --}}
+    @if(in_array('Manifiestos', $misModulos) || in_array('Informe Gerencial', $misModulos))
         <hr class="sidebar-divider">
-        <div class="sidebar-heading">Gestion Logistica</div>
+        <div class="sidebar-heading">Gestión Logística</div>
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseManifiesto"
                 aria-expanded="true" aria-controls="collapseManifiesto">
                 <i class="fas fa-fw fa-file-invoice"></i>
-                <span>Manifiesto</span>
+                <span>Manifiestos</span>
             </a>
 
             <div id="collapseManifiesto" class="collapse" aria-labelledby="headingManifiesto" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Gestión de Manifiestos:</h6>
+                    <h6 class="collapse-header">Opciones:</h6>
 
                     @if(in_array('Manifiestos', $misModulos))
                         <a class="collapse-item {{ request()->is('manifiestos') ? 'active' : '' }}" href="{{ url('/manifiestos') }}">
-                            <i class="fas fa-clipboard-list mr-2 text-gray-500"></i> Validacion de Manifiestos
+                            <i class="fas fa-clipboard-list mr-2 text-gray-500"></i> Validación de Manifiestos
+                        </a>
+                    @endif
+
+                    @if(in_array('Informe Gerencial', $misModulos))
+                        <a class="collapse-item {{ request()->routeIs('viajes.transportados') ? 'active' : '' }}" href="{{ route('viajes.transportados') }}">
+                            <i class="fas fa-chart-line mr-2 text-primary"></i> Informe Gerencial
                         </a>
                     @endif
                 </div>
