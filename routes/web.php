@@ -286,3 +286,7 @@ Route::match(['get', 'post'], '/viajes-transportados', [\App\Http\Controllers\Vi
 Route::post('/viajes-transportados/excel', [\App\Http\Controllers\ViajesTransportadosController::class, 'exportarExcel'])
         ->middleware(VerificarModulo::class . ':Informe Gerencial')
         ->name('viajes.excel');
+
+// RUTAS CORRECTAS PARA DESCARGA
+Route::get('/descargar-colaborador/{id}', [TratamientoDatosController::class, 'descargarColaborador']);
+Route::get('/descargar-tercero/{id}', [TratamientoDatosController::class, 'descargarTercero']);

@@ -15,74 +15,38 @@
         .bg-plexa-gradient { background: linear-gradient(135deg, #115c48 0%, #378E77 100%); }
         .soft-card { border: none; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .soft-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); }
-        .custom-input { border-radius: 10px; border: 2px solid #e2e8f0; background-color: #f8fafc; padding: 0.85rem 1rem; color: #1e293b; font-weight: 500; transition: all 0.3s ease; }
-        .custom-input:focus { border-color: #378E77; background-color: #ffffff; box-shadow: 0 0 0 4px rgba(55, 142, 119, 0.1); outline: none; }
-        .custom-label { font-weight: 700; color: #475569; font-size: 0.9rem; margin-bottom: 0.5rem; display: block; }
         .btn-plexa { background: linear-gradient(135deg, #378E77, #248b6f); border: none; border-radius: 12px; padding: 12px 20px; font-weight: 700; color: white; box-shadow: 0 8px 15px rgba(55, 142, 119, 0.25); transition: all 0.3s ease; }
         .btn-plexa:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(55, 142, 119, 0.35); color: white; }
+        
         .table-modern { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
         .table-modern th { border: none; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; padding: 10px 20px; }
         .table-modern td { background: #ffffff; border: none; padding: 15px 20px; vertical-align: middle; color: #334155; font-weight: 500; }
-        .table-modern tbody tr { box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: box-shadow 0.2s ease; }
+        .table-modern tbody tr { box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: box-shadow 0.2s ease; cursor: pointer; }
         .table-modern td:first-child { border-radius: 12px 0 0 12px; }
         .table-modern td:last-child { border-radius: 0 12px 12px 0; }
-        .avatar-circle { width: 40px; height: 40px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; margin-right: 12px; }
+        .avatar-circle { width: 40px; height: 40px; background-color: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; margin-right: 12px; transition: all .3s ease; }
+        .table-modern tbody tr:hover { box-shadow: 0 8px 25px rgba(55, 142, 119, 0.18) !important; }
+        .table-modern tbody tr:hover .avatar-circle { transform: scale(1.1) rotate(4deg); background-color: #378E77; color: #fff; box-shadow: 0 4px 12px rgba(55, 142, 119, .4); }
+        
         .badge-success-soft { background-color: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
         .badge-aut { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.72rem; display: inline-block; margin-bottom: 3px; margin-right: 3px; }
         .badge-aut-si { background-color: #dcfce7; color: #166534; }
         .badge-aut-no { background-color: #fee2e2; color: #991b1b; }
         .badge-aut-na { background-color: #f1f5f9; color: #64748b; }
 
-        /* ===== Paginación estilo Plexa (sin animación) ===== */
+        /* Estilo de Pestañas Tipo Carpeta */
+        .tabs-navigation { display: flex; align-items: flex-end; width: 100%; border-bottom: 4px solid #378E77; margin-bottom: 20px; gap: 5px; }
+        .tab-btn { padding: 12px 30px; background: #e2e8f0; color: #64748b; border: 1px solid #cbd5e1; border-bottom: none; border-radius: 16px 16px 0 0; font-weight: 700; font-size: 0.95rem; cursor: pointer; position: relative; margin-bottom: 0; z-index: 1; transition: background-color 0.2s; }
+        .tab-btn:hover:not(.active) { background: #cbd5e1; color: #1e293b; }
+        .tab-btn.active { background: #378E77; color: white; border-color: #378E77; margin-bottom: -4px; padding-bottom: 16px; z-index: 2; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Paginación */
         .pagination { margin-bottom: 0; }
-        .page-link {
-            color: #378E77;
-            border-radius: 8px;
-            margin: 0 3px;
-            border: 1px solid #e2e8f0;
-            padding: 6px 12px;
-            font-weight: 600;
-            font-size: .85rem;
-            transition: all .2s ease;
-        }
+        .page-link { color: #378E77; border-radius: 8px; margin: 0 3px; border: 1px solid #e2e8f0; padding: 6px 12px; font-weight: 600; font-size: .85rem; transition: all .2s ease; }
         .page-item.active .page-link { background: #378E77; border-color: #378E77; color: #fff; }
         .page-link:hover { background: #e8f7f1; color: #248b6f; }
-        .page-item.disabled .page-link { color: #cbd5e1; background: transparent; }
-
-        /* =====================================================
-           ANIMACIONES — SOLO EN LA TABLA (sin desborde horizontal)
-           ===================================================== */
-        @keyframes filaIn {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Entrada escalonada VERTICAL (no genera scrollbar horizontal) */
-        .table-modern tbody tr { animation: filaIn .4s ease-out both; }
-        .table-modern tbody tr:nth-child(1)  { animation-delay: .03s; }
-        .table-modern tbody tr:nth-child(2)  { animation-delay: .07s; }
-        .table-modern tbody tr:nth-child(3)  { animation-delay: .11s; }
-        .table-modern tbody tr:nth-child(4)  { animation-delay: .15s; }
-        .table-modern tbody tr:nth-child(5)  { animation-delay: .19s; }
-        .table-modern tbody tr:nth-child(6)  { animation-delay: .23s; }
-        .table-modern tbody tr:nth-child(7)  { animation-delay: .27s; }
-        .table-modern tbody tr:nth-child(8)  { animation-delay: .31s; }
-        .table-modern tbody tr:nth-child(9)  { animation-delay: .35s; }
-        .table-modern tbody tr:nth-child(10) { animation-delay: .39s; }
-
-        /* Hover: solo sombra (SIN translateX para no desbordar) */
-        .table-modern tbody tr:hover {
-            box-shadow: 0 8px 25px rgba(55, 142, 119, 0.18) !important;
-        }
-
-        /* El avatar reacciona al pasar por la fila (contenido dentro de la celda) */
-        .avatar-circle { transition: all .3s cubic-bezier(.22,1,.36,1); }
-        .table-modern tbody tr:hover .avatar-circle {
-            transform: scale(1.1) rotate(4deg);
-            background-color: #378E77;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(55, 142, 119, .4);
-        }
     </style>
 </head>
 
@@ -105,8 +69,8 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="color: #378E77;">Firmas Recibidas</div>
-                                            <div class="h3 mb-0 font-weight-bold text-gray-800">{{ $firmas->total() }}</div>
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1" style="color: #378E77;">Total Firmas</div>
+                                            <div class="h3 mb-0 font-weight-bold text-gray-800">{{ $firmasTerceros->total() + $firmasColaboradores->total() }}</div>
                                         </div>
                                         <div class="col-auto"><i class="fas fa-file-signature fa-2x text-gray-300"></i></div>
                                     </div>
@@ -115,140 +79,149 @@
                         </div>
                     </div>
 
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm" style="border-radius: 12px; border:none; background-color: #dcfce7; color: #166534;" role="alert">
-                            <i class="fas fa-check-circle mr-2"></i> <strong>¡Excelente!</strong> {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    @endif
-
                     <div class="row">
-                        <div class="col-lg-4">
-                            <div class="card soft-card mb-4">
-                                <div class="card-header py-3 bg-plexa-gradient d-flex align-items-center" style="border-radius: 16px 16px 0 0; border-bottom: none;">
-                                    <i class="fas fa-pen-nib text-white mr-2" style="font-size: 1.2rem;"></i>
-                                    <h6 class="m-0 font-weight-bold text-white">Configuración del Documento</h6>
-                                </div>
-                                <div class="card-body p-4">
-                                    <form action="{{ route('tratamientodedatos.update') }}" method="POST">
-                                        @csrf
-                                        <div class="form-group mb-4">
-                                            <label class="custom-label">Título Principal</label>
-                                            <input type="text" name="titulo" class="custom-input w-100" value="{{ $texto->titulo }}" required>
-                                        </div>
-
-                                        <div class="form-group mb-4">
-                                            <label class="custom-label">Subtítulo / Referencia Legal</label>
-                                            <textarea name="subtitulo" class="custom-input w-100" rows="3">{{ $texto->subtitulo }}</textarea>
-                                        </div>
-
-                                        <div class="form-group mb-4">
-                                            <label class="custom-label">Cuerpo de Términos (HTML)</label>
-                                            <textarea name="terminos_legales" class="custom-input w-100" rows="5" style="font-family: monospace; font-size: 0.85rem;">{{ $texto->terminos_legales }}</textarea>
-                                        </div>
-
-                                        <hr class="mt-4 mb-3">
-                                        <h6 class="font-weight-bold text-gray-800 mb-3"><i class="fas fa-palette mr-2 text-primary"></i>Personalización Visual</h6>
-
-                                        <div class="row mb-4">
-                                            <div class="col-md-4 text-center">
-                                                <label class="custom-label small">Fondo Pág.</label>
-                                                <input type="color" name="color_fondo" class="form-control form-control-color w-100 p-1" value="{{ $texto->color_fondo }}" style="height: 40px; border-radius: 8px;">
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <label class="custom-label small">Textos</label>
-                                                <input type="color" name="color_texto" class="form-control form-control-color w-100 p-1" value="{{ $texto->color_texto }}" style="height: 40px; border-radius: 8px;">
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <label class="custom-label small">Botón</label>
-                                                <input type="color" name="color_boton" class="form-control form-control-color w-100 p-1" value="{{ $texto->color_boton }}" style="height: 40px; border-radius: 8px;">
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn-plexa w-100 mt-2">
-                                            <i class="fas fa-cloud-upload-alt mr-2"></i> Publicar Cambios
-                                        </button>
-                                    </form>
-                                </div>
+                        <div class="col-lg-12">
+                            
+                            <!-- Pestañas de Navegación -->
+                            <div class="tabs-navigation">
+                                <button type="button" class="tab-btn {{ $tabActiva == 'terceros' ? 'active' : '' }}" onclick="switchTab('terceros')">
+                                    <i class="fas fa-truck"></i> Terceros
+                                </button>
+                                <button type="button" class="tab-btn {{ $tabActiva == 'colaboradores' ? 'active' : '' }}" onclick="switchTab('colaboradores')">
+                                    <i class="fas fa-users"></i> Colaboradores / Candidatos
+                                </button>
                             </div>
-                        </div>
 
-                        <div class="col-lg-8">
                             <div class="card soft-card mb-4">
                                 <div class="card-body p-4">
-                                    <h5 class="font-weight-bold text-gray-800 mb-4">Base de Datos de Firmantes</h5>
-                                    <div class="table-responsive">
-                                        <table class="table-modern text-left">
-                                            <thead>
-                                                <tr>
-                                                    <th>Firmante</th>
-                                                    <th>Documento</th>
-                                                    <th>Autorizaciones</th>
-                                                    <th>Fecha Firma</th>
-                                                    <th>Estado</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($firmas as $firma)
-                                                    <tr onclick="abrirModalDetalle({{ $firma }})"
-                                                        style="cursor: pointer;"
-                                                        title="Clic para ver detalles del registro"
-                                                        onmouseover="this.style.backgroundColor='#f8fafc'"
-                                                        onmouseout="this.style.backgroundColor='transparent'">
-
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="avatar-circle"><i class="fas fa-user"></i></div>
-                                                                <div>
-                                                                    <div class="font-weight-bold text-gray-900">{{ $firma->nombre }}</div>
-                                                                    <div class="small text-muted">ID: #{{ str_pad($firma->id, 4, '0', STR_PAD_LEFT) }}</div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td><div class="font-weight-bold"><i class="far fa-id-card text-gray-400 mr-2"></i>{{ $firma->cedula }}</div></td>
-                                                        <td>
-                                                            @php
-                                                                $p = $firma->autorizo_personales ?? null;
-                                                                $s = $firma->autorizo_sensibles ?? null;
-                                                                $claseP = ($p === 'SI') ? 'badge-aut-si' : (($p === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
-                                                                $claseS = ($s === 'SI') ? 'badge-aut-si' : (($s === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
-                                                            @endphp
-                                                            <span class="badge-aut {{ $claseP }}">Personales: {{ $p ?? '—' }}</span>
-                                                            <span class="badge-aut {{ $claseS }}">Sensibles: {{ $s ?? '—' }}</span>
-                                                        </td>
-                                                        <td>
-                                                            <div class="text-gray-800">{{ $firma->created_at->format('d M, Y') }}</div>
-                                                            <div class="small text-muted">{{ $firma->created_at->format('h:i A') }}</div>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge-success-soft d-inline-block"><i class="fas fa-check mr-1"></i> Autorizado</span>
-                                                        </td>
-                                                    </tr>
-                                                @empty
+                                    
+                                    <!-- ==================== TABLA TERCEROS ==================== -->
+                                    <div id="tab-terceros" class="tab-content {{ $tabActiva == 'terceros' ? 'active' : '' }}">
+                                        <h5 class="font-weight-bold text-gray-800 mb-4">Base de Datos: Terceros</h5>
+                                        <div class="table-responsive">
+                                            <table class="table-modern text-left">
+                                                <thead>
                                                     <tr>
-                                                        <td colspan="5" class="text-center py-5">
-                                                            <i class="fas fa-box-open text-gray-300 mb-3" style="font-size: 4rem;"></i>
-                                                            <h5 class="font-weight-bold text-gray-500">Sin datos aún</h5>
-                                                            <p class="text-muted">Las firmas aparecerán aquí.</p>
-                                                        </td>
+                                                        <th>Razón Social / Firmante</th>
+                                                        <th>NIT / Cédula</th>
+                                                        <th>Autorizaciones</th>
+                                                        <th>Fecha Firma</th>
+                                                        <th>Estado</th>
                                                     </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($firmasTerceros as $firmaT)
+                                                        <!-- PASAMOS SOLO EL ID AL JS -->
+                                                        <tr onclick="abrirModalTercero({{ $firmaT->id }})">
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="avatar-circle"><i class="fas fa-building"></i></div>
+                                                                    <div>
+                                                                        <div class="font-weight-bold text-gray-900">{{ $firmaT->nombre_razon_social }}</div>
+                                                                        <div class="small text-muted">ID: #{{ str_pad($firmaT->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td><div class="font-weight-bold"><i class="far fa-id-card text-gray-400 mr-2"></i>{{ $firmaT->identificacion }}</div></td>
+                                                            <td>
+                                                                @php
+                                                                    $g = $firmaT->autorizacion_general ?? null;
+                                                                    $s = $firmaT->autorizacion_sensibles ?? null;
+                                                                    $claseG = ($g === 'SI') ? 'badge-aut-si' : (($g === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                                    $claseS = ($s === 'SI') ? 'badge-aut-si' : (($s === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                                @endphp
+                                                                <span class="badge-aut {{ $claseG }}">General: {{ $g ?? '—' }}</span><br>
+                                                                <span class="badge-aut {{ $claseS }}">Sensibles: {{ $s ?? '—' }}</span>
+                                                            </td>
+                                                            <td>
+                                                                <div class="text-gray-800">{{ \Carbon\Carbon::parse($firmaT->created_at)->format('d M, Y') }}</div>
+                                                                <div class="small text-muted">{{ \Carbon\Carbon::parse($firmaT->created_at)->format('h:i A') }}</div>
+                                                            </td>
+                                                            <td><span class="badge-success-soft d-inline-block"><i class="fas fa-check mr-1"></i> Autorizado</span></td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="5" class="text-center py-5">
+                                                                <i class="fas fa-box-open text-gray-300 mb-3" style="font-size: 3rem;"></i>
+                                                                <h6 class="font-weight-bold text-gray-500">Sin datos aún</h6>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        @if($firmasTerceros->hasPages())
+                                            <div class="mt-4 d-flex justify-content-between align-items-center">
+                                                <div class="small text-muted">Mostrando {{ $firmasTerceros->firstItem() }} a {{ $firmasTerceros->lastItem() }} de {{ $firmasTerceros->total() }}</div>
+                                                <div>{{ $firmasTerceros->appends(['ter_page' => $firmasTerceros->currentPage()])->links('pagination::bootstrap-4') }}</div>
+                                            </div>
+                                        @endif
                                     </div>
 
-                                    {{-- ===== PAGINACIÓN 10 por página ===== --}}
-                                    @if($firmas->hasPages())
-                                        <div class="mt-4 d-flex flex-column flex-md-row align-items-center justify-content-between">
-                                            <div class="small text-muted mb-2 mb-md-0">
-                                                Mostrando {{ $firmas->firstItem() ?? 0 }} a {{ $firmas->lastItem() ?? 0 }}
-                                                de <b>{{ $firmas->total() }}</b> firmas
-                                            </div>
-                                            <div>
-                                                {{ $firmas->links('pagination::bootstrap-4') }}
-                                            </div>
+                                    <!-- ==================== TABLA COLABORADORES ==================== -->
+                                    <div id="tab-colaboradores" class="tab-content {{ $tabActiva == 'colaboradores' ? 'active' : '' }}">
+                                        <h5 class="font-weight-bold text-gray-800 mb-4">Base de Datos: Colaboradores / Candidatos</h5>
+                                        <div class="table-responsive">
+                                            <table class="table-modern text-left">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Firmante</th>
+                                                        <th>Documento</th>
+                                                        <th>Autorizaciones</th>
+                                                        <th>Fecha Firma</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($firmasColaboradores as $firmaC)
+                                                        <!-- PASAMOS SOLO EL ID AL JS -->
+                                                        <tr onclick="abrirModalColaborador({{ $firmaC->id }})">
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="avatar-circle"><i class="fas fa-user"></i></div>
+                                                                    <div>
+                                                                        <div class="font-weight-bold text-gray-900">{{ $firmaC->nombre }}</div>
+                                                                        <div class="small text-muted">ID: #{{ str_pad($firmaC->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td><div class="font-weight-bold"><i class="far fa-id-card text-gray-400 mr-2"></i>{{ $firmaC->cedula }}</div></td>
+                                                            <td>
+                                                                @php
+                                                                    $p = $firmaC->autorizo_personales ?? null;
+                                                                    $s = $firmaC->autorizo_sensibles ?? null;
+                                                                    $claseP = ($p === 'SI') ? 'badge-aut-si' : (($p === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                                    $claseS = ($s === 'SI') ? 'badge-aut-si' : (($s === 'NO') ? 'badge-aut-no' : 'badge-aut-na');
+                                                                @endphp
+                                                                <span class="badge-aut {{ $claseP }}">Personales: {{ $p ?? '—' }}</span>
+                                                                <span class="badge-aut {{ $claseS }}">Sensibles: {{ $s ?? '—' }}</span>
+                                                            </td>
+                                                            <td>
+                                                                <div class="text-gray-800">{{ \Carbon\Carbon::parse($firmaC->created_at)->format('d M, Y') }}</div>
+                                                                <div class="small text-muted">{{ \Carbon\Carbon::parse($firmaC->created_at)->format('h:i A') }}</div>
+                                                            </td>
+                                                            <td><span class="badge-success-soft d-inline-block"><i class="fas fa-check mr-1"></i> Autorizado</span></td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="5" class="text-center py-5">
+                                                                <i class="fas fa-box-open text-gray-300 mb-3" style="font-size: 3rem;"></i>
+                                                                <h6 class="font-weight-bold text-gray-500">Sin datos aún</h6>
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    @endif
+
+                                        @if($firmasColaboradores->hasPages())
+                                            <div class="mt-4 d-flex justify-content-between align-items-center">
+                                                <div class="small text-muted">Mostrando {{ $firmasColaboradores->firstItem() }} a {{ $firmasColaboradores->lastItem() }} de {{ $firmasColaboradores->total() }}</div>
+                                                <div>{{ $firmasColaboradores->appends(['col_page' => $firmasColaboradores->currentPage()])->links('pagination::bootstrap-4') }}</div>
+                                            </div>
+                                        @endif
+                                    </div>
 
                                 </div>
                             </div>
@@ -260,56 +233,63 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalDetalleFirma" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- ==================== MODAL TERCEROS ==================== -->
+    <div class="modal fade" id="modalDetalleTercero" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
-
                 <div class="modal-header bg-plexa-gradient text-white" style="border-radius: 16px 16px 0 0; border-bottom: none;">
-                    <h5 class="modal-title font-weight-bold"><i class="fas fa-file-signature mr-2"></i>Detalle de Autorización</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title font-weight-bold"><i class="fas fa-truck mr-2"></i>Detalle Tercero</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
                 </div>
-
                 <div class="modal-body p-4">
-                    <div class="text-center mb-4">
-                        <span class="badge badge-success mb-2 px-3 py-2" style="font-size: 0.9rem; border-radius: 20px;">
-                            <i class="fas fa-check-circle mr-1"></i> Términos Aceptados
-                        </span>
-                        <p class="text-muted small" id="modalFechaInfo"></p>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Nombre Completo:</div>
-                        <div class="col-sm-7 text-dark font-weight-bold" id="modalNombre"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Documento:</div>
-                        <div class="col-sm-7 text-dark font-weight-bold" id="modalCedula"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Autoriza Datos Personales:</div>
-                        <div class="col-sm-7" id="modalPersonales"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Autoriza Datos Sensibles:</div>
-                        <div class="col-sm-7" id="modalSensibles"></div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-5 text-muted font-weight-bold small">Fecha de Autorización:</div>
-                        <div class="col-sm-7 text-dark font-weight-bold" id="modalFechaAut"></div>
-                    </div>
+                    <div class="text-center mb-4"><span class="badge badge-success mb-2 px-3 py-2" style="border-radius: 20px;"><i class="fas fa-check-circle mr-1"></i> Autorización Aceptada</span><p class="text-muted small" id="tFechaInfo"></p></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Razón Social:</div><div class="col-7 font-weight-bold text-dark" id="tNombre"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">NIT/CC:</div><div class="col-7 font-weight-bold text-dark" id="tIdent"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Calidad Actúa:</div><div class="col-7" id="tCalidad"></div></div>
+                    <hr>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Autorización General:</div><div class="col-7" id="tAuthGen"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Datos Sensibles:</div><div class="col-7" id="tAuthSen"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Transmisión RISK:</div><div class="col-7" id="tAuthTrans"></div></div>
+                    
                     <div class="mt-4 pt-3 text-center" style="border-top: 1px dashed #e2e8f0;">
                         <span class="text-muted font-weight-bold small d-block mb-2">FIRMA REGISTRADA:</span>
-                        <img id="modalFirmaImg" src="" alt="Firma" style="max-height: 80px; display: block; margin: 0 auto;">
+                        <img id="tFirmaImg" src="" style="max-height: 80px; display: block; margin: 0 auto;">
                     </div>
                 </div>
-
                 <div class="modal-footer" style="background-color: #f8fafc; border-radius: 0 0 16px 16px;">
                     <button type="button" class="btn btn-secondary" style="border-radius: 8px;" data-dismiss="modal">Cerrar</button>
-                    <a href="#" id="btnDescargarPdf" class="btn btn-plexa" target="_blank" rel="noopener noreferrer">
-                        <i class="fas fa-file-pdf mr-1"></i> Descargar Documento
-                    </a>
+                    <!-- EL ENLACE AHORA TIENE target="_blank" -->
+                    <a href="#" id="tBtnDescargar" class="btn btn-plexa" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-pdf mr-1"></i> Descargar Documento</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL COLABORADORES ==================== -->
+    <div class="modal fade" id="modalDetalleColaborador" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+                <div class="modal-header bg-plexa-gradient text-white" style="border-radius: 16px 16px 0 0; border-bottom: none;">
+                    <h5 class="modal-title font-weight-bold"><i class="fas fa-users mr-2"></i>Detalle Colaborador</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4"><span class="badge badge-success mb-2 px-3 py-2" style="border-radius: 20px;"><i class="fas fa-check-circle mr-1"></i> Autorización Aceptada</span><p class="text-muted small" id="cFechaInfo"></p></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Nombre Completo:</div><div class="col-7 font-weight-bold text-dark" id="cNombre"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Cédula:</div><div class="col-7 font-weight-bold text-dark" id="cCedula"></div></div>
+                    <hr>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Autoriza Personales:</div><div class="col-7" id="cAuthPer"></div></div>
+                    <div class="row mb-2"><div class="col-5 text-muted small font-weight-bold">Autoriza Sensibles:</div><div class="col-7" id="cAuthSen"></div></div>
+                    
+                    <div class="mt-4 pt-3 text-center" style="border-top: 1px dashed #e2e8f0;">
+                        <span class="text-muted font-weight-bold small d-block mb-2">FIRMA REGISTRADA:</span>
+                        <img id="cFirmaImg" src="" style="max-height: 80px; display: block; margin: 0 auto;">
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color: #f8fafc; border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-secondary" style="border-radius: 8px;" data-dismiss="modal">Cerrar</button>
+                    <!-- EL ENLACE AHORA TIENE target="_blank" -->
+                    <a href="#" id="cBtnDescargar" class="btn btn-plexa" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-pdf mr-1"></i> Descargar Documento</a>
                 </div>
             </div>
         </div>
@@ -320,6 +300,22 @@
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
     <script>
+        // PASAMOS LOS ARREGLOS LIMPIOS DESDE PHP A JAVASCRIPT
+        const dataTerceros = @json($firmasTerceros->items());
+        const dataColaboradores = @json($firmasColaboradores->items());
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            if(tab === 'terceros') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tab-terceros').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-colaboradores').classList.add('active');
+            }
+        }
+
         function badgeSINO(valor) {
             if (!valor) return '<span class="badge-aut badge-aut-na">—</span>';
             return valor === 'SI'
@@ -327,56 +323,61 @@
                 : '<span class="badge-aut badge-aut-no"><i class="fas fa-times mr-1"></i>NO</span>';
         }
 
-        function abrirModalDetalle(firmaData) {
-            document.getElementById('modalNombre').innerText = firmaData.nombre || '—';
-            document.getElementById('modalCedula').innerText = firmaData.cedula || '—';
-
-            document.getElementById('modalPersonales').innerHTML = badgeSINO(firmaData.autorizo_personales);
-            document.getElementById('modalSensibles').innerHTML  = badgeSINO(firmaData.autorizo_sensibles);
-
-            document.getElementById('modalFechaAut').innerText = firmaData.fecha_autorizacion
-                ? firmaData.fecha_autorizacion.substring(0, 10)
-                : '—';
-
-            if (firmaData.created_at) {
-                let fecha = new Date(firmaData.created_at);
-                document.getElementById('modalFechaInfo').innerText = "Firmado el: " + fecha.toLocaleDateString('es-ES') + " a las " + fecha.toLocaleTimeString('es-ES');
-            } else {
-                document.getElementById('modalFechaInfo').innerText = '';
-            }
-
-            let imgEl = document.getElementById('modalFirmaImg');
-            if (firmaData.firma) {
-                imgEl.src = firmaData.firma;
-                imgEl.style.display = 'block';
-            } else {
-                imgEl.style.display = 'none';
-            }
-
-            const btnPdf = document.getElementById('btnDescargarPdf');
-            btnPdf.href = "{{ url('/tratamiento-datos/documento') }}/" + firmaData.id + "/descargar";
-            btnPdf.style.display = 'inline-block';
-
-            $('#modalDetalleFirma').modal('show');
+        function formatearFecha(fechaCadena) {
+            if (!fechaCadena) return '—';
+            let fecha = new Date(fechaCadena);
+            return fecha.toLocaleDateString('es-ES') + " a las " + fecha.toLocaleTimeString('es-ES');
         }
 
-        // ===== Congelar la animación de cada fila al terminar =====
-        // Corre una sola vez por carga de página; abrir el modal NO la re-dispara.
-        document.querySelectorAll('.table-modern tbody tr').forEach(function (fila) {
-            fila.addEventListener('animationend', function () {
-                fila.style.animation = 'none';
-            }, { once: true });
-        });
+        // ==========================================
+        // Modal Terceros (Limpio y Seguro)
+        // ==========================================
+        function abrirModalTercero(id) {
+            let data = dataTerceros.find(item => item.id == id);
+            if(!data) return;
 
-        // ===== Scroll suave al cambiar de página =====
-        document.querySelectorAll('.pagination a').forEach(function (link) {
-            link.addEventListener('click', function () {
-                setTimeout(function () {
-                    var tabla = document.querySelector('.table-modern');
-                    if (tabla) tabla.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            });
-        });
+            // ASIGNAR URL EXACTA DE DESCARGA
+            document.getElementById('tBtnDescargar').href = "/descargar-tercero/" + data.id;
+
+            document.getElementById('tNombre').innerText = data.nombre_razon_social || '—';
+            document.getElementById('tIdent').innerText = data.identificacion || '—';
+            document.getElementById('tCalidad').innerText = data.calidad_actua || '—';
+            document.getElementById('tAuthGen').innerHTML = badgeSINO(data.autorizacion_general);
+            document.getElementById('tAuthSen').innerHTML = badgeSINO(data.autorizacion_sensibles);
+            document.getElementById('tAuthTrans').innerHTML = badgeSINO(data.autorizacion_transmision);
+            document.getElementById('tFechaInfo').innerText = "Firmado el: " + formatearFecha(data.created_at);
+
+            let imgEl = document.getElementById('tFirmaImg');
+            if (data.firma && typeof data.firma === 'string' && data.firma.includes('base64')) {
+                imgEl.src = data.firma; imgEl.style.display = 'block';
+            } else { imgEl.style.display = 'none'; }
+            
+            $('#modalDetalleTercero').modal('show');
+        }
+
+        // ==========================================
+        // Modal Colaboradores (Limpio y Seguro)
+        // ==========================================
+        function abrirModalColaborador(id) {
+            let data = dataColaboradores.find(item => item.id == id);
+            if(!data) return;
+
+            // ASIGNAR URL EXACTA DE DESCARGA
+            document.getElementById('cBtnDescargar').href = "/descargar-colaborador/" + data.id;
+
+            document.getElementById('cNombre').innerText = data.nombre || '—';
+            document.getElementById('cCedula').innerText = data.cedula || '—';
+            document.getElementById('cAuthPer').innerHTML = badgeSINO(data.autorizo_personales);
+            document.getElementById('cAuthSen').innerHTML = badgeSINO(data.autorizo_sensibles);
+            document.getElementById('cFechaInfo').innerText = "Firmado el: " + formatearFecha(data.created_at);
+
+            let imgEl = document.getElementById('cFirmaImg');
+            if (data.firma && typeof data.firma === 'string' && data.firma.includes('base64')) {
+                imgEl.src = data.firma; imgEl.style.display = 'block';
+            } else { imgEl.style.display = 'none'; }
+            
+            $('#modalDetalleColaborador').modal('show');
+        }
     </script>
 </body>
 </html>
