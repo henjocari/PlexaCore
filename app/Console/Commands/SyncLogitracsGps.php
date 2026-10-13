@@ -45,7 +45,7 @@ class SyncLogitracsGps extends Command
 
         // Limpieza de datos (2 HORAS)
         GpsPosition::whereNotIn('PLACA', $placasActivas)->delete();
-        GpsPosition::where('FH_DATO', '<', Carbon::now()->subHours(2))->delete();
+        GpsPosition::where('FH_DATO', '<', Carbon::now()->subHours(12))->delete();
 
         // Configuración SOAP
         $wsdl = 'http://triton.logitracs.com/webserviceTriton/integracionGeoPark.asmx?WSDL';
