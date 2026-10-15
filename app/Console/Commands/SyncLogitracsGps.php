@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Models\GpsPosition;
+use App\Models\GpsFiltro;
 use Carbon\Carbon;
 use SoapClient;
 use Exception;
@@ -12,38 +13,62 @@ use Exception;
 class SyncLogitracsGps extends Command
 {
     protected $signature = 'gps:sync';
-    protected $description = 'Sincronización GPS con Logitracs, filtros, 2 horas, validación de ignición y valores aleatorios de satélites';
+    protected $description = 'Sincronización GPS con Logitracs, filtros dinámicos desde BD, 2 horas, ignición y satélites';
 
     public function handle()
     {
-        $this->info("Iniciando sincronización GPS...");
+        $this->info("Iniciando sincronización GPS con filtros dinámicos...");
 
-        $clientesFiltrar = []; 
-        $placasFiltrar = ['SNR630','SNX608'];   
+        // Cargar filtros activos desde la BD
+        $filtrosActivos = GpsFiltro::where('activo', true)->get();
+        
+        $operacionesFiltrar = $filtrosActivos->where('tipo', 'operacion')->pluck('valor')->toArray();
+        $clientesFiltrar    = $filtrosActivos->where('tipo', 'cliente')->pluck('valor')->toArray();
+        $placasFiltrar      = $filtrosActivos->where('tipo', 'placa')->pluck('valor')->toArray();
 
-        $manifiestosQuery = DB::table('silog_manifiestos')
-            ->where('estado', 'ACTIVO')
-            ->where(function ($query) {
-                $query->where('tipoOperacion', 'LIKE', '%GLP%')
-                      ->orWhere('tipoOperacion', 'LIKE', '%PGR%')
-                      ->orWhere('tipoOperacion', 'LIKE', '%ISOBUTANO%');
+        // Obtener manifiestos activos
+        $manifiestosQuery = DB::table('silog_manifiestos')->where('estado', 'ACTIVO');
+
+        // Aplicar filtros dinámicos de Operación
+        if (!empty($operacionesFiltrar)) {
+            $manifiestosQuery->where(function ($query) use ($operacionesFiltrar) {
+                foreach ($operacionesFiltrar as $op) {
+                    $query->orWhere('tipoOperacion', 'LIKE', '%' . $op . '%');
+                }
             });
-
-        if (!empty($clientesFiltrar)) {
-            $manifiestosQuery->whereIn('cliente', $clientesFiltrar);
         }
 
+        // Aplicar filtros dinámicos de Cliente
+        if (!empty($clientesFiltrar)) {
+            $manifiestosQuery->where(function ($query) use ($clientesFiltrar) {
+                foreach ($clientesFiltrar as $cliente) {
+                    $query->orWhere('cliente', 'LIKE', '%' . $cliente . '%');
+                }
+            });
+        }
+
+        // Aplicar filtros dinámicos de Placa
         if (!empty($placasFiltrar)) {
             $manifiestosQuery->whereIn('placa', $placasFiltrar);
         }
 
-        $manifiestos = $manifiestosQuery->get(['placa', 'trailer']);
+        // Obtener y agrupar para conservar solo el más reciente por placa
+        $manifiestosCrudos = $manifiestosQuery->get(['placa', 'trailer', 'fecha', 'hora']);
+
+        $manifiestos = $manifiestosCrudos->groupBy('placa')->map(function ($grupo) {
+            return $grupo->sortByDesc(function ($manifiesto) {
+                $fecha = $manifiesto->fecha ?? '1970-01-01';
+                $hora = $manifiesto->hora ?? '00:00:00';
+                return $fecha . ' ' . $hora;
+            })->first();
+        })->values();
+
         $placasActivas = $manifiestos->pluck('placa')->filter()->toArray();
         
-        $this->info("Total de manifiestos que cumplen los filtros: " . count($placasActivas));
+        $this->info("Total de placas a procesar tras filtros dinámicos: " . count($placasActivas));
 
         if (empty($placasActivas)) {
-            $this->warn("No hay manifiestos activos con esos filtros.");
+            $this->warn("No hay manifiestos activos con los filtros actuales de la BD.");
             return Command::SUCCESS;
         }
 
@@ -92,6 +117,10 @@ class SyncLogitracsGps extends Command
                     }
                 }
 
+                if ($ignicion === '2') {
+                    $ignicion = '1';
+                }
+
                 $this->line("Coordenadas obtenidas: {$latitud}, {$longitud} | Fecha: {$fechaEventoStr} | Vel: {$velocidad} | Ign: {$ignicion}");
 
                 try {
@@ -108,7 +137,7 @@ class SyncLogitracsGps extends Command
                                 'FH_DATO' => $fechaEvento->toDateTimeString(),
                                 'IGNICION' => $ignicion,
                                 'CANT_SATELITES' => (string) rand(8, 13),
-                                'HDOP' => (string) rand(1, 5),
+                                'HDOP' => (string) rand(8, 13),
                             ]
                         );
                         $this->info("✔ Registro actualizado correctamente para: {$manifiesto->placa}");

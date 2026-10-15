@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\GpsPosition;
+use App\Models\QanalyticsLog; // Importamos el modelo del log
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +15,6 @@ class SendQAnalyticsGps extends Command
     protected $signature = 'qanalytics:send';
     protected $description = 'Envía posiciones GPS a la API REST de QAnalytics (solo obligatorios)';
 
-    // Credenciales proporcionadas en la nueva documentación[cite: 15]
     private $user = 'PLEXA_T_VBT';
     private $pass = 'Jd#6yFMLgO';
     private $baseUrl = 'https://ww3.qanalytics.cl/Api_InsertaPosicion_General_test';
@@ -38,15 +38,13 @@ class SendQAnalyticsGps extends Command
                 continue; 
             }
 
-            // Convertir la fecha local a UTC (GMT 0) según requerimiento[cite: 15]
             $fechaUtc = Carbon::parse($pos->FH_DATO, 'America/Bogota')
                               ->setTimezone('UTC')
                               ->format('Y-m-d\TH:i:s');
 
             $ignicion = (int) $pos->IGNICION;
-            if ($ignicion > 1) $ignicion = 0; // IGN solo acepta 0 o 1[cite: 15]
+            if ($ignicion > 1) $ignicion = 0; 
 
-            // Solo campos obligatorios según documentación[cite: 15]
             $datosPool[] = [
                 'COD_VEH'    => (string) $pos->PLACA,
                 'PLACA'      => preg_replace('/[^A-Z0-9]/', '', strtoupper($pos->PLACA)),
@@ -55,7 +53,7 @@ class SendQAnalyticsGps extends Command
                 'FH_SVR_GPS' => $fechaUtc,
                 'FH_RPT_GPS' => $fechaUtc,
                 'VEL'        => (int) $pos->VELOCIDAD,
-                'SENT'       => $this->cardinalToDegrees($pos->SENTIDO), // Convertir a grados 0-360[cite: 15]
+                'SENT'       => $this->cardinalToDegrees($pos->SENTIDO), 
                 'CANT_SAT'   => (int) ($pos->CANT_SATELITES ?? 0),
                 'HDOP'       => (float) ($pos->HDOP ?? 0),
                 'IGN'        => $ignicion
@@ -76,11 +74,30 @@ class SendQAnalyticsGps extends Command
                 return Command::FAILURE;
             }
 
-            // Enviar datos al endpoint de inserción con el Bearer token[cite: 15]
             $response = Http::withoutVerifying()
                 ->withToken($token)
                 ->timeout(15)
                 ->post("{$this->baseUrl}/inserta_posiciones", $datosPool);
+
+            // --- AQUÍ VA EL CÓDIGO DEL LOG ---
+            $statusCode = $response->status();
+            $responseBody = $response->body();
+
+            $logs = [];
+            foreach ($datosPool as $dato) {
+                $logs[] = [
+                    'placa' => $dato['PLACA'],
+                    'payload' => json_encode($dato),
+                    'status_code' => $statusCode,
+                    'response_body' => $responseBody,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            
+            QanalyticsLog::insert($logs);
+            QanalyticsLog::where('created_at', '<', now()->subHours(24))->delete();
+            // ---------------------------------
 
             if ($response->successful()) {
                 foreach ($registrosAActualizar as $key => $fh_dato) {
@@ -88,7 +105,7 @@ class SendQAnalyticsGps extends Command
                 }
                 $this->info("✔ Se enviaron " . count($datosPool) . " registros exitosamente a QAnalytics.");
             } else {
-                $this->warn("El servidor respondió con error HTTP {$response->status()}: " . $response->body());
+                $this->warn("El servidor respondió con error HTTP {$statusCode}: " . $responseBody);
             }
 
         } catch (Exception $e) {
@@ -101,16 +118,14 @@ class SendQAnalyticsGps extends Command
 
     private function obtenerToken()
     {
-        // El token dura 3 horas[cite: 15]. Lo guardamos en caché por 2.5 horas (150 mins) para reutilizarlo.
         return Cache::remember('qanalytics_access_token', 150 * 60, function () {
-            // Autenticación Básica al endpoint Genera_Token[cite: 15]
             $response = Http::withoutVerifying()
                 ->withBasicAuth($this->user, $this->pass)
                 ->timeout(10)
                 ->post("{$this->baseUrl}/Genera_Token");
 
             if ($response->successful()) {
-                return $response->json('accessToken'); // Retorna el JWT[cite: 15]
+                return $response->json('accessToken'); 
             }
 
             return null;
