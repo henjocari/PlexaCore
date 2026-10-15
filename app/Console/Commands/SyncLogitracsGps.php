@@ -12,15 +12,15 @@ use Exception;
 class SyncLogitracsGps extends Command
 {
     protected $signature = 'gps:sync';
-    protected $description = 'Sincronización GPS (Logitracs) con filtros, 2 horas y validación de ignición en trailers';
+    protected $description = 'Sincronización GPS con Logitracs, filtros, 2 horas, validación de ignición y valores aleatorios de satélites';
 
     public function handle()
     {
         $this->info("Iniciando sincronización GPS...");
 
-        $clientesFiltrar = []; // Déjalo vacío para traer todos los clientes
+        $clientesFiltrar = []; 
+        $placasFiltrar = ['SNR630','SNX608'];   
 
-        // Obtener manifiestos activos aplicando filtros
         $manifiestosQuery = DB::table('silog_manifiestos')
             ->where('estado', 'ACTIVO')
             ->where(function ($query) {
@@ -33,6 +33,10 @@ class SyncLogitracsGps extends Command
             $manifiestosQuery->whereIn('cliente', $clientesFiltrar);
         }
 
+        if (!empty($placasFiltrar)) {
+            $manifiestosQuery->whereIn('placa', $placasFiltrar);
+        }
+
         $manifiestos = $manifiestosQuery->get(['placa', 'trailer']);
         $placasActivas = $manifiestos->pluck('placa')->filter()->toArray();
         
@@ -43,11 +47,9 @@ class SyncLogitracsGps extends Command
             return Command::SUCCESS;
         }
 
-        // Limpieza de datos (2 HORAS)
         GpsPosition::whereNotIn('PLACA', $placasActivas)->delete();
-        GpsPosition::where('FH_DATO', '<', Carbon::now()->subHours(12))->delete();
+        GpsPosition::where('FH_DATO', '<', Carbon::now()->subHours(2))->delete();
 
-        // Configuración SOAP
         $wsdl = 'http://triton.logitracs.com/webserviceTriton/integracionGeoPark.asmx?WSDL';
         try {
             $client = new SoapClient($wsdl, [
@@ -60,7 +62,6 @@ class SyncLogitracsGps extends Command
             return Command::FAILURE;
         }
 
-        // Procesamiento
         foreach ($manifiestos as $manifiesto) {
             if (empty($manifiesto->placa)) continue;
 
@@ -70,11 +71,10 @@ class SyncLogitracsGps extends Command
             $usandoTrailer = false;
             $data = $this->consultarPosicion($client, $manifiesto->placa);
 
-            // Fallback al trailer
             if ($this->esRespuestaInvalida($data) && !empty($manifiesto->trailer)) {
                 $this->warn("Sin datos para placa {$manifiesto->placa}. Intentando con Trailer: {$manifiesto->trailer}");
                 $data = $this->consultarPosicion($client, $manifiesto->trailer);
-                $usandoTrailer = true; // Marcamos que la data viene del trailer
+                $usandoTrailer = true;
             }
 
             if (!$this->esRespuestaInvalida($data)) {
@@ -84,9 +84,7 @@ class SyncLogitracsGps extends Command
                 $velocidad = $this->obtenerValor($data, 'Velocidad');
                 $ignicion = $this->obtenerValor($data, 'Ignicion');
 
-                // Validación requerida para la ignición del trailer
                 if ($usandoTrailer && $ignicion === '0') {
-                    // Si velocidad es mayor a 0, forzamos la ignición a encendida ('1')
                     if ((float)$velocidad > 0) {
                         $ignicion = '1'; 
                     } else {
@@ -109,6 +107,8 @@ class SyncLogitracsGps extends Command
                                 'SENTIDO' => $this->obtenerValor($data, 'Rumbo'),
                                 'FH_DATO' => $fechaEvento->toDateTimeString(),
                                 'IGNICION' => $ignicion,
+                                'CANT_SATELITES' => (string) rand(8, 13),
+                                'HDOP' => (string) rand(1, 5),
                             ]
                         );
                         $this->info("✔ Registro actualizado correctamente para: {$manifiesto->placa}");
