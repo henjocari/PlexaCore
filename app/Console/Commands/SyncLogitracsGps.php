@@ -9,6 +9,8 @@ use App\Models\GpsFiltro;
 use Carbon\Carbon;
 use SoapClient;
 use Exception;
+use App\Models\gps_VehiculoTemporal;
+use Illuminate\Support\Facades\Artisan;
 
 class SyncLogitracsGps extends Command
 {
@@ -64,6 +66,22 @@ class SyncLogitracsGps extends Command
         })->values();
 
         $placasActivas = $manifiestos->pluck('placa')->filter()->toArray();
+
+        gps_VehiculoTemporal::whereIn('placa', $placasActivas)->delete();
+
+        // 2. Obtener los vehículos temporales restantes y unirlos al pool de consultas
+        $vehiculosTemporales = gps_VehiculoTemporal::all();
+
+        foreach ($vehiculosTemporales as $temp) {
+            $manifiestos->push((object)[
+                'placa' => $temp->placa,
+                'trailer' => $temp->cisterna,
+                'fecha' => null,
+                'hora' => null
+            ]);
+            
+            $placasActivas[] = $temp->placa;
+        }
         
         $this->info("Total de placas a procesar tras filtros dinámicos: " . count($placasActivas));
 
@@ -96,12 +114,37 @@ class SyncLogitracsGps extends Command
             $usandoTrailer = false;
             $data = $this->consultarPosicion($client, $manifiesto->placa);
 
-            if ($this->esRespuestaInvalida($data) && !empty($manifiesto->trailer)) {
-                $this->warn("Sin datos para placa {$manifiesto->placa}. Intentando con Trailer: {$manifiesto->trailer}");
-                $data = $this->consultarPosicion($client, $manifiesto->trailer);
-                $usandoTrailer = true;
+            // 1. Verificamos si la placa dio una respuesta con errores de estructura
+            $placaInvalida = $this->esRespuestaInvalida($data);
+            $placaVieja = false;
+
+            // 2. Si la estructura es válida, comprobamos la fecha inmediatamente
+            if (!$placaInvalida) {
+                $fechaEventoStr = $this->obtenerValor($data, 'FechaEvento');
+                try {
+                    $fechaEvento = Carbon::parse($fechaEventoStr);
+                    if ($fechaEvento->diffInHours(Carbon::now()) > 2) {
+                        $placaVieja = true;
+                    }
+                } catch (Exception $ex) {
+                    $placaVieja = true;
+                }
             }
 
+            // 3. Si la placa no trajo coordenadas o su GPS es muy viejo, intentamos con la cisterna
+            if (($placaInvalida || $placaVieja) && !empty($manifiesto->trailer)) {
+                $motivo = $placaVieja ? 'reporte GPS atrasado (> 2h)' : 'error o sin latitud válida';
+                $this->warn("Placa {$manifiesto->placa} falló por {$motivo}. Intentando con Trailer: {$manifiesto->trailer}");
+                
+                $dataTrailer = $this->consultarPosicion($client, $manifiesto->trailer);
+                
+                if (!$this->esRespuestaInvalida($dataTrailer)) {
+                    $data = $dataTrailer;
+                    $usandoTrailer = true;
+                }
+            }
+
+            // 4. Continuamos el procesamiento con la data final (sea de placa o cisterna)
             if (!$this->esRespuestaInvalida($data)) {
                 $fechaEventoStr = $this->obtenerValor($data, 'FechaEvento');
                 $latitud = $this->obtenerValor($data, 'Latitud');
@@ -121,7 +164,8 @@ class SyncLogitracsGps extends Command
                     $ignicion = '1';
                 }
 
-                $this->line("Coordenadas obtenidas: {$latitud}, {$longitud} | Fecha: {$fechaEventoStr} | Vel: {$velocidad} | Ign: {$ignicion}");
+                $origen = $usandoTrailer ? "Trailer" : "Placa";
+                $this->line("Coordenadas obtenidas ({$origen}): {$latitud}, {$longitud} | Fecha: {$fechaEventoStr} | Vel: {$velocidad} | Ign: {$ignicion}");
 
                 try {
                     $fechaEvento = Carbon::parse($fechaEventoStr);
@@ -142,7 +186,7 @@ class SyncLogitracsGps extends Command
                         );
                         $this->info("✔ Registro actualizado correctamente para: {$manifiesto->placa}");
                     } else {
-                        $this->error("✖ Descartado: El reporte GPS tiene más de 2 horas de antigüedad.");
+                        $this->error("✖ Descartado: El reporte GPS ({$origen}) tiene más de 2 horas de antigüedad.");
                     }
                 } catch (Exception $ex) {
                     $this->error("Error al convertir la fecha del GPS: {$fechaEventoStr}");
@@ -156,6 +200,12 @@ class SyncLogitracsGps extends Command
 
         $this->info("--------------------------------------------------");
         $this->info("Sincronización finalizada exitosamente.");
+        
+        // --- CÓDIGO DE INTEGRACIÓN ---
+        $this->info("Iniciando envío a QAnalytics integrado...");
+        \Illuminate\Support\Facades\Artisan::call('qanalytics:send');
+        $this->info(\Illuminate\Support\Facades\Artisan::output());
+
         return Command::SUCCESS;
     }
 

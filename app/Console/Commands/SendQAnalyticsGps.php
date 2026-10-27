@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\GpsPosition;
-use App\Models\QanalyticsLog; // Importamos el modelo del log
+use App\Models\LogQanalytics;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -15,9 +15,9 @@ class SendQAnalyticsGps extends Command
     protected $signature = 'qanalytics:send';
     protected $description = 'Envía posiciones GPS a la API REST de QAnalytics (solo obligatorios)';
 
-    private $user = 'PLEXA_T_VBT';
-    private $pass = 'Jd#6yFMLgO';
-    private $baseUrl = 'https://ww3.qanalytics.cl/Api_InsertaPosicion_General_test';
+    private $user = 'PLEXA_P_NYR';
+    private $pass = '%FA0Acq$oj';
+    private $baseUrl = 'https://ww3.qanalytics.cl/Api_InsertaPosicion_General_fWia8T';
 
     public function handle()
     {
@@ -38,7 +38,13 @@ class SendQAnalyticsGps extends Command
                 continue; 
             }
 
-            $fechaUtc = Carbon::parse($pos->FH_DATO, 'America/Bogota')
+            // Fecha y hora en la que el GPS generó el punto
+            $fechaReporteUtc = Carbon::parse($pos->FH_DATO, 'America/Bogota')
+                              ->setTimezone('UTC')
+                              ->format('Y-m-d\TH:i:s');
+
+            // Fecha y hora en la que el registro entró a la base de datos
+            $fechaServidorUtc = Carbon::parse($pos->updated_at, 'America/Bogota')
                               ->setTimezone('UTC')
                               ->format('Y-m-d\TH:i:s');
 
@@ -50,8 +56,8 @@ class SendQAnalyticsGps extends Command
                 'PLACA'      => preg_replace('/[^A-Z0-9]/', '', strtoupper($pos->PLACA)),
                 'LAT'        => (float) $pos->LATITUD,
                 'LON'        => (float) $pos->LONGITUD,
-                'FH_SVR_GPS' => $fechaUtc,
-                'FH_RPT_GPS' => $fechaUtc,
+                'FH_SVR_GPS' => $fechaServidorUtc,
+                'FH_RPT_GPS' => $fechaReporteUtc,
                 'VEL'        => (int) $pos->VELOCIDAD,
                 'SENT'       => $this->cardinalToDegrees($pos->SENTIDO), 
                 'CANT_SAT'   => (int) ($pos->CANT_SATELITES ?? 0),
@@ -95,8 +101,8 @@ class SendQAnalyticsGps extends Command
                 ];
             }
             
-            QanalyticsLog::insert($logs);
-            QanalyticsLog::where('created_at', '<', now()->subHours(24))->delete();
+            LogQanalytics::insert($logs);
+            LogQanalytics::where('created_at', '<', now()->subHours(24))->delete();
             // ---------------------------------
 
             if ($response->successful()) {

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Http\Request;
 use App\Http\Controllers\ConductorController;
 use App\Http\Controllers\CloudFleet_Conductores;
 use App\Http\Controllers\HabitacionController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\InspeccionQuimicaController;
 use App\Http\Controllers\ManifiestosController;
 use App\Http\Controllers\PlanDeProcedimientoController;
 use App\Http\Controllers\ViajesTransportadosController;
+use App\Http\Controllers\QanalyticsController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -240,53 +243,106 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 });
 
 
-// ==========================================
-//     RUTAS PÚBLICAS DE LA API Y RECURSOS
-// ==========================================
+    // ==========================================
+    //     RUTAS PÚBLICAS DE LA API Y RECURSOS
+    // ==========================================
 
-// Guardar firma desde PlexaWeb / Flask
-Route::post(
-    '/guardar-firma',
-    [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']
-);
+    // Guardar firma desde PlexaWeb / Flask
+    Route::post(
+        '/guardar-firma',
+        [\App\Http\Controllers\TratamientoDatosController::class, 'guardarFirmaApi']
+    );
 
-// Ver documento firmado (stream en navegador)
-Route::get(
-    '/tratamiento-datos/documento/{id}',
-    [\App\Http\Controllers\TratamientoDatosController::class, 'verDocumento']
-)->name('firma.documento');
+    // Ver documento firmado (stream en navegador)
+    Route::get(
+        '/tratamiento-datos/documento/{id}',
+        [\App\Http\Controllers\TratamientoDatosController::class, 'verDocumento']
+    )->name('firma.documento');
 
-// Descargar documento firmado como PDF
-Route::get(
-    '/tratamiento-datos/documento/{id}/descargar',
-    [\App\Http\Controllers\TratamientoDatosController::class, 'descargarDocumento']
-)->name('firma.descargar');
+    // Descargar documento firmado como PDF
+    Route::get(
+        '/tratamiento-datos/documento/{id}/descargar',
+        [\App\Http\Controllers\TratamientoDatosController::class, 'descargarDocumento']
+    )->name('firma.descargar');
 
-// Obtener textos y colores de tratamiento de datos
-Route::get(
-    '/obtener-textos',
-    [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']
-);
+    // Obtener textos y colores de tratamiento de datos
+    Route::get(
+        '/obtener-textos',
+        [\App\Http\Controllers\TratamientoDatosController::class, 'obtenerTextosApi']
+    );
 
-// 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR)
-Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])
-    ->name('precio.publico');
+    // 👇 RUTA DEL PDF SACADA DEL CANDADO PARA QUE NEWPLEXA LA PUEDA LEER (VISOR)
+    Route::get('/precio-glp/publico/{archivo}', [PrecioGlpController::class, 'verPDF'])
+        ->name('precio.publico');
 
-// 👇 RUTA PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL)
-Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])
-    ->name('precio.descargar');
+    // 👇 RUTA PARA FORZAR LA DESCARGA DEL PDF (BOTÓN AZUL)
+    Route::get('/precio-glp/descargar/{archivo}', [PrecioGlpController::class, 'descargarPDF'])
+        ->name('precio.descargar');
 
-// ==========================================
-//  MÓDULO INFORME GERENCIAL (SILOGTRAN)
-// ==========================================
-Route::match(['get', 'post'], '/viajes-transportados', [\App\Http\Controllers\ViajesTransportadosController::class, 'index'])
-    ->middleware(VerificarModulo::class . ':Informe Gerencial')
-    ->name('viajes.transportados');
-
-Route::post('/viajes-transportados/excel', [\App\Http\Controllers\ViajesTransportadosController::class, 'exportarExcel'])
+    // ==========================================
+    //  MÓDULO INFORME GERENCIAL (SILOGTRAN)
+    // ==========================================
+    Route::match(['get', 'post'], '/viajes-transportados', [\App\Http\Controllers\ViajesTransportadosController::class, 'index'])
         ->middleware(VerificarModulo::class . ':Informe Gerencial')
-        ->name('viajes.excel');
+        ->name('viajes.transportados');
 
-// RUTAS CORRECTAS PARA DESCARGA
-Route::get('/descargar-colaborador/{id}', [TratamientoDatosController::class, 'descargarColaborador']);
-Route::get('/descargar-tercero/{id}', [TratamientoDatosController::class, 'descargarTercero']);
+    Route::post('/viajes-transportados/excel', [\App\Http\Controllers\ViajesTransportadosController::class, 'exportarExcel'])
+            ->middleware(VerificarModulo::class . ':Informe Gerencial')
+            ->name('viajes.excel');
+
+    // RUTAS CORRECTAS PARA DESCARGA
+    Route::get('/descargar-colaborador/{id}', [TratamientoDatosController::class, 'descargarColaborador']);
+    Route::get('/descargar-tercero/{id}', [TratamientoDatosController::class, 'descargarTercero']);
+
+    // ==========================================
+    //  MÓDULO QANALYTICS (GPS y Logs)
+    // ==========================================
+    Route::get('/qanalytics', [\App\Http\Controllers\QanalyticsController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':QAnalytics')
+        ->name('qanalytics');
+
+    // Nuevas rutas para el CRUD de gps_filtros
+    Route::post('/qanalytics/filtros', [\App\Http\Controllers\QanalyticsController::class, 'storeFiltro'])
+        ->middleware(VerificarModulo::class . ':QAnalytics')
+        ->name('qanalytics.filtros.store');
+
+    Route::put('/qanalytics/filtros/{id}', [\App\Http\Controllers\QanalyticsController::class, 'updateFiltro'])
+        ->middleware(VerificarModulo::class . ':QAnalytics')
+        ->name('qanalytics.filtros.update');
+
+    Route::delete('/qanalytics/filtros/{id}', [\App\Http\Controllers\QanalyticsController::class, 'destroyFiltro'])
+        ->middleware(VerificarModulo::class . ':QAnalytics')
+        ->name('qanalytics.filtros.destroy');
+    
+    // ==========================================
+    //  TOKEN QANALYTICS
+    // ==========================================
+
+    Route::get('/cron/ejecutar', function (Request $request) {
+        $tokenSecreto = 'PLEXA_CRON_2026_xyz'; 
+
+        if ($request->query('token') !== $tokenSecreto) {
+            return response()->json(['error' => 'Acceso denegado'], 401);
+        }
+
+        try {
+            // Ejecuta la sincronización que internamente ya dispara el envío a QAnalytics
+            Artisan::call('gps:sync');
+            $salidaCombinada = Artisan::output();
+
+            return response()->json([
+                'status' => 'ok', 
+                'mensaje' => 'Secuencia integrada completada',
+                'resultado' => $salidaCombinada
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error', 
+                'mensaje' => $e->getMessage()
+            ], 500);
+        }
+    });
+
+    Route::post('/qanalytics/temporales', [QanalyticsController::class, 'storeTemporal'])->name('qanalytics.temporales.store');
+    Route::delete('/qanalytics/temporales/{id}', [QanalyticsController::class, 'destroyTemporal'])->name('qanalytics.temporales.destroy');
+    Route::get('/qanalytics/logs/exportar', [App\Http\Controllers\QanalyticsController::class, 'exportarLogs'])->name('qanalytics.logs.exportar');

@@ -65,7 +65,7 @@
     @endif
 
     {{-- ADMINISTRACIÓN --}}
-    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('Tabla Conductores', $misModulos) || in_array('Tratamiento Datos', $misModulos))
+    @if(in_array('Precio GLP', $misModulos) || in_array('Carrusel', $misModulos) || in_array('QAnalytics', $misModulos) || in_array('Tabla Conductores', $misModulos) || in_array('Tratamiento Datos', $misModulos))
         <hr class="sidebar-divider">
         <div class="sidebar-heading">Configuración</div>
 
@@ -94,6 +94,12 @@
                     @if(in_array('Tratamiento Datos', $misModulos))
                         <a class="collapse-item {{ request()->is('tratamientodedatos') ? 'active' : '' }}" href="{{ url('/tratamientodedatos') }}">
                             <i class="fas fa-file-signature mr-2 text-gray-500"></i> Tratamiento de Datos
+                        </a>
+                    @endif
+
+                    @if(in_array('QAnalytics', $misModulos))
+                        <a class="collapse-item {{ request()->is('qanalytics') ? 'active' : '' }}" href="{{ url('/qanalytics') }}">
+                            <i class="fas fa-chart-bar mr-2 text-gray-500"></i> QAnalytics
                         </a>
                     @endif
 
