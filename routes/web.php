@@ -20,6 +20,7 @@ use App\Http\Controllers\ManifiestosController;
 use App\Http\Controllers\PlanDeProcedimientoController;
 use App\Http\Controllers\ViajesTransportadosController;
 use App\Http\Controllers\QanalyticsController;
+use App\Http\Controllers\SilogtranPqrsController;
 
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
@@ -230,6 +231,21 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
 
     Route::post('/habitaciones/{id}/desasignar', [HabitacionController::class, 'desasignarConductor'])
         ->name('habitaciones.desasignar');
+
+    // ==========================================
+    //  MÓDULO SILOGTRAN - PQRS
+    // ==========================================
+    Route::get('/silogtran/pqrs', [SilogtranPqrsController::class, 'index'])
+        ->middleware(VerificarModulo::class . ':PQRS')
+        ->name('silogtran.pqrs');
+
+    Route::post('/silogtran/pqrs', [SilogtranPqrsController::class, 'store'])
+        ->middleware(VerificarModulo::class . ':PQRS')
+        ->name('silogtran.pqrs.store');
+
+    Route::post('/silogtran/pqrs/{id}/gestionar', [SilogtranPqrsController::class, 'gestionar'])
+        ->middleware(VerificarModulo::class . ':PQRS')
+        ->name('silogtran.pqrs.gestionar');
 
     // HISTORIAL DE HABITACIONES
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])

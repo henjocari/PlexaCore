@@ -210,6 +210,28 @@
         </li>
     @endif
 
+    {{-- SILOGTRAN --}}
+    @if(in_array('PQRS', $misModulos))
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Silogtran</div>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSilogtran"
+                aria-expanded="true" aria-controls="collapseSilogtran">
+                <i class="fas fa-fw fa-truck-moving"></i>
+                <span>Silogtran</span>
+            </a>
+            <div id="collapseSilogtran" class="collapse" aria-labelledby="headingSilogtran" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Atención:</h6>
+                    <a class="collapse-item {{ request()->routeIs('silogtran.pqrs') ? 'active' : '' }}" href="{{ route('silogtran.pqrs') }}">
+                        <i class="fas fa-headset mr-2 text-success"></i> PQRS
+                    </a>
+                </div>
+            </div>
+        </li>
+    @endif
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">
