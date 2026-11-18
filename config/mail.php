@@ -115,4 +115,22 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Destinatarios de PQRS (Silogtran)
+    |--------------------------------------------------------------------------
+    |
+    | Correos que reciben cada PQRS radicada. Se definen en el .env con
+    | PQRS_MAIL_TO, separados por coma si son varios.
+    |
+    */
+
+    'pqrs_to' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('PQRS_MAIL_TO', ''))
+    ))),
+
+    // true = también se envía acuse de recibo al solicitante
+    'pqrs_acuse' => filter_var(env('PQRS_MAIL_ACUSE', true), FILTER_VALIDATE_BOOLEAN),
+
 ];
