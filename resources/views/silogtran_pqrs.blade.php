@@ -71,13 +71,23 @@
         .pq-title { font-size: 1.9rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 12px; }
         .pq-title .tag { font-size: .7rem; font-weight: 800; letter-spacing: 1px; padding: 5px 10px; border-radius: 30px; background: var(--px-green); border: 1px solid rgba(255,255,255,.25); }
 
-        /* ===== Tema Silogtran: solo en esta página ===== */
-        #accordionSidebar { background: #0d0d0f !important; background-image: linear-gradient(180deg, #0d0d0f 0%, #1c1c22 70%, #3a1020 100%) !important; }
-        #accordionSidebar .sidebar-heading { color: rgba(255,179,194,.75); }
-        #accordionSidebar .nav-item .nav-link:hover, #accordionSidebar .nav-item .nav-link:hover i { color: #fff; }
-        #accordionSidebar .collapse-inner .collapse-item.active { color: #E94262; font-weight: 800; background: #FDEDF0; }
-        #accordionSidebar .collapse-inner .collapse-item.active i { color: #E94262 !important; }
-        #accordionSidebar #sidebarToggle { background: rgba(233,66,98,.25); }
+        /* ===== Tema Silogtran: solo la sección "Silogtran" del menú, solo en esta página.
+           El resto del menú conserva el verde de Plexa. ===== */
+        #accordionSidebar .menu-silogtran {
+            background: linear-gradient(135deg, #0d0d0f 0%, #1c1c22 60%, #3a1020 100%);
+            margin-left: .6rem; margin-right: .6rem;
+            animation: pqMenuIn .6s var(--ease-out) both;
+        }
+        #accordionSidebar .menu-silogtran-head { border-radius: 12px 12px 0 0; padding-top: .7rem; color: rgba(255,179,194,.85) !important; }
+        #accordionSidebar .menu-silogtran-item { border-radius: 0 0 12px 12px; padding-bottom: .3rem; box-shadow: 0 10px 22px rgba(0,0,0,.25); }
+        #accordionSidebar .menu-silogtran-item .nav-link,
+        #accordionSidebar .menu-silogtran-item .nav-link i { color: #fff; }
+        #accordionSidebar .menu-silogtran-item .nav-link:hover i { color: #FFB3C2; }
+        #accordionSidebar .menu-silogtran .collapse-inner .collapse-item.active { color: #E94262; font-weight: 800; background: #FDEDF0; }
+        #accordionSidebar .menu-silogtran .collapse-inner .collapse-item.active i { color: #E94262 !important; }
+        @keyframes pqMenuIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+        /* Menú contraído (solo íconos) */
+        #accordionSidebar.toggled .menu-silogtran { margin-left: .35rem; margin-right: .35rem; }
         .scroll-to-top { background: rgba(233,66,98,.75); }
         .page-item.active .page-link { background: #E94262; border-color: #E94262; }
         .page-link { color: #CC3366; }
