@@ -18,6 +18,14 @@ class RefreshPermissions
      */
     public function handle(Request $request, Closure $next)
     {
+        // Registrar en permisos_modulos los módulos nuevos de routes/web.php
+        // (solo consulta la BD cuando cambia la lista de módulos). Nunca debe tumbar la página.
+        try {
+            \App\Support\SincronizarModulos::ejecutar();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('No se pudieron sincronizar los módulos: ' . $e->getMessage());
+        }
+
         // Verificar si el usuario está autenticado
         if (Auth::check()) {
             

@@ -23,7 +23,7 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         .container-fluid {
-            background-image: url("{{ asset('img/Logo_plexa.svg') }}");
+            background-image: url("{{ asset('img/logo.png') }}");
             background-position: center center;
             background-repeat: no-repeat;
             background-size: contain; /* Cambia 'cover' a 'contain' si quieres ver el logo completo */

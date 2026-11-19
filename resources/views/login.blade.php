@@ -30,13 +30,13 @@
     }
     @media (max-width: 991.98px) {
         .col-lg-6, .bg-gradient-primary{
-            background: url('{{ asset("img/Logo_plexa.svg") }}') no-repeat center center;
+            background: url('{{ asset("img/logo.png") }}') no-repeat center center;
             background-size: 100%; /* ajusta el tamaño del logo */
             background-color: #f8f9fc; /* color de fondo suave */
         }
     }
     .bg-gradient-primary{
-            background: url('{{ asset("img/Logo_plexa.svg") }}') no-repeat center center;
+            background: url('{{ asset("img/logo.png") }}') no-repeat center center;
             background-size: 100%; /* ajusta el tamaño del logo */
             background-color: #f8f9fc; /* color de fondo suave */
     }
@@ -58,7 +58,7 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row min-vh-10 g-0">
                             <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center bg-light">
-                                <img src="{{ asset('img/Logo_plexa.svg') }}"  alt="Logo Plexa" style="max-width: 100%; height: auto;">
+                                <img src="{{ asset('img/logo.png') }}"  alt="Logo Plexa" style="max-width: 100%; height: auto;">
                             </div>
                             <div class="col-lg-6">
                                 <div class="p-5">

@@ -222,6 +222,11 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::get('/conductores/buscar', [ConductorController::class, 'buscarDisponibles'])
         ->name('conductores.buscar');
 
+    // CloudFleet: botón "Actualizar" de la Tabla de Conductores (tablas.blade.php)
+    Route::get('/cloud_conductor/', [CloudFleet_Conductores::class, 'obtenerTodos'])
+        ->middleware(VerificarModulo::class . ':Tabla Conductores')
+        ->name('actualizarconductores');
+
     // Habitaciones
     Route::put('/habitaciones/{numero}', [HabitacionController::class, 'update'])
         ->name('habitaciones.update');

@@ -3,7 +3,7 @@
 
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/index') }}">
         <div class="sidebar-brand-icon">
-            <img src="{{ asset('img/Logo_plexa.svg') }}" alt="Logo" width="100%">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo" width="100%">
         </div>
     </a>
 

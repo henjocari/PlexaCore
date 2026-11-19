@@ -9,6 +9,7 @@ return new class extends Migration
 {
     public function up()
     {
+        if (!Schema::hasTable('silogtran_pqrs'))
         Schema::create('silogtran_pqrs', function (Blueprint $table) {
             $table->id();
             $table->string('radicado', 30)->unique();

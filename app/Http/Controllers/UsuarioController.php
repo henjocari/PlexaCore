@@ -62,11 +62,15 @@ class UsuarioController extends Controller
         $rolesInfoB64    = base64_encode(json_encode($rolesInfo, JSON_UNESCAPED_UNICODE));
 
         // Extraer y unificar las operaciones dinámicas para el formulario
-        $operacionesRaw = DB::table('silog_manifiestos')
-            ->whereRaw("UPPER(estado) != 'ANULADO'")
-            ->distinct()
-            ->pluck('tipoOperacion')
-            ->filter();
+        // Si la tabla de manifiestos aún no existe (p. ej. en local sin sincronizar),
+        // la página no se cae: solo queda vacía la lista de operaciones.
+        $operacionesRaw = \Illuminate\Support\Facades\Schema::hasTable('silog_manifiestos')
+            ? DB::table('silog_manifiestos')
+                ->whereRaw("UPPER(estado) != 'ANULADO'")
+                ->distinct()
+                ->pluck('tipoOperacion')
+                ->filter()
+            : collect();
 
         $operacionesUnificadas = $operacionesRaw->map(function ($op) {
             $opTrim = trim($op);

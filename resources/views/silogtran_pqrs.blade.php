@@ -53,19 +53,18 @@
 
         /* Logo de la empresa (esquina superior derecha del encabezado) */
         .pq-company {
-            position: absolute; right: 30px; top: 26px; z-index: 2;
-            background: rgba(255,255,255,.94); border-radius: 12px; padding: 4px 10px;
-            box-shadow: 0 8px 22px rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.6);
+            position: absolute; right: 30px; top: 24px; z-index: 2;
             animation: pqCompanyIn .9s var(--ease-spring) .2s both, pqCompanyFloat 6s ease-in-out 1.1s infinite;
         }
-        .pq-company img { display: block; height: 60px; width: auto; }
+        /* Logo sin recuadro: la imagen es transparente; la sombra lo separa del fondo oscuro */
+        .pq-company img { display: block; height: 110px; width: auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
         @keyframes pqCompanyIn { from { opacity: 0; transform: translateY(-10px) scale(.85); } to { opacity: 1; transform: none; } }
         @keyframes pqCompanyFloat { 0%,100% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
         .pq-crumb { font-size: .76rem; letter-spacing: .5px; opacity: .8; margin-bottom: 6px; }
         .pq-crumb b { color: #FFB3C2; }
         .pq-brand { display: flex; align-items: center; gap: 22px; margin-bottom: 4px; position: relative; z-index: 1; }
-        .pq-logo { height: 92px; width: auto; flex-shrink: 0; filter: drop-shadow(0 6px 18px rgba(233,66,98,.35)); animation: pqLogoIn 1s var(--ease-spring) both; }
+        .pq-logo { height: 110px; width: auto; flex-shrink: 0; filter: drop-shadow(0 6px 18px rgba(233,66,98,.35)); animation: pqLogoIn 1s var(--ease-spring) both; }
         @keyframes pqLogoIn { from { opacity: 0; transform: scale(.7) rotate(-8deg); } to { opacity: 1; transform: none; } }
         .pq-brand-sep { width: 2px; align-self: stretch; background: linear-gradient(transparent, rgba(255,255,255,.35), transparent); }
         .pq-title { font-size: 1.9rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 12px; }
@@ -363,8 +362,8 @@
             .pq-title { font-size: 1.45rem; }
             .pq-brand { flex-direction: column; align-items: flex-start; gap: 12px; }
             .pq-logo { height: 70px; }
-            .pq-company { top: 18px; right: 16px; padding: 3px 8px; }
-            .pq-company img { height: 32px; }
+            .pq-company { top: 18px; right: 16px; }
+            .pq-company img { height: 48px; }
             .pq-card-body { padding: 18px; }
             .pq-step { width: 62px; }
             .pq-step .lbl { font-size: .62rem; }
