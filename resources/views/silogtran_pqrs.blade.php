@@ -531,7 +531,11 @@
                 {{-- ================= HERO ================= --}}
                 <div class="pq-hero">
                     <span class="pq-blob b1"></span><span class="pq-blob b2"></span><span class="pq-blob b3"></span>
-                    <div class="pq-company" title="Plexa"><img src="{{ asset('img/IsotipoPlexa-recorte.png') }}" alt="Plexa"></div>
+                    @php
+                        // Logo recortado (sin margen transparente); si no está en el servidor se usa el original
+                        $logoPlexa = is_file(public_path('img/IsotipoPlexa-recorte.png')) ? 'img/IsotipoPlexa-recorte.png' : 'img/IsotipoPlexa.png';
+                    @endphp
+                    <div class="pq-company" title="Plexa"><img src="{{ asset($logoPlexa) }}" alt="Plexa"></div>
 
                     <div class="pq-brand">
                         <img src="{{ asset('img/silogtran-logo.svg') }}" alt="Silogtran" class="pq-logo">
