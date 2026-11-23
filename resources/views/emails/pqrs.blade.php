@@ -170,7 +170,7 @@
                         <!-- Detalle en dos columnas -->
                         @php
                             $campos = [
-                                ['Solicitante', $p->nombre],
+                                ['Solicitante', $p->nombre . ($p->nit_cliente ? ' · Cliente NIT ' . $p->nit_cliente : '')],
                                 ['Documento', $p->tipo_documento . ' ' . $p->documento],
                                 ['Correo', $p->email],
                                 ['Teléfono', $p->telefono ?: '—'],

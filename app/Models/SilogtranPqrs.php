@@ -10,6 +10,7 @@ class SilogtranPqrs extends Model
 
     protected $fillable = [
         'radicado',
+        'nit_cliente',
         'tipo',
         'categoria',
         'prioridad',

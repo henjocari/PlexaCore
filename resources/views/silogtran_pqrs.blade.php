@@ -1,3 +1,14 @@
+@php
+    // Modo embebido: la página se muestra dentro de Silogtran (iframe) filtrada por el NIT del cliente
+    $embed       = $embed ?? false;
+    $nitCliente  = $nitCliente ?? null;
+    $embedParams = $embedParams ?? [];
+    $radicadoOk  = $radicadoOk ?? null;
+
+    // Datos del modal de éxito (interno: sesión · embebido: ?radicado= validado contra el NIT)
+    $exitoRadicado = $radicadoOk->radicado ?? session('pqrs_radicado');
+    $exitoTipo     = $radicadoOk->tipo ?? session('pqrs_tipo');
+@endphp
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -57,14 +68,14 @@
             animation: pqCompanyIn .9s var(--ease-spring) .2s both, pqCompanyFloat 6s ease-in-out 1.1s infinite;
         }
         /* Logo sin recuadro: la imagen es transparente; la sombra lo separa del fondo oscuro */
-        .pq-company img { display: block; height: 110px; width: auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
+        .pq-company img { display: block; height: 80px; width: auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
         @keyframes pqCompanyIn { from { opacity: 0; transform: translateY(-10px) scale(.85); } to { opacity: 1; transform: none; } }
         @keyframes pqCompanyFloat { 0%,100% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
 
         .pq-crumb { font-size: .76rem; letter-spacing: .5px; opacity: .8; margin-bottom: 6px; }
         .pq-crumb b { color: #FFB3C2; }
         .pq-brand { display: flex; align-items: center; gap: 22px; margin-bottom: 4px; position: relative; z-index: 1; }
-        .pq-logo { height: 110px; width: auto; flex-shrink: 0; filter: drop-shadow(0 6px 18px rgba(233,66,98,.35)); animation: pqLogoIn 1s var(--ease-spring) both; }
+        .pq-logo { height: 92px; width: auto; flex-shrink: 0; filter: drop-shadow(0 6px 18px rgba(233,66,98,.35)); animation: pqLogoIn 1s var(--ease-spring) both; }
         @keyframes pqLogoIn { from { opacity: 0; transform: scale(.7) rotate(-8deg); } to { opacity: 1; transform: none; } }
         .pq-brand-sep { width: 2px; align-self: stretch; background: linear-gradient(transparent, rgba(255,255,255,.35), transparent); }
         .pq-title { font-size: 1.9rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 12px; }
@@ -468,6 +479,14 @@
         }
     </style>
 
+    @if($embed)
+        {{-- Ajustes para verse dentro del iframe de Silogtran (sin menú ni cabecera de PlexaCore) --}}
+        <style>
+            body { background: var(--px-bg); }
+            .pq-wrap { padding-top: 16px; }
+            .pq-nit { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 3px 10px; border-radius: 30px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); font-weight: 700; color: #fff; }
+        </style>
+    @else
     {{-- Decide antes de pintar si se muestra la intro (evita parpadeos) --}}
     <script>
         (function () {
@@ -479,10 +498,12 @@
             } catch (e) {}
         })();
     </script>
+    @endif
 </head>
 
 <body id="page-top">
 
+@unless($embed)
 {{-- ================= INTRO ================= --}}
 <div id="pqIntro" aria-hidden="true" title="Clic para saltar">
     <div class="pi-green"></div>
@@ -496,26 +517,29 @@
     </div>
     <div class="pi-edge"></div>
 </div>
+@endunless
 
 <div id="wrapper">
-    @include('layouts.menu')
+    @unless($embed) @include('layouts.menu') @endunless
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            @include('layouts.cabecera')
+            @unless($embed) @include('layouts.cabecera') @endunless
 
             <div class="pq-wrap">
 
                 {{-- ================= HERO ================= --}}
                 <div class="pq-hero">
                     <span class="pq-blob b1"></span><span class="pq-blob b2"></span><span class="pq-blob b3"></span>
-                    <div class="pq-company" title="Plexa"><img src="{{ asset('img/IsotipoPlexa.png') }}" alt="Plexa"></div>
+                    <div class="pq-company" title="Plexa"><img src="{{ asset('img/IsotipoPlexa-recorte.png') }}" alt="Plexa"></div>
 
                     <div class="pq-brand">
                         <img src="{{ asset('img/silogtran-logo.svg') }}" alt="Silogtran" class="pq-logo">
                         <span class="pq-brand-sep d-none d-sm-block"></span>
                         <div>
-                            <div class="pq-crumb">Silogtran / <b>PQRS</b></div>
+                            <div class="pq-crumb">Silogtran / <b>PQRS</b>
+                                @if($embed)<span class="pq-nit"><i class="fas fa-building"></i> NIT {{ $nitCliente }}</span>@endif
+                            </div>
                             <h1 class="pq-title"><i class="fas fa-headset"></i> Centro PQRS <span class="tag">SILOGTRAN</span></h1>
                         </div>
                     </div>
@@ -561,7 +585,7 @@
                             <div class="pq-step" data-step="4"><div class="dot"><span>4</span></div><div class="lbl">Confirmar</div></div>
                         </div>
 
-                        <form id="pqForm" action="{{ route('silogtran.pqrs.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                        <form id="pqForm" action="{{ $embed ? route('silogtran.pqrs.embed.store', $embedParams) : route('silogtran.pqrs.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
 
                             {{-- PASO 1 --}}
@@ -611,7 +635,7 @@
                                         <div class="pq-field">
                                             <select class="in" name="tipo_documento" id="f_tdoc" required>
                                                 @foreach(['CC' => 'Cédula de ciudadanía', 'CE' => 'Cédula de extranjería', 'NIT' => 'NIT', 'PAS' => 'Pasaporte'] as $k => $v)
-                                                    <option value="{{ $k }}" {{ old('tipo_documento', 'CC') === $k ? 'selected' : '' }}>{{ $v }}</option>
+                                                    <option value="{{ $k }}" {{ old('tipo_documento', $embed ? 'NIT' : 'CC') === $k ? 'selected' : '' }}>{{ $v }}</option>
                                                 @endforeach
                                             </select>
                                             <i class="fas fa-id-badge ic"></i><label for="f_tdoc">Tipo de documento *</label>
@@ -620,7 +644,7 @@
                                     <div class="col-md-8">
                                         <div class="pq-field">
                                             <input class="in" type="text" name="documento" id="f_doc" placeholder=" " maxlength="30" required inputmode="numeric"
-                                                   value="{{ old('documento', $usuario->cedula ?? '') }}">
+                                                   value="{{ old('documento', $embed ? $nitCliente : ($usuario->cedula ?? '')) }}">
                                             <i class="fas fa-id-card ic"></i><label for="f_doc">Número de documento *</label><i class="fas fa-check-circle ok"></i>
                                             <div class="err">Ingresa un número de documento válido.</div>
                                         </div>
@@ -752,7 +776,10 @@
                             <h6 class="pq-card-title">Solicitudes radicadas</h6>
                             <p class="pq-card-sub">Seguimiento de las PQRS registradas en Silogtran.</p>
                         </div>
-                        <form method="GET" action="{{ route('silogtran.pqrs') }}" class="pq-filters" id="pqFilters">
+                        <form method="GET" action="{{ $embed ? route('silogtran.pqrs.embed') : route('silogtran.pqrs') }}" class="pq-filters" id="pqFilters">
+                            @foreach($embedParams as $k => $v)
+                                <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                            @endforeach
                             <input type="text" name="busqueda" class="f" placeholder="Buscar radicado, nombre..." value="{{ request('busqueda') }}">
                             <select name="tipo" class="f" onchange="this.form.submit()">
                                 <option value="">Todos los tipos</option>
@@ -777,7 +804,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @php $puedeGestionar = in_array((int) ($usuario->rol ?? 0), [1, 2]); @endphp
+                                @php $puedeGestionar = !$embed && in_array((int) ($usuario->rol ?? 0), [1, 2]); @endphp
                                 @forelse($pqrs as $i => $p)
                                     @php
                                         $badge = ['Radicado' => 'b-radicado', 'En Gestion' => 'b-gestion', 'Cerrado' => 'b-cerrado'][$p->estado] ?? 'b-radicado';
@@ -788,6 +815,9 @@
                                         <td>
                                             <div class="font-weight-bold" style="color:#1B1B1F;">{{ $p->nombre }}</div>
                                             <div class="small text-muted">{{ $p->tipo_documento }} {{ $p->documento }}</div>
+                                            @if(!$embed && $p->nit_cliente)
+                                                <div class="small" style="color:#A8284A;" title="Radicada desde Silogtran"><i class="fas fa-building"></i> Cliente NIT {{ $p->nit_cliente }}</div>
+                                            @endif
                                         </td>
                                         <td style="max-width:240px;">{{ \Illuminate\Support\Str::limit($p->asunto, 60) }}</td>
                                         <td class="small">{{ $p->categoria }}</td>
@@ -830,10 +860,11 @@
 
             </div>
         </div>
-        @include('layouts.pie')
+        @unless($embed) @include('layouts.pie') @endunless
     </div>
 </div>
 
+@unless($embed)
 {{-- ================= SALIDA ================= --}}
 <div id="pqOutro" aria-hidden="true">
     <div class="po-dark"></div>
@@ -841,6 +872,7 @@
     <div class="po-green"></div>
     <div class="po-plexa"><img src="{{ asset('img/Logo_plexa.svg') }}" alt=""></div>
 </div>
+@endunless
 
 {{-- ================= MODAL GESTIÓN ================= --}}
 <div class="modal fade pq-modal" id="pqModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -888,7 +920,7 @@
 </div>
 
 {{-- ================= ÉXITO ================= --}}
-@if(session('pqrs_radicado'))
+@if($exitoRadicado)
     <canvas id="pqConfetti"></canvas>
     <div class="pq-success-overlay" id="pqSuccess">
         <div class="pq-success">
@@ -896,9 +928,9 @@
                 <svg viewBox="0 0 56 56"><circle class="c" cx="28" cy="28" r="26"></circle><path class="k" d="M16 29 l8 8 l16 -18"></path></svg>
             </div>
             <h4>¡PQRS radicada con éxito!</h4>
-            <p>Tu {{ session('pqrs_tipo') === 'Peticion' ? 'petición' : strtolower(session('pqrs_tipo')) }} fue registrada. Guarda este número para hacer seguimiento:</p>
+            <p>Tu {{ $exitoTipo === 'Peticion' ? 'petición' : strtolower((string) $exitoTipo) }} fue {{ $exitoTipo === 'Reclamo' ? 'registrado' : 'registrada' }}. Guarda este número para hacer seguimiento:</p>
             <div class="pq-radbox">
-                <code id="pqRadNum">{{ session('pqrs_radicado') }}</code>
+                <code id="pqRadNum">{{ $exitoRadicado }}</code>
                 <button type="button" id="pqCopy" title="Copiar"><i class="fas fa-copy"></i></button>
             </div>
             <button type="button" class="pq-btn pq-btn-primary" id="pqSuccessClose">Entendido <i class="fas fa-check"></i></button>
@@ -939,11 +971,11 @@
     }
 
     /* ---------- Salida: al ir a otra parte del menú ---------- */
-    const outro = document.getElementById('pqOutro');
+    const outro = document.getElementById('pqOutro');   // no existe en la vista embebida
     let saliendo = false;
     document.addEventListener('click', e => {
         const a = e.target.closest('a[href]');
-        if (!a || saliendo || e.defaultPrevented) return;
+        if (!outro || !a || saliendo || e.defaultPrevented) return;
         if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;   // nueva pestaña, etc.
         if (a.target && a.target !== '_self') return;
         if (a.hasAttribute('download') || a.hasAttribute('data-toggle') || a.hasAttribute('data-dismiss')) return;
@@ -960,7 +992,7 @@
     });
     // Si el usuario vuelve con "atrás", quitar el telón
     window.addEventListener('pageshow', ev => {
-        if (ev.persisted) { saliendo = false; outro.classList.remove('go'); }
+        if (ev.persisted && outro) { saliendo = false; outro.classList.remove('go'); }
     });
 
     /* ---------- Contadores animados ---------- */

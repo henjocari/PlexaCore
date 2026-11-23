@@ -15,7 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'guardar-firma',
             '/guardar-firma',
-            '*guardar-firma*'
+            '*guardar-firma*',
+            // PQRS embebido en Silogtran: dentro del iframe el navegador no envía la
+            // cookie de sesión, por eso no puede usar token CSRF. Lo protege el NIT
+            // firmado (config/silogtran.php) y el límite de envíos por minuto.
+            'silogtran/pqrs/embed',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
