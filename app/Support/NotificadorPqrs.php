@@ -25,6 +25,62 @@ class NotificadorPqrs
 
     private function __construct(private SilogtranPqrs $pqrs) {}
 
+    /* ---------------------------------------------------------------
+     *  Envío en segundo plano: el usuario recibe la respuesta al instante
+     *  y los correos se envían justo después (Laravel defer()).
+     *  Si algo falla, la causa queda en caché para mostrarla en el listado.
+     * --------------------------------------------------------------- */
+
+    public static function enSegundoPlano(SilogtranPqrs $pqrs, string $evento = 'radicada'): void
+    {
+        $id = $pqrs->id;
+
+        \Illuminate\Support\defer(function () use ($id, $evento) {
+            $p = SilogtranPqrs::find($id);
+            if (!$p) {
+                return;
+            }
+            $n = $evento === 'actualizada' ? self::actualizada($p) : self::radicada($p);
+
+            try {
+                $n->todoOk()
+                    ? cache()->forget(self::claveFallo($id))
+                    : cache()->put(self::claveFallo($id), $n->resumen(true), now()->addDays(15));
+            } catch (\Throwable $e) {
+                Log::warning("PQRS {$p->radicado}: no se pudo guardar el estado del correo en caché: " . $e->getMessage());
+            }
+        });
+    }
+
+    public static function claveFallo(int $id): string
+    {
+        return "pqrs_correo_fallo:{$id}";
+    }
+
+    /**
+     * Fallos de correo pendientes para un grupo de PQRS: [id => mensaje].
+     */
+    public static function fallosDe(iterable $ids): array
+    {
+        $ids = collect($ids)->filter()->values();
+        if ($ids->isEmpty()) {
+            return [];
+        }
+        try {
+            $claves = $ids->mapWithKeys(fn ($id) => [self::claveFallo($id) => $id]);
+            $valores = cache()->many($claves->keys()->all());
+        } catch (\Throwable $e) {
+            return [];
+        }
+        $out = [];
+        foreach ($valores as $clave => $msg) {
+            if ($msg) {
+                $out[$claves[$clave]] = $msg;
+            }
+        }
+        return $out;
+    }
+
     public static function radicada(SilogtranPqrs $pqrs): self
     {
         $n = new self($pqrs);

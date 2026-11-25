@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PqrsMail;
+use App\Support\NotificadorPqrs;
 use App\Models\SilogtranPqrs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +35,7 @@ class SilogtranPqrsController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate($this->reglas(), $this->mensajes());
+        $data = $this->validador($request)->validate();
 
         $pqrs = $this->radicar($request, $data, null, Auth::id());
 
@@ -68,13 +68,9 @@ class SilogtranPqrsController extends Controller
         // Notificar al solicitante solo si cambió el estado o la respuesta
         $mensaje = "La PQRS {$pqrs->radicado} fue actualizada a \"{$pqrs->estado}\".";
         if ($estadoAnterior !== $pqrs->estado || $respuestaAnterior !== $pqrs->respuesta) {
-            try {
-                Mail::to($pqrs->email)->send(new PqrsMail($pqrs, 'actualizacion'));
-                $mensaje .= " Se notificó a {$pqrs->email}.";
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo actualización: " . $e->getMessage());
-                $mensaje .= ' (No se pudo enviar el correo al solicitante.)';
-            }
+            // El correo sale justo después de responder (si falla, se marca con ⚠ en el listado)
+            NotificadorPqrs::enSegundoPlano($pqrs, 'actualizada');
+            $mensaje .= " Se notificará a {$pqrs->email}.";
         }
 
         return redirect()->route('silogtran.pqrs')->with('success', $mensaje);
@@ -108,7 +104,7 @@ class SilogtranPqrsController extends Controller
 
         // Dentro de un iframe el navegador no envía la cookie de sesión, así que los
         // errores no se pueden "flashear" con redirect: se vuelve a pintar la vista.
-        $validator = Validator::make($request->all(), $this->reglas(), $this->mensajes());
+        $validator = $this->validador($request);
         if ($validator->fails()) {
             $request->flash();
             return $this->respuestaEmbed($request, $nit, [
@@ -121,6 +117,28 @@ class SilogtranPqrsController extends Controller
         return redirect()->route('silogtran.pqrs.embed', $this->parametrosEmbed($request) + [
             'radicado' => $pqrs->radicado,
         ]);
+    }
+
+    /* =====================================================================
+     *  SEGUIMIENTO DESDE EL CORREO (enlace firmado, sin login)
+     *  GET /pqrs/seguimiento/{radicado}?signature=...
+     * ===================================================================== */
+
+    public function seguimiento(string $radicado)
+    {
+        $pqrs = SilogtranPqrs::where('radicado', $radicado)->firstOrFail();
+
+        return response()
+            ->view('pqrs_seguimiento', ['p' => $pqrs])
+            ->header('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    /**
+     * Enlace permanente y firmado a la página de seguimiento de una PQRS.
+     */
+    public static function urlSeguimiento(SilogtranPqrs $pqrs): string
+    {
+        return \Illuminate\Support\Facades\URL::signedRoute('pqrs.seguimiento', ['radicado' => $pqrs->radicado]);
     }
 
     /* =====================================================================
@@ -220,7 +238,33 @@ class SilogtranPqrsController extends Controller
             'pqrs'       => $pqrs,
             'stats'      => $stats,
             'categorias' => SilogtranPqrs::CATEGORIAS,
+            // Correos que fallaron al enviarse (solo se muestran a quien gestiona, en la vista interna)
+            'fallosCorreo' => $nit ? [] : NotificadorPqrs::fallosDe($pqrs->pluck('id')),
         ];
+    }
+
+    /**
+     * Validador del formulario + reglas de ubicación: en Colombia el departamento debe
+     * existir y la ciudad debe pertenecer a ese departamento (DIVIPOLA).
+     */
+    private function validador(Request $request): \Illuminate\Validation\Validator
+    {
+        return Validator::make($request->all(), $this->reglas(), $this->mensajes())
+            ->after(function ($v) use ($request) {
+                if ($request->input('pais') !== 'Colombia') {
+                    return;
+                }
+                $mapa = SilogtranPqrs::municipiosColombia();
+                if (!$mapa) {
+                    return; // sin el archivo de municipios no se puede verificar
+                }
+                $depto = (string) $request->input('departamento');
+                if (!isset($mapa[$depto])) {
+                    $v->errors()->add('departamento', 'Selecciona un departamento de la lista.');
+                } elseif (!in_array((string) $request->input('ciudad'), $mapa[$depto], true)) {
+                    $v->errors()->add('ciudad', "Selecciona un municipio de {$depto}.");
+                }
+            });
     }
 
     private function reglas(): array
@@ -234,6 +278,12 @@ class SilogtranPqrsController extends Controller
             'documento'      => 'required|string|max:30',
             'email'          => 'required|email|max:150',
             'telefono'       => 'nullable|string|max:30',
+            'pais'           => ['required', Rule::in(SilogtranPqrs::PAISES)],
+            'pais_otro'      => 'nullable|required_if:pais,Otro país|string|max:80',
+            'departamento'   => 'required|string|max:80',
+            'ciudad'         => 'required|string|max:80',
+            'direccion'      => 'nullable|string|max:200',
+            'producto_servicio' => ['required', Rule::in(SilogtranPqrs::PRODUCTOS)],
             'manifiesto'     => 'nullable|string|max:50',
             'asunto'         => 'required|string|max:150',
             'descripcion'    => 'required|string|min:20|max:3000',
@@ -248,15 +298,28 @@ class SilogtranPqrsController extends Controller
             'descripcion.min' => 'La descripción debe tener al menos 20 caracteres.',
             'acepta.accepted' => 'Debe aceptar la política de tratamiento de datos.',
             'adjunto.max'     => 'El archivo no puede superar 10 MB.',
+            'pais.required'         => 'Indica el país.',
+            'departamento.required' => 'Indica el departamento.',
+            'ciudad.required'       => 'Indica la ciudad.',
+            'producto_servicio.required' => 'Selecciona el producto o servicio.',
+            'pais_otro.required_if' => 'Escribe el nombre del país.',
+            'pais.in' => 'Selecciona un país de la lista.',
         ];
     }
 
     /**
-     * Guarda la PQRS, el adjunto y envía los correos (buzón + acuse al solicitante).
+     * Guarda la PQRS y el adjunto. Los correos (buzón + acuse) salen en segundo plano
+     * justo después de responder, para que radicar sea inmediato.
      */
     private function radicar(Request $request, array $data, ?string $nit, $userId): SilogtranPqrs
     {
         unset($data['acepta']);
+
+        // "Otro país": se guarda el nombre que escribió el usuario
+        if (($data['pais'] ?? '') === 'Otro país') {
+            $data['pais'] = trim((string) ($data['pais_otro'] ?? '')) ?: 'Otro país';
+        }
+        unset($data['pais_otro']);
 
         if ($request->hasFile('adjunto')) {
             $destino = public_path('archivos_pqrs');
@@ -276,30 +339,15 @@ class SilogtranPqrsController extends Controller
 
         $pqrs = SilogtranPqrs::create($data);
 
-        // 1) Aviso al buzón de PQRS (definido en PQRS_MAIL_TO)
-        $destinatarios = config('mail.pqrs_to', []);
-        if (!empty($destinatarios)) {
-            try {
-                Mail::to($destinatarios)->send(new PqrsMail($pqrs, 'empresa'));
-                Log::info("PQRS {$pqrs->radicado}: correo enviado a " . implode(', ', $destinatarios));
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo empresa: " . $e->getMessage());
-            }
-        } else {
-            Log::warning("PQRS {$pqrs->radicado}: PQRS_MAIL_TO no está configurado en el .env");
-        }
-
-        // 2) Acuse de recibo al solicitante
-        if (config('mail.pqrs_acuse', true)) {
-            try {
-                Mail::to($pqrs->email)->send(new PqrsMail($pqrs, 'solicitante'));
-                Log::info("PQRS {$pqrs->radicado}: acuse enviado a {$pqrs->email}");
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo solicitante: " . $e->getMessage());
-            }
-        }
+        // Buzón interno (PQRS_MAIL_TO) + acuse al solicitante, después de responder
+        NotificadorPqrs::enSegundoPlano($pqrs, 'radicada');
 
         return $pqrs;
+    }
+
+    private function esGestor(): bool
+    {
+        return in_array((int) (Auth::user()->rol ?? 0), [1, 2]);
     }
 
     /**

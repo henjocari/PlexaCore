@@ -222,6 +222,8 @@
                             </table>
                         @else
                             <!-- Botón de seguimiento (enlace firmado, sin login) -->
+                            {{-- Si la ruta de seguimiento no está registrada, el correo se envía igual, sin el botón --}}
+                            @if(\Illuminate\Support\Facades\Route::has('pqrs.seguimiento'))
                             @php $urlSeguimiento = \App\Http\Controllers\SilogtranPqrsController::urlSeguimiento($p); @endphp
                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 26px;">
                                 <tr>
@@ -233,6 +235,7 @@
                                     </td>
                                 </tr>
                             </table>
+                            @endif
 
                             <!-- Línea de tiempo -->
                             @php
@@ -252,7 +255,7 @@
                                                 </tr>
                                             </table>
                                             <span style="display:block; margin-top:8px; font-size:12px; font-weight:bold; color:{{ $i <= $actual ? '#16283c' : '#a3adbb' }};">
-                                                {{ $paso === 'En Gestion' ? 'En gestión' : $paso }}
+                                                {{ ['Radicado' => 'Radicada', 'En Gestion' => 'En gestión', 'Cerrado' => 'Resuelta'][$paso] ?? $paso }}
                                             </span>
                                         </td>
                                     @endforeach
@@ -270,7 +273,7 @@
                             @if($destino === 'empresa')
                                 Correo generado automáticamente desde el Centro PQRS de Silogtran. Puedes responder este mensaje y la respuesta llegará directamente al solicitante.
                             @else
-                                Este es un correo automático, por favor no respondas a esta dirección. Guarda este correo: con el botón de arriba puedes consultar en cualquier momento si tu solicitud ya fue resuelta. Si necesitas agregar información, radica una nueva solicitud indicando tu número de radicado.
+                                Este es un correo automático, por favor no respondas a esta dirección. @if(\Illuminate\Support\Facades\Route::has('pqrs.seguimiento')) Guarda este correo: con el botón de arriba puedes consultar en cualquier momento si tu solicitud ya fue resuelta. @else Te avisaremos a este correo cada vez que tu solicitud cambie de estado. @endif Si necesitas agregar información, radica una nueva solicitud indicando tu número de radicado.
                             @endif
                         </p>
                     </td>

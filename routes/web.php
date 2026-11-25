@@ -22,12 +22,28 @@ use App\Http\Controllers\ViajesTransportadosController;
 use App\Http\Controllers\QanalyticsController;
 use App\Http\Controllers\SilogtranPqrsController;
 
+
 // ----------------------
 // RUTAS PÚBLICAS (sin login)
 // ----------------------
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// PQRS embebido en Silogtran (iframe): sin login, filtrado por el NIT de la URL.
+// ?nit=900123456[&exp=...][&firma=...]  — ver config/silogtran.php
+Route::get('/silogtran/pqrs/embed', [SilogtranPqrsController::class, 'embed'])
+    ->name('silogtran.pqrs.embed');
+
+Route::post('/silogtran/pqrs/embed', [SilogtranPqrsController::class, 'embedStore'])
+    ->middleware('throttle:10,1')   // máx. 10 radicaciones por minuto por IP
+    ->name('silogtran.pqrs.embed.store');
+
+// Seguimiento de una PQRS desde el correo del cliente (enlace firmado, sin login).
+// Si alguien cambia el radicado en la URL, la firma deja de ser válida (403).
+Route::get('/pqrs/seguimiento/{radicado}', [SilogtranPqrsController::class, 'seguimiento'])
+    ->middleware(['signed', 'throttle:30,1'])
+    ->name('pqrs.seguimiento');
 
 // ----------------------
 // RUTAS PROTEGIDAS (requieren sesión)
@@ -251,6 +267,7 @@ Route::middleware(['auth', RefreshPermissions::class])->group(function () {
     Route::post('/silogtran/pqrs/{id}/gestionar', [SilogtranPqrsController::class, 'gestionar'])
         ->middleware(VerificarModulo::class . ':PQRS')
         ->name('silogtran.pqrs.gestionar');
+
 
     // HISTORIAL DE HABITACIONES
     Route::get('/historial-habitaciones/export-excel', [HistorialHabitacionController::class, 'exportExcel'])

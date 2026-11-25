@@ -21,7 +21,8 @@
     <link rel="icon" type="image/png" href="{{ asset('img/favicon.png') }}">
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- Copia local y diferida: no bloquea el primer pintado de la página (antes venía de un CDN externo) --}}
+    <script src="{{ asset('vendor/papel/sweetalert2-11.10.5.all.min.js') }}" defer></script>
 
     <style>
         :root {
@@ -351,15 +352,19 @@
 
         /* ================= ANIMACIÓN DE ENVÍO ================= */
         #pqEnvio { position: fixed; inset: 0; z-index: 2500; display: none; align-items: center; justify-content: center; padding: 16px;
-                   background: radial-gradient(circle at 50% 40%, rgba(74,20,38,.92) 0%, rgba(13,13,15,.95) 70%); backdrop-filter: blur(6px); }
+                   background: radial-gradient(circle at 50% 40%, #3d1424 0%, #0d0d0f 72%); }
+        /* Mientras se envía: se oculta y congela la página de atrás para que el navegador solo anime el avión */
+        html.pq-enviando #wrapper { visibility: hidden; }
+        html.pq-enviando #wrapper, html.pq-enviando #wrapper * { animation-play-state: paused !important; }
         #pqEnvio.on { display: flex; animation: pqFadeIn .35s ease; }
         .pe-card { width: 100%; max-width: 420px; text-align: center; color: #fff; }
         .pe-cielo { position: relative; height: 190px; margin-bottom: 8px; }
         .pe-orbita { position: absolute; left: 50%; top: 50%; width: 260px; height: 150px; margin: -75px 0 0 -130px;
-                     border: 2px dashed rgba(255,179,194,.28); border-radius: 50%; animation: peGiro 14s linear infinite; }
-        .pe-avion { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite; }
-        .pe-avion svg { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; filter: drop-shadow(0 10px 22px rgba(233,66,98,.55)); }
-        .pe-estela { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite backwards; }
+                     border: 2px dashed rgba(255,179,194,.28); border-radius: 50%; animation: peGiro 14s linear infinite; will-change: transform; }
+        .pe-avion { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite; will-change: transform; }
+        .pe-avion::before { content: ""; position: absolute; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; background: radial-gradient(circle, rgba(233,66,98,.45), rgba(233,66,98,0) 65%); }
+        .pe-avion svg { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; }
+        .pe-estela { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite backwards; will-change: transform; }
         .pe-estela::before { content: ""; position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #F06E87; }
         .pe-estela.e1 { animation-delay: .09s; } .pe-estela.e2 { animation-delay: .18s; } .pe-estela.e3 { animation-delay: .27s; }
         .pe-estela.e2::before { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: #FFB3C2; opacity: .8; }
@@ -374,7 +379,7 @@
         .pe-paso.hecho { color: #fff; }
         .pe-paso.hecho .ic { background: #E94262; border-color: #E94262; transform: scale(1.08); animation: none; }
         .pe-barra { height: 5px; border-radius: 5px; background: rgba(255,255,255,.12); overflow: hidden; }
-        .pe-barra span { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, #E94262, #F06E87, #307ABE); transition: width 1.1s var(--ease-out); }
+        .pe-barra span { display: block; height: 100%; width: 100%; border-radius: 5px; background: linear-gradient(90deg, #E94262, #F06E87, #307ABE); transform: scaleX(0); transform-origin: left center; transition: transform 1.1s var(--ease-out); will-change: transform; }
         @keyframes peGiro { to { transform: rotate(360deg); } }
         @keyframes peVuelo {
             0%   { transform: translate(-120px, 40px) rotate(-12deg); }
@@ -399,6 +404,18 @@
         .pq-detail { background: #f8fafc; border-radius: 12px; padding: 12px 14px; font-size: .84rem; color: #334155; margin-bottom: 16px; white-space: pre-line; max-height: 180px; overflow: auto; overflow-wrap: anywhere; }
 
         .pq-alert { border: none; border-radius: 14px; padding: 14px 18px; display: flex; gap: 10px; align-items: center; animation: pqFadeDown .5s ease; font-size: .88rem; }
+        .pq-alert { position: relative; overflow: hidden; padding-right: 44px; }
+        .pq-alert.pq-out { animation: pqAlertOut .55s cubic-bezier(.55,0,.35,1) forwards; pointer-events: none; }
+        @keyframes pqAlertOut {
+            0%   { opacity: 1; transform: translateX(0) scale(1); }
+            35%  { opacity: .9; transform: translateX(-8px) scale(1); }
+            100% { opacity: 0; transform: translateX(60px) scale(.96); }
+        }
+        .pq-alert-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: currentColor; opacity: .35; transform-origin: left; animation: pqAlertBar linear forwards; }
+        .pq-alert:hover .pq-alert-bar { animation-play-state: paused; }
+        @keyframes pqAlertBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+        .pq-alert-x { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: inherit; opacity: .55; font-size: 1.15rem; line-height: 1; cursor: pointer; }
+        .pq-alert-x:hover { opacity: 1; background: rgba(0,0,0,.06); }
 
         /* ================= RESPONSIVE ================= */
         @media (max-width: 991px) {
@@ -596,12 +613,14 @@
                 </div>
 
                 @if(session('success'))
-                    <div class="pq-alert mb-4" style="background:#eaf7e6; color:#2f7a25;"><i class="fas fa-check-circle"></i>{{ session('success') }}</div>
+                    <div class="pq-alert mb-4" data-auto="5000" style="background:#eaf7e6; color:#2f7a25;"><i class="fas fa-check-circle"></i>{{ session('success') }}</div>
                 @endif
-                @if(session('aviso_correo'))
+                @php $fallosCorreo = $fallosCorreo ?? []; $esGestorPq = !$embed && in_array((int) ($usuario->rol ?? 0), [1, 2]); @endphp
+                @if($esGestorPq && count($fallosCorreo))
                     <div class="pq-alert mb-4" style="background:#fff6e0; color:#8a5a00; align-items:flex-start;">
                         <i class="fas fa-envelope" style="margin-top:3px"></i>
-                        <div><b>La PQRS quedó guardada, pero hubo un problema con los correos.</b><br><span style="word-break:break-word">{{ session('aviso_correo') }}</span></div>
+                        <div><b>{{ count($fallosCorreo) }} PQRS de esta página tienen correos que no se pudieron enviar</b> (marcadas con <i class="fas fa-exclamation-triangle"></i>).
+                            Pasa el mouse sobre el ícono para ver la causa. Diagnóstico: <code>php artisan correo:probar tu@correo</code></div>
                     </div>
                 @endif
                 @if(session('error'))
@@ -633,7 +652,7 @@
                             <div class="pq-step" data-step="4"><div class="dot"><span>4</span></div><div class="lbl">Confirmar</div></div>
                         </div>
 
-                        <form id="pqForm" action="{{ $embed ? route('silogtran.pqrs.embed.store', $embedParams) : route('silogtran.pqrs.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+                        <form id="pqForm" autocomplete="off" action="{{ $embed ? route('silogtran.pqrs.embed.store', $embedParams) : route('silogtran.pqrs.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                             @csrf
 
                             {{-- PASO 1 --}}
@@ -674,25 +693,27 @@
                                     <div class="col-md-12">
                                         <div class="pq-field">
                                             <input class="in" type="text" name="nombre" id="f_nombre" placeholder=" " maxlength="150" required
-                                                   value="{{ old('nombre', trim(($usuario->Nombre ?? '') . ' ' . ($usuario->Apellido ?? ''))) }}">
+                                                   autocomplete="off" value="{{ old('nombre') }}">
                                             <i class="fas fa-user ic"></i><label for="f_nombre">Nombre completo *</label><i class="fas fa-check-circle ok"></i>
                                             <div class="err">Ingresa tu nombre completo.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="pq-field">
-                                            <select class="in" name="tipo_documento" id="f_tdoc" required>
+                                            <select class="in" name="tipo_documento" id="f_tdoc" required autocomplete="off">
+                                                <option value="" {{ old('tipo_documento') ? '' : 'selected' }} disabled>Seleccione…</option>
                                                 @foreach(['CC' => 'Cédula de ciudadanía', 'CE' => 'Cédula de extranjería', 'NIT' => 'NIT', 'PAS' => 'Pasaporte'] as $k => $v)
-                                                    <option value="{{ $k }}" {{ old('tipo_documento', $embed ? 'NIT' : 'CC') === $k ? 'selected' : '' }}>{{ $v }}</option>
+                                                    <option value="{{ $k }}" {{ old('tipo_documento') === $k ? 'selected' : '' }}>{{ $v }}</option>
                                                 @endforeach
                                             </select>
                                             <i class="fas fa-id-badge ic"></i><label for="f_tdoc">Tipo de documento *</label>
+                                            <div class="err">Selecciona el tipo de documento.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="pq-field">
                                             <input class="in" type="text" name="documento" id="f_doc" placeholder=" " maxlength="30" required inputmode="numeric"
-                                                   value="{{ old('documento', $embed ? $nitCliente : ($usuario->cedula ?? '')) }}">
+                                                   autocomplete="off" value="{{ old('documento') }}">
                                             <i class="fas fa-id-card ic"></i><label for="f_doc">Número de documento *</label><i class="fas fa-check-circle ok"></i>
                                             <div class="err">Ingresa un número de documento válido.</div>
                                         </div>
@@ -700,7 +721,7 @@
                                     <div class="col-md-7">
                                         <div class="pq-field">
                                             <input class="in" type="email" name="email" id="f_email" placeholder=" " maxlength="150" required
-                                                   value="{{ old('email', $usuario->email ?? '') }}">
+                                                   autocomplete="off" value="{{ old('email') }}">
                                             <i class="fas fa-envelope ic"></i><label for="f_email">Correo electrónico *</label><i class="fas fa-check-circle ok"></i>
                                             <div class="err">Ingresa un correo electrónico válido.</div>
                                         </div>
@@ -708,53 +729,64 @@
                                     <div class="col-md-5">
                                         <div class="pq-field">
                                             <input class="in" type="tel" name="telefono" id="f_tel" placeholder=" " maxlength="30"
-                                                   value="{{ old('telefono', $usuario->cel ?? '') }}">
+                                                   autocomplete="off" value="{{ old('telefono') }}">
                                             <i class="fas fa-mobile-alt ic"></i><label for="f_tel">Celular</label><i class="fas fa-check-circle ok"></i>
                                         </div>
                                     </div>
+                                    {{-- País → Departamento → Ciudad (listas; con otro país se escribe a mano) --}}
                                     <div class="col-md-4">
                                         <div class="pq-field">
-                                            <input class="in" type="text" name="pais" id="f_pais" placeholder=" " maxlength="80" required list="pqPaises" autocomplete="country-name"
-                                                   value="{{ old('pais', 'Colombia') }}">
-                                            <i class="fas fa-globe-americas ic"></i><label for="f_pais">País *</label><i class="fas fa-check-circle ok"></i>
-                                            <div class="err">Indica el país.</div>
+                                            <select class="in" name="pais" id="f_pais" required autocomplete="off" data-old="{{ old('pais') }}">
+                                                <option value="" selected disabled>Seleccione…</option>
+                                                @foreach(\App\Models\SilogtranPqrs::PAISES as $pa)
+                                                    <option value="{{ $pa }}">{{ $pa }}</option>
+                                                @endforeach
+                                            </select>
+                                            <i class="fas fa-globe-americas ic"></i><label for="f_pais">País *</label>
+                                            <div class="err">Selecciona el país.</div>
+                                        </div>
+                                        <div class="pq-field d-none" id="wPaisOtro">
+                                            <input class="in" type="text" name="pais_otro" id="f_pais_otro" placeholder=" " maxlength="80" autocomplete="off" value="{{ old('pais_otro') }}" disabled>
+                                            <i class="fas fa-flag ic"></i><label for="f_pais_otro">¿Cuál país? *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Escribe el país.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="pq-field">
-                                            <input class="in" type="text" name="departamento" id="f_depto" placeholder=" " maxlength="80" required list="pqDeptos" autocomplete="address-level1"
-                                                   value="{{ old('departamento') }}">
-                                            <i class="fas fa-map ic"></i><label for="f_depto">Departamento *</label><i class="fas fa-check-circle ok"></i>
-                                            <div class="err">Indica el departamento.</div>
+                                        <div class="pq-field" id="wDeptoSel">
+                                            <select class="in" name="departamento" id="f_depto" required autocomplete="off" data-old="{{ old('departamento') }}" disabled>
+                                                <option value="" selected disabled>Primero elige el país</option>
+                                            </select>
+                                            <i class="fas fa-map ic"></i><label for="f_depto">Departamento *</label>
+                                            <div class="err">Selecciona el departamento.</div>
+                                        </div>
+                                        <div class="pq-field d-none" id="wDeptoTxt">
+                                            <input class="in" type="text" name="departamento" id="f_depto_txt" placeholder=" " maxlength="80" autocomplete="off" value="{{ old('departamento') }}" disabled>
+                                            <i class="fas fa-map ic"></i><label for="f_depto_txt">Estado / provincia *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Escribe el estado o la provincia.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="pq-field">
-                                            <input class="in" type="text" name="ciudad" id="f_ciudad" placeholder=" " maxlength="80" required autocomplete="address-level2"
-                                                   value="{{ old('ciudad') }}">
-                                            <i class="fas fa-city ic"></i><label for="f_ciudad">Ciudad *</label><i class="fas fa-check-circle ok"></i>
-                                            <div class="err">Indica la ciudad.</div>
+                                        <div class="pq-field" id="wCiudadSel">
+                                            <select class="in" name="ciudad" id="f_ciudad" required autocomplete="off" data-old="{{ old('ciudad') }}" disabled>
+                                                <option value="" selected disabled>Primero elige el departamento</option>
+                                            </select>
+                                            <i class="fas fa-city ic"></i><label for="f_ciudad">Ciudad / municipio *</label>
+                                            <div class="err">Selecciona la ciudad o municipio.</div>
+                                        </div>
+                                        <div class="pq-field d-none" id="wCiudadTxt">
+                                            <input class="in" type="text" name="ciudad" id="f_ciudad_txt" placeholder=" " maxlength="80" autocomplete="off" value="{{ old('ciudad') }}" disabled>
+                                            <i class="fas fa-city ic"></i><label for="f_ciudad_txt">Ciudad *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Escribe la ciudad.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="pq-field">
-                                            <input class="in" type="text" name="direccion" id="f_dir" placeholder=" " maxlength="200" autocomplete="street-address"
+                                            <input class="in" type="text" name="direccion" id="f_dir" placeholder=" " maxlength="200" autocomplete="off"
                                                    value="{{ old('direccion') }}">
                                             <i class="fas fa-map-marker-alt ic"></i><label for="f_dir">Dirección</label><i class="fas fa-check-circle ok"></i>
                                         </div>
                                     </div>
                                 </div>
-                                {{-- Sugerencias (se puede escribir cualquier otro valor) --}}
-                                <datalist id="pqPaises">
-                                    @foreach(['Colombia', 'Venezuela', 'Ecuador', 'Perú', 'Panamá', 'México', 'Estados Unidos', 'España'] as $pa)
-                                        <option value="{{ $pa }}">
-                                    @endforeach
-                                </datalist>
-                                <datalist id="pqDeptos">
-                                    @foreach(\App\Models\SilogtranPqrs::DEPARTAMENTOS_CO as $dep)
-                                        <option value="{{ $dep }}">
-                                    @endforeach
-                                </datalist>
                             </div>
 
                             {{-- PASO 3 --}}
@@ -936,6 +968,9 @@
                                         <td class="small text-nowrap">{{ optional($p->created_at)->format('d/m/Y H:i') }}</td>
                                         <td><span class="pq-badge {{ $badge }}"><span class="d"></span>{{ $p->estado === 'En Gestion' ? 'En gestión' : $p->estado }}</span></td>
                                         <td class="text-nowrap">
+                                            @if($puedeGestionar && isset($fallosCorreo[$p->id]))
+                                                <span class="pq-act d-inline-flex align-items-center justify-content-center" style="background:#fff6e0;color:#b07a0c;cursor:help" title="{{ $fallosCorreo[$p->id] }}"><i class="fas fa-exclamation-triangle"></i></span>
+                                            @endif
                                             @if($p->adjunto)
                                                 <a href="{{ asset('archivos_pqrs/' . $p->adjunto) }}" target="_blank" class="pq-act d-inline-flex align-items-center justify-content-center" title="Ver adjunto"><i class="fas fa-paperclip"></i></a>
                                             @endif
@@ -1078,11 +1113,6 @@
                 <code id="pqRadNum">{{ $exitoRadicado }}</code>
                 <button type="button" id="pqCopy" title="Copiar"><i class="fas fa-copy"></i></button>
             </div>
-            @if(($embed && request('correo') === '0') || (!$embed && session('aviso_correo')))
-                <p style="font-size:.8rem; color:#8a5a00; background:#fff6e0; border-radius:10px; padding:8px 12px;">
-                    <i class="fas fa-envelope"></i> No pudimos enviar el correo de confirmación en este momento. Tu solicitud sí quedó radicada: guarda este número.
-                </p>
-            @endif
             <button type="button" class="pq-btn pq-btn-primary" id="pqSuccessClose">Entendido <i class="fas fa-check"></i></button>
         </div>
     </div>
@@ -1133,8 +1163,8 @@
         if (raw === '' || raw.startsWith('#') || raw.startsWith('javascript:')) return;
         let url;
         try { url = new URL(a.href, location.href); } catch (err) { return; }
-        if (url.origin !== location.origin) return;                
-        if (url.pathname === location.pathname) return;            
+        if (url.origin !== location.origin) return;                // enlaces externos / mailto
+        if (url.pathname === location.pathname) return;            // paginación o filtros del mismo PQRS
         e.preventDefault();
         saliendo = true;
         outro.classList.add('go');
@@ -1211,15 +1241,71 @@
     btnPrev.addEventListener('click', () => goTo(current - 1, true));
     btnNext.addEventListener('click', () => { if (validateStep(current)) goTo(current + 1); });
 
+    /* ---------- Sin autocompletado del navegador: todo se diligencia a mano ----------
+       Chrome/Edge ignoran autocomplete="off" en campos tipo dirección; un campo de solo
+       lectura nunca se autocompleta, así que se libera en el momento en que se toca. */
+    form.querySelectorAll('input.in:not([type=file]):not([type=hidden]), textarea.in').forEach(inp => {
+        if (inp.value) return;                 // si viene con datos (p. ej. tras un error), se deja editable
+        inp.readOnly = true;
+        const liberar = () => { inp.readOnly = false; };
+        inp.addEventListener('pointerdown', liberar, { once: true });
+        inp.addEventListener('focus', liberar, { once: true });
+    });
+
+    /* ---------- País → Departamento → Ciudad ----------
+       Colombia: listas con los municipios oficiales (DIVIPOLA). Otro país: texto libre. */
+    const MUNICIPIOS = @json(\App\Models\SilogtranPqrs::municipiosColombia());
+    const selPais = document.getElementById('f_pais'), selDepto = document.getElementById('f_depto'), selCiudad = document.getElementById('f_ciudad');
+    const txtPaisOtro = document.getElementById('f_pais_otro'), txtDepto = document.getElementById('f_depto_txt'), txtCiudad = document.getElementById('f_ciudad_txt');
+    const mostrar = (id, on) => document.getElementById(id).classList.toggle('d-none', !on);
+    function opciones(sel, lista, vacio) {
+        sel.innerHTML = '<option value="" selected disabled>' + vacio + '</option>' +
+            lista.map(x => '<option>' + String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) + '</option>').join('');
+    }
+    function limpiar(el) { const f = el.closest('.pq-field'); f.classList.remove('valid', 'invalid'); }
+    function alCambiarPais() {
+        const p = selPais.value, esCo = p === 'Colombia', otro = p === 'Otro país';
+        mostrar('wPaisOtro', otro); txtPaisOtro.disabled = !otro;
+        mostrar('wDeptoSel', esCo || !p); mostrar('wCiudadSel', esCo || !p);
+        mostrar('wDeptoTxt', !!p && !esCo); mostrar('wCiudadTxt', !!p && !esCo);
+        selDepto.disabled = !esCo; txtDepto.disabled = esCo || !p;
+        txtCiudad.disabled = esCo || !p;
+        if (esCo) {
+            opciones(selDepto, Object.keys(MUNICIPIOS), 'Seleccione el departamento…');
+            selCiudad.disabled = true; opciones(selCiudad, [], 'Primero elige el departamento');
+        }
+        [selDepto, selCiudad, txtDepto, txtCiudad, txtPaisOtro].forEach(limpiar);
+    }
+    function alCambiarDepto() {
+        const lista = MUNICIPIOS[selDepto.value] || [];
+        selCiudad.disabled = !lista.length;
+        opciones(selCiudad, lista, lista.length ? 'Seleccione la ciudad o municipio…' : 'Primero elige el departamento');
+        limpiar(selCiudad);
+    }
+    selPais.addEventListener('change', alCambiarPais);
+    selDepto.addEventListener('change', alCambiarDepto);
+    // Restaurar lo que el usuario había elegido si el servidor devolvió errores
+    if (selPais.dataset.old) {
+        selPais.value = selPais.dataset.old; alCambiarPais();
+        if (selPais.value === 'Colombia' && selDepto.dataset.old) {
+            selDepto.value = selDepto.dataset.old; alCambiarDepto();
+            if (selCiudad.dataset.old) selCiudad.value = selCiudad.dataset.old;
+        }
+    }
+
     /* ---------- Validación ---------- */
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     const rules = {
         f_nombre: v => v.trim().length >= 3,
+        f_tdoc:   v => v !== '' && v !== null,
         f_doc:    v => /^[0-9A-Za-z.\-]{4,30}$/.test(v.trim()),
         f_email:  v => emailRe.test(v.trim()),
-        f_pais:   v => v.trim().length >= 2,
-        f_depto:  v => v.trim().length >= 2,
-        f_ciudad: v => v.trim().length >= 2,
+        f_pais:       v => !!v,
+        f_pais_otro:  v => v.trim().length >= 2,
+        f_depto:      v => !!v,
+        f_depto_txt:  v => v.trim().length >= 2,
+        f_ciudad:     v => !!v,
+        f_ciudad_txt: v => v.trim().length >= 2,
         f_asunto: v => v.trim().length >= 4,
         f_desc:   v => v.trim().length >= 20,
     };
@@ -1251,7 +1337,7 @@
             if (!sel) { shake(document.getElementById('pqTypes')); ok = false; }
         }
         if (n === 2 || n === 3) {
-            panels[n - 1].querySelectorAll('.pq-field .in').forEach(inp => {
+            panels[n - 1].querySelectorAll('.pq-field .in:not(:disabled)').forEach(inp => {
                 if (rules[inp.id] && !checkField(inp, true)) { ok = false; shake(inp.closest('.pq-field')); }
             });
         }
@@ -1353,7 +1439,7 @@
         if (!allowed.includes(ext) || f.size > 10 * 1024 * 1024) {
             fileIn.value = '';
             shake(drop);
-            Swal.fire({ icon: 'warning', title: 'Archivo no válido', text: 'Solo PDF, imágenes, Word o Excel de máximo 10 MB.', confirmButtonColor: '#E94262' });
+            (window.Swal ? Swal.fire({ icon: 'warning', title: 'Archivo no válido', text: 'Solo PDF, imágenes, Word o Excel de máximo 10 MB.', confirmButtonColor: '#E94262' }) : alert('Archivo no válido: solo PDF, imágenes, Word o Excel de máximo 10 MB.'));
             return;
         }
         const icons = { pdf: 'fa-file-pdf', jpg: 'fa-file-image', jpeg: 'fa-file-image', png: 'fa-file-image', doc: 'fa-file-word', docx: 'fa-file-word', xls: 'fa-file-excel', xlsx: 'fa-file-excel' };
@@ -1370,14 +1456,15 @@
     /* ---------- Resumen ---------- */
     function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     function buildReview() {
-        const v = name => (form.querySelector('[name="' + name + '"]:checked') || form.querySelector('[name="' + name + '"]') || {}).value || '';
+        const v = name => (form.querySelector('[name="' + name + '"]:checked') || form.querySelector('[name="' + name + '"]:not(:disabled)') || {}).value || '';
+        const paisTxt = v('pais') === 'Otro país' ? v('pais_otro') : v('pais');
         const tipoTxt = { Peticion: 'Petición' }[v('tipo')] || v('tipo');
         const tdoc = form.querySelector('[name="tipo_documento"]');
         const items = [
             ['Tipo', tipoTxt], ['Producto o servicio', v('producto_servicio')],
             ['Categoría', v('categoria')], ['Solicitante', v('nombre')],
             ['Documento', tdoc.value + ' ' + v('documento')], ['Correo', v('email')],
-            ['Celular', v('telefono') || '—'], ['Ubicación', [v('ciudad'), v('departamento'), v('pais')].filter(Boolean).join(', ')],
+            ['Celular', v('telefono') || '—'], ['Ubicación', [v('ciudad'), v('departamento'), paisTxt].filter(Boolean).join(', ')],
             ['Dirección', v('direccion') || '—', true],
             ['Prioridad', v('prioridad')], ['Manifiesto', v('manifiesto') || '—'],
             ['Asunto', v('asunto'), true], ['Descripción', v('descripcion'), true],
@@ -1408,12 +1495,13 @@
     }
     function mostrarEnvio() {
         envio.classList.add('on');
+        document.documentElement.classList.add('pq-enviando');
         const barra = document.getElementById('peBarra');
         const plan = [
-            [0,    () => { marcarPaso(1, 'activo'); barra.style.width = '18%'; }],
-            [750,  () => { marcarPaso(1, 'hecho'); marcarPaso(2, 'activo'); barra.style.width = '48%'; }],
-            [1500, () => { marcarPaso(2, 'hecho'); marcarPaso(3, 'activo'); barra.style.width = '78%'; }],
-            [4000, () => { barra.style.width = '92%'; }],
+            [0,    () => { marcarPaso(1, 'activo'); barra.style.transform = 'scaleX(.18)'; }],
+            [450,  () => { marcarPaso(1, 'hecho'); marcarPaso(2, 'activo'); barra.style.transform = 'scaleX(.48)'; }],
+            [900,  () => { marcarPaso(2, 'hecho'); marcarPaso(3, 'activo'); barra.style.transform = 'scaleX(.78)'; }],
+            [2500, () => { barra.style.transform = 'scaleX(.92)'; }],
         ];
         envioTimers = plan.map(([ms, fn]) => setTimeout(fn, ms));
     }
@@ -1422,6 +1510,7 @@
         if (!ev.persisted) return;
         envioTimers.forEach(clearTimeout);
         envio.classList.remove('on');
+        document.documentElement.classList.remove('pq-enviando');
         envio.querySelectorAll('.pe-paso').forEach(p => { p.classList.remove('activo', 'hecho'); p.querySelector('.ic').innerHTML = ''; });
         btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
     });
@@ -1433,10 +1522,10 @@
     @if($errors->any())
         (function () {
             const errs = @json(array_keys($errors->getMessages()));
-            const map = { tipo: 1, nombre: 2, tipo_documento: 2, documento: 2, email: 2, telefono: 2, pais: 2, departamento: 2, ciudad: 2, direccion: 2, producto_servicio: 3, categoria: 3, prioridad: 3, manifiesto: 3, asunto: 3, descripcion: 3, adjunto: 3, acepta: 4 };
+            const map = { tipo: 1, nombre: 2, tipo_documento: 2, documento: 2, email: 2, telefono: 2, pais: 2, pais_otro: 2, departamento: 2, ciudad: 2, direccion: 2, producto_servicio: 3, categoria: 3, prioridad: 3, manifiesto: 3, asunto: 3, descripcion: 3, adjunto: 3, acepta: 4 };
             const first = Math.min.apply(null, errs.map(k => map[k] || 4));
             goTo(first);
-            const ids = { nombre: 'f_nombre', documento: 'f_doc', email: 'f_email', pais: 'f_pais', departamento: 'f_depto', ciudad: 'f_ciudad', asunto: 'f_asunto', descripcion: 'f_desc' };
+            const ids = { nombre: 'f_nombre', documento: 'f_doc', email: 'f_email', pais: 'f_pais', pais_otro: 'f_pais_otro', departamento: 'f_depto', ciudad: 'f_ciudad', asunto: 'f_asunto', descripcion: 'f_desc' };
             errs.forEach(k => { if (ids[k]) document.getElementById(ids[k]).closest('.pq-field').classList.add('invalid'); });
         })();
     @else
@@ -1508,6 +1597,40 @@
             else ctx.clearRect(0, 0, cv.width, cv.height);
         })(t0);
     }
+})();
+</script>
+<script>
+// Avisos: botón × para cerrar; el de éxito se va solo (pausa con el mouse encima)
+(function () {
+    function cerrar(a) {
+        if (!a.isConnected || a.classList.contains('pq-out')) return;
+        a.classList.add('pq-out');
+        a.addEventListener('animationend', function fin(e) {
+            if (e.animationName !== 'pqAlertOut') return;
+            a.removeEventListener('animationend', fin);
+            // Colapsa el espacio para que el contenido suba suave
+            var h = a.offsetHeight, mb = parseFloat(getComputedStyle(a).marginBottom);
+            a.style.height = h + 'px'; a.style.marginBottom = mb + 'px';
+            a.style.transition = 'height .3s ease, margin .3s ease, padding .3s ease';
+            requestAnimationFrame(function () {
+                a.style.height = '0px'; a.style.marginBottom = '0px'; a.style.paddingTop = '0px'; a.style.paddingBottom = '0px';
+            });
+            setTimeout(function () { a.remove(); }, 320);
+        });
+    }
+    document.querySelectorAll('.pq-alert').forEach(function (a) {
+        var x = document.createElement('button');
+        x.type = 'button'; x.className = 'pq-alert-x'; x.setAttribute('aria-label', 'Cerrar'); x.innerHTML = '&times;';
+        x.addEventListener('click', function () { cerrar(a); });
+        a.appendChild(x);
+        var ms = parseInt(a.dataset.auto || '0', 10);
+        if (ms) {
+            var bar = document.createElement('span');
+            bar.className = 'pq-alert-bar'; bar.style.animationDuration = ms + 'ms';
+            bar.addEventListener('animationend', function () { cerrar(a); });
+            a.appendChild(bar);
+        }
+    });
 })();
 </script>
 </body>
