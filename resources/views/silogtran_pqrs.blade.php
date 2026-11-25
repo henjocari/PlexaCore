@@ -665,16 +665,76 @@
                                         <div class="pq-field">
                                             <input class="in" type="tel" name="telefono" id="f_tel" placeholder=" " maxlength="30"
                                                    value="{{ old('telefono', $usuario->cel ?? '') }}">
-                                            <i class="fas fa-phone ic"></i><label for="f_tel">Teléfono / Celular</label><i class="fas fa-check-circle ok"></i>
+                                            <i class="fas fa-mobile-alt ic"></i><label for="f_tel">Celular</label><i class="fas fa-check-circle ok"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="pq-field">
+                                            <input class="in" type="text" name="pais" id="f_pais" placeholder=" " maxlength="80" required list="pqPaises" autocomplete="country-name"
+                                                   value="{{ old('pais', 'Colombia') }}">
+                                            <i class="fas fa-globe-americas ic"></i><label for="f_pais">País *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Indica el país.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="pq-field">
+                                            <input class="in" type="text" name="departamento" id="f_depto" placeholder=" " maxlength="80" required list="pqDeptos" autocomplete="address-level1"
+                                                   value="{{ old('departamento') }}">
+                                            <i class="fas fa-map ic"></i><label for="f_depto">Departamento *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Indica el departamento.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="pq-field">
+                                            <input class="in" type="text" name="ciudad" id="f_ciudad" placeholder=" " maxlength="80" required autocomplete="address-level2"
+                                                   value="{{ old('ciudad') }}">
+                                            <i class="fas fa-city ic"></i><label for="f_ciudad">Ciudad *</label><i class="fas fa-check-circle ok"></i>
+                                            <div class="err">Indica la ciudad.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="pq-field">
+                                            <input class="in" type="text" name="direccion" id="f_dir" placeholder=" " maxlength="200" autocomplete="street-address"
+                                                   value="{{ old('direccion') }}">
+                                            <i class="fas fa-map-marker-alt ic"></i><label for="f_dir">Dirección</label><i class="fas fa-check-circle ok"></i>
                                         </div>
                                     </div>
                                 </div>
+                                {{-- Sugerencias (se puede escribir cualquier otro valor) --}}
+                                <datalist id="pqPaises">
+                                    @foreach(['Colombia', 'Venezuela', 'Ecuador', 'Perú', 'Panamá', 'México', 'Estados Unidos', 'España'] as $pa)
+                                        <option value="{{ $pa }}">
+                                    @endforeach
+                                </datalist>
+                                <datalist id="pqDeptos">
+                                    @foreach(\App\Models\SilogtranPqrs::DEPARTAMENTOS_CO as $dep)
+                                        <option value="{{ $dep }}">
+                                    @endforeach
+                                </datalist>
                             </div>
 
                             {{-- PASO 3 --}}
                             <div class="pq-panel" data-panel="3">
                                 <h5>Cuéntanos el detalle</h5>
                                 <p class="hint">Entre más claro sea tu relato, más rápido podremos darte respuesta.</p>
+
+                                <span class="pq-label">Producto o servicio *</span>
+                                <div class="pq-chips" id="pqProductos">
+                                    @php
+                                        $iconosProd = [
+                                            'Comercialización GLP' => 'fa-fire', 'Comercialización Gas Natural' => 'fa-burn',
+                                            'Transporte GLP' => 'fa-truck', 'Transporte de Hidrocarburos' => 'fa-oil-can',
+                                            'Operaciones en Planta' => 'fa-industry', 'Administrativos' => 'fa-briefcase',
+                                            'Cotizaciones de servicios' => 'fa-file-invoice-dollar',
+                                        ];
+                                    @endphp
+                                    @foreach(\App\Models\SilogtranPqrs::PRODUCTOS as $prod)
+                                        <label class="pq-chip mb-0">
+                                            <input type="radio" name="producto_servicio" value="{{ $prod }}" {{ old('producto_servicio') === $prod ? 'checked' : '' }}>
+                                            <span><i class="fas {{ $iconosProd[$prod] ?? 'fa-tag' }}"></i>{{ $prod }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
 
                                 <span class="pq-label">Categoría *</span>
                                 <div class="pq-chips" id="pqChips">
@@ -824,7 +884,10 @@
                                             @endif
                                         </td>
                                         <td style="max-width:240px;">{{ \Illuminate\Support\Str::limit($p->asunto, 60) }}</td>
-                                        <td class="small">{{ $p->categoria }}</td>
+                                        <td class="small">
+                                            @if($p->producto_servicio)<div class="font-weight-bold" style="color:#1B1B1F;">{{ $p->producto_servicio }}</div>@endif
+                                            {{ $p->categoria }}
+                                        </td>
                                         <td><span class="pr-{{ $p->prioridad }}">{{ $p->prioridad }}</span></td>
                                         <td class="small text-nowrap">{{ optional($p->created_at)->format('d/m/Y H:i') }}</td>
                                         <td><span class="pq-badge {{ $badge }}"><span class="d"></span>{{ $p->estado === 'En Gestion' ? 'En gestión' : $p->estado }}</span></td>
@@ -837,6 +900,13 @@
                                                 data-radicado="{{ $p->radicado }}"
                                                 data-asunto="{{ $p->asunto }}"
                                                 data-descripcion="{{ $p->descripcion }}"
+                                                data-info="{{ implode(' · ', array_filter([
+                                                    $p->producto_servicio,
+                                                    $p->email,
+                                                    $p->telefono ? 'Cel. ' . $p->telefono : null,
+                                                    implode(', ', array_filter([$p->ciudad, $p->departamento, $p->pais])) ?: null,
+                                                    $p->direccion,
+                                                ])) }}"
                                                 data-estado="{{ $p->estado }}"
                                                 data-respuesta="{{ $p->respuesta }}">
                                                 <i class="fas {{ $puedeGestionar ? 'fa-pen' : 'fa-eye' }}"></i>
@@ -890,6 +960,8 @@
                     <button type="button" class="x" data-dismiss="modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="mb">
+                    <span class="pq-label">Producto · contacto · ubicación</span>
+                    <div class="pq-detail" id="pqmInfo"></div>
                     <span class="pq-label">Descripción</span>
                     <div class="pq-detail" id="pqmDesc"></div>
 
@@ -1071,6 +1143,9 @@
         f_nombre: v => v.trim().length >= 3,
         f_doc:    v => /^[0-9A-Za-z.\-]{4,30}$/.test(v.trim()),
         f_email:  v => emailRe.test(v.trim()),
+        f_pais:   v => v.trim().length >= 2,
+        f_depto:  v => v.trim().length >= 2,
+        f_ciudad: v => v.trim().length >= 2,
         f_asunto: v => v.trim().length >= 4,
         f_desc:   v => v.trim().length >= 20,
     };
@@ -1107,6 +1182,11 @@
             });
         }
         if (n === 3) {
+            const prods = document.getElementById('pqProductos');
+            const prod = form.querySelector('input[name="producto_servicio"]:checked');
+            prods.classList.toggle('invalid', !prod);
+            if (!prod) { ok = false; shake(prods); }
+
             const chips = document.getElementById('pqChips');
             const cat = form.querySelector('input[name="categoria"]:checked');
             chips.classList.toggle('invalid', !cat);
@@ -1143,6 +1223,8 @@
     });
     form.querySelectorAll('input[name="categoria"]').forEach(r =>
         r.addEventListener('change', () => document.getElementById('pqChips').classList.remove('invalid')));
+    form.querySelectorAll('input[name="producto_servicio"]').forEach(r =>
+        r.addEventListener('change', () => document.getElementById('pqProductos').classList.remove('invalid')));
     document.querySelector('#pqAcepta input').addEventListener('change', function () {
         if (this.checked) document.getElementById('pqAcepta').classList.remove('invalid');
     });
@@ -1218,9 +1300,11 @@
         const tipoTxt = { Peticion: 'Petición' }[v('tipo')] || v('tipo');
         const tdoc = form.querySelector('[name="tipo_documento"]');
         const items = [
-            ['Tipo', tipoTxt], ['Categoría', v('categoria')],
-            ['Solicitante', v('nombre')], ['Documento', tdoc.value + ' ' + v('documento')],
-            ['Correo', v('email')], ['Teléfono', v('telefono') || '—'],
+            ['Tipo', tipoTxt], ['Producto o servicio', v('producto_servicio')],
+            ['Categoría', v('categoria')], ['Solicitante', v('nombre')],
+            ['Documento', tdoc.value + ' ' + v('documento')], ['Correo', v('email')],
+            ['Celular', v('telefono') || '—'], ['Ubicación', [v('ciudad'), v('departamento'), v('pais')].filter(Boolean).join(', ')],
+            ['Dirección', v('direccion') || '—', true],
             ['Prioridad', v('prioridad')], ['Manifiesto', v('manifiesto') || '—'],
             ['Asunto', v('asunto'), true], ['Descripción', v('descripcion'), true],
             ['Adjunto', fileIn.files[0] ? fileIn.files[0].name : 'Sin adjunto', true],
@@ -1246,10 +1330,10 @@
     @if($errors->any())
         (function () {
             const errs = @json(array_keys($errors->getMessages()));
-            const map = { tipo: 1, nombre: 2, tipo_documento: 2, documento: 2, email: 2, telefono: 2, categoria: 3, prioridad: 3, manifiesto: 3, asunto: 3, descripcion: 3, adjunto: 3, acepta: 4 };
+            const map = { tipo: 1, nombre: 2, tipo_documento: 2, documento: 2, email: 2, telefono: 2, pais: 2, departamento: 2, ciudad: 2, direccion: 2, producto_servicio: 3, categoria: 3, prioridad: 3, manifiesto: 3, asunto: 3, descripcion: 3, adjunto: 3, acepta: 4 };
             const first = Math.min.apply(null, errs.map(k => map[k] || 4));
             goTo(first);
-            const ids = { nombre: 'f_nombre', documento: 'f_doc', email: 'f_email', asunto: 'f_asunto', descripcion: 'f_desc' };
+            const ids = { nombre: 'f_nombre', documento: 'f_doc', email: 'f_email', pais: 'f_pais', departamento: 'f_depto', ciudad: 'f_ciudad', asunto: 'f_asunto', descripcion: 'f_desc' };
             errs.forEach(k => { if (ids[k]) document.getElementById(ids[k]).closest('.pq-field').classList.add('invalid'); });
         })();
     @else
@@ -1263,6 +1347,7 @@
         document.getElementById('pqmRad').textContent = d.radicado;
         document.getElementById('pqmAsunto').textContent = d.asunto;
         document.getElementById('pqmDesc').textContent = d.descripcion;
+        document.getElementById('pqmInfo').textContent = d.info || '—';
         document.getElementById('pqModalForm').action = baseGestion + '/' + d.id + '/gestionar';
         const est = document.querySelector('#pqModalForm input[name="estado"][value="' + d.estado + '"]');
         if (est) est.checked = true;

@@ -27,8 +27,13 @@
         $titulo = '¡Hemos recibido tu solicitud!';
         $intro  = 'Hola <strong>' . e($p->nombre) . '</strong>, tu ' . mb_strtolower($tipoTxt) . ($esMasc ? ' fue radicado' : ' fue radicada') . ' correctamente. Nuestro equipo ' . ($esMasc ? 'lo' : 'la') . ' revisará y te daremos respuesta a este mismo correo. Guarda tu número de radicado para hacer seguimiento.';
     } else {
-        $titulo = 'Tu solicitud tiene novedades';
-        $intro  = 'Hola <strong>' . e($p->nombre) . '</strong>, el estado de tu solicitud cambió a <strong>' . e($estadoTxt) . '</strong>.';
+        if ($p->estado === 'Cerrado') {
+            $titulo = '¡Tu solicitud fue resuelta!';
+            $intro  = 'Hola <strong>' . e($p->nombre) . '</strong>, tu solicitud fue <strong>resuelta</strong>. Abajo encontrarás la respuesta de nuestro equipo.';
+        } else {
+            $titulo = 'Tu solicitud tiene novedades';
+            $intro  = 'Hola <strong>' . e($p->nombre) . '</strong>, el estado de tu solicitud cambió a <strong>' . e($estadoTxt) . '</strong>.';
+        }
     }
 
     // Logo de Plexa (versión liviana para correo). Se incrusta en el mensaje.
@@ -173,7 +178,10 @@
                                 ['Solicitante', $p->nombre . ($p->nit_cliente ? ' · Cliente NIT ' . $p->nit_cliente : '')],
                                 ['Documento', $p->tipo_documento . ' ' . $p->documento],
                                 ['Correo', $p->email],
-                                ['Teléfono', $p->telefono ?: '—'],
+                                ['Celular', $p->telefono ?: '—'],
+                                ['Producto o servicio', $p->producto_servicio ?: '—'],
+                                ['Ubicación', implode(', ', array_filter([$p->ciudad, $p->departamento, $p->pais])) ?: '—'],
+                                ['Dirección', $p->direccion ?: '—'],
                                 ['Categoría', $p->categoria],
                                 ['Manifiesto / remesa', $p->manifiesto ?: '—'],
                                 ['Fecha de radicación', optional($p->created_at)->format('d/m/Y h:i a')],
@@ -213,6 +221,19 @@
                                 </tr>
                             </table>
                         @else
+                            <!-- Botón de seguimiento (enlace firmado, sin login) -->
+                            @php $urlSeguimiento = \App\Http\Controllers\SilogtranPqrsController::urlSeguimiento($p); @endphp
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 26px;">
+                                <tr>
+                                    <td align="center" bgcolor="#378E77" style="border-radius:12px; background-color:#378E77;">
+                                        <a href="{{ $urlSeguimiento }}" target="_blank"
+                                           style="display:inline-block; padding:14px 28px; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; color:#ffffff; text-decoration:none; border-radius:12px;">
+                                            {{ $p->estado === 'Cerrado' ? 'Ver la respuesta completa' : 'Ver el estado de mi solicitud' }} &rarr;
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
                             <!-- Línea de tiempo -->
                             @php
                                 $pasos = ['Radicado', 'En Gestion', 'Cerrado'];
@@ -226,7 +247,7 @@
                                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
                                                 <tr>
                                                     <td align="center" width="34" height="34" style="width:34px; height:34px; border-radius:17px; font-size:14px; font-weight:bold; {{ $i <= $actual ? 'background-color:#378E77; color:#ffffff;' : 'background-color:#e9eef3; color:#a3adbb;' }}">
-                                                        {{ $i < $actual ? '✓' : $i + 1 }}
+                                                        {{ ($i < $actual || ($p->estado === 'Cerrado' && $i === $actual)) ? '✓' : $i + 1 }}
                                                     </td>
                                                 </tr>
                                             </table>
@@ -249,7 +270,7 @@
                             @if($destino === 'empresa')
                                 Correo generado automáticamente desde el Centro PQRS de Silogtran. Puedes responder este mensaje y la respuesta llegará directamente al solicitante.
                             @else
-                                Este es un correo automático, por favor no respondas a esta dirección. Si necesitas agregar información, radica una nueva solicitud indicando tu número de radicado.
+                                Este es un correo automático, por favor no respondas a esta dirección. Guarda este correo: con el botón de arriba puedes consultar en cualquier momento si tu solicitud ya fue resuelta. Si necesitas agregar información, radica una nueva solicitud indicando tu número de radicado.
                             @endif
                         </p>
                     </td>

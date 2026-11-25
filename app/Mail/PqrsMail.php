@@ -27,7 +27,9 @@ class PqrsMail extends Mailable
 
         $asunto = match ($this->destino) {
             'solicitante'   => "✅ Recibimos tu " . mb_strtolower($tipo) . " · Radicado {$this->pqrs->radicado}",
-            'actualizacion' => "🔔 Tu PQRS {$this->pqrs->radicado} fue actualizada",
+            'actualizacion' => $this->pqrs->estado === 'Cerrado'
+                ? "✅ Tu PQRS {$this->pqrs->radicado} fue resuelta"
+                : "🔔 Tu PQRS {$this->pqrs->radicado} fue actualizada",
             default         => "📩 {$nuevo} " . mb_strtolower($tipo) . " [{$this->pqrs->prioridad}] · {$this->pqrs->radicado}",
         };
 

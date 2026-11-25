@@ -124,6 +124,28 @@ class SilogtranPqrsController extends Controller
     }
 
     /* =====================================================================
+     *  SEGUIMIENTO DESDE EL CORREO (enlace firmado, sin login)
+     *  GET /pqrs/seguimiento/{radicado}?signature=...
+     * ===================================================================== */
+
+    public function seguimiento(string $radicado)
+    {
+        $pqrs = SilogtranPqrs::where('radicado', $radicado)->firstOrFail();
+
+        return response()
+            ->view('pqrs_seguimiento', ['p' => $pqrs])
+            ->header('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    /**
+     * Enlace permanente y firmado a la página de seguimiento de una PQRS.
+     */
+    public static function urlSeguimiento(SilogtranPqrs $pqrs): string
+    {
+        return \Illuminate\Support\Facades\URL::signedRoute('pqrs.seguimiento', ['radicado' => $pqrs->radicado]);
+    }
+
+    /* =====================================================================
      *  AUXILIARES
      * ===================================================================== */
 
@@ -234,6 +256,11 @@ class SilogtranPqrsController extends Controller
             'documento'      => 'required|string|max:30',
             'email'          => 'required|email|max:150',
             'telefono'       => 'nullable|string|max:30',
+            'pais'           => 'required|string|max:80',
+            'departamento'   => 'required|string|max:80',
+            'ciudad'         => 'required|string|max:80',
+            'direccion'      => 'nullable|string|max:200',
+            'producto_servicio' => ['required', Rule::in(SilogtranPqrs::PRODUCTOS)],
             'manifiesto'     => 'nullable|string|max:50',
             'asunto'         => 'required|string|max:150',
             'descripcion'    => 'required|string|min:20|max:3000',
@@ -248,6 +275,10 @@ class SilogtranPqrsController extends Controller
             'descripcion.min' => 'La descripción debe tener al menos 20 caracteres.',
             'acepta.accepted' => 'Debe aceptar la política de tratamiento de datos.',
             'adjunto.max'     => 'El archivo no puede superar 10 MB.',
+            'pais.required'         => 'Indica el país.',
+            'departamento.required' => 'Indica el departamento.',
+            'ciudad.required'       => 'Indica la ciudad.',
+            'producto_servicio.required' => 'Selecciona el producto o servicio.',
         ];
     }
 
