@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PqrsMail;
+use App\Support\NotificadorPqrs;
 use App\Models\SilogtranPqrs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,11 +37,12 @@ class SilogtranPqrsController extends Controller
     {
         $data = $request->validate($this->reglas(), $this->mensajes());
 
-        $pqrs = $this->radicar($request, $data, null, Auth::id());
+        [$pqrs, $correo] = $this->radicar($request, $data, null, Auth::id());
 
         return redirect()->route('silogtran.pqrs')
             ->with('pqrs_radicado', $pqrs->radicado)
-            ->with('pqrs_tipo', $pqrs->tipo);
+            ->with('pqrs_tipo', $pqrs->tipo)
+            ->with('aviso_correo', $correo->resumen($this->esGestor()));
     }
 
     /**
@@ -67,17 +68,17 @@ class SilogtranPqrsController extends Controller
 
         // Notificar al solicitante solo si cambió el estado o la respuesta
         $mensaje = "La PQRS {$pqrs->radicado} fue actualizada a \"{$pqrs->estado}\".";
+        $aviso = null;
         if ($estadoAnterior !== $pqrs->estado || $respuestaAnterior !== $pqrs->respuesta) {
-            try {
-                Mail::to($pqrs->email)->send(new PqrsMail($pqrs, 'actualizacion'));
+            $correo = NotificadorPqrs::actualizada($pqrs);
+            if ($correo->todoOk()) {
                 $mensaje .= " Se notificó a {$pqrs->email}.";
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo actualización: " . $e->getMessage());
-                $mensaje .= ' (No se pudo enviar el correo al solicitante.)';
+            } else {
+                $aviso = $correo->resumen(true);
             }
         }
 
-        return redirect()->route('silogtran.pqrs')->with('success', $mensaje);
+        return redirect()->route('silogtran.pqrs')->with('success', $mensaje)->with('aviso_correo', $aviso);
     }
 
     /* =====================================================================
@@ -116,11 +117,12 @@ class SilogtranPqrsController extends Controller
             ], 422);
         }
 
-        $pqrs = $this->radicar($request, $validator->validated(), $nit, null);
+        [$pqrs, $correo] = $this->radicar($request, $validator->validated(), $nit, null);
 
+        // En el iframe no hay sesión: si el acuse no salió, se avisa con ?correo=0
         return redirect()->route('silogtran.pqrs.embed', $this->parametrosEmbed($request) + [
             'radicado' => $pqrs->radicado,
-        ]);
+        ] + ($correo->falloSolicitante() ? ['correo' => 0] : []));
     }
 
     /* =====================================================================
@@ -284,8 +286,10 @@ class SilogtranPqrsController extends Controller
 
     /**
      * Guarda la PQRS, el adjunto y envía los correos (buzón + acuse al solicitante).
+     *
+     * @return array{0: SilogtranPqrs, 1: NotificadorPqrs}
      */
-    private function radicar(Request $request, array $data, ?string $nit, $userId): SilogtranPqrs
+    private function radicar(Request $request, array $data, ?string $nit, $userId): array
     {
         unset($data['acepta']);
 
@@ -307,30 +311,13 @@ class SilogtranPqrsController extends Controller
 
         $pqrs = SilogtranPqrs::create($data);
 
-        // 1) Aviso al buzón de PQRS (definido en PQRS_MAIL_TO)
-        $destinatarios = config('mail.pqrs_to', []);
-        if (!empty($destinatarios)) {
-            try {
-                Mail::to($destinatarios)->send(new PqrsMail($pqrs, 'empresa'));
-                Log::info("PQRS {$pqrs->radicado}: correo enviado a " . implode(', ', $destinatarios));
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo empresa: " . $e->getMessage());
-            }
-        } else {
-            Log::warning("PQRS {$pqrs->radicado}: PQRS_MAIL_TO no está configurado en el .env");
-        }
+        // Buzón interno (PQRS_MAIL_TO) + acuse al solicitante
+        return [$pqrs, NotificadorPqrs::radicada($pqrs)];
+    }
 
-        // 2) Acuse de recibo al solicitante
-        if (config('mail.pqrs_acuse', true)) {
-            try {
-                Mail::to($pqrs->email)->send(new PqrsMail($pqrs, 'solicitante'));
-                Log::info("PQRS {$pqrs->radicado}: acuse enviado a {$pqrs->email}");
-            } catch (\Throwable $e) {
-                Log::error("PQRS {$pqrs->radicado} - correo solicitante: " . $e->getMessage());
-            }
-        }
-
-        return $pqrs;
+    private function esGestor(): bool
+    {
+        return in_array((int) (Auth::user()->rol ?? 0), [1, 2]);
     }
 
     /**

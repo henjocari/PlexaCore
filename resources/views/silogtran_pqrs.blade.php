@@ -312,6 +312,8 @@
         .pq-table { width: 100%; border-collapse: separate; border-spacing: 0; }
         .pq-table th { font-size: .68rem; letter-spacing: .8px; text-transform: uppercase; color: var(--px-muted); padding: 11px 14px; background: #f8fafc; border-bottom: 1px solid #eef1f5; white-space: nowrap; }
         .pq-table td { padding: 13px 14px; border-bottom: 1px solid #f2f4f7; font-size: .84rem; color: #334155; vertical-align: middle; }
+        /* Asunto: máx. 2 líneas con "…" para que textos largos no deformen la tabla */
+        .pq-asunto { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
         .pq-table tbody tr { opacity: 0; animation: pqRise .5s var(--ease-out) forwards; transition: background .25s; }
         .pq-table tbody tr:hover { background: #FFF6F8; }
         .pq-rad { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; color: var(--px-green-deep); font-size: .78rem; white-space: nowrap; }
@@ -347,6 +349,42 @@
         .pq-radbox button:hover { transform: scale(1.12); }
         #pqConfetti { position: fixed; inset: 0; pointer-events: none; z-index: 2001; }
 
+        /* ================= ANIMACIÓN DE ENVÍO ================= */
+        #pqEnvio { position: fixed; inset: 0; z-index: 2500; display: none; align-items: center; justify-content: center; padding: 16px;
+                   background: radial-gradient(circle at 50% 40%, rgba(74,20,38,.92) 0%, rgba(13,13,15,.95) 70%); backdrop-filter: blur(6px); }
+        #pqEnvio.on { display: flex; animation: pqFadeIn .35s ease; }
+        .pe-card { width: 100%; max-width: 420px; text-align: center; color: #fff; }
+        .pe-cielo { position: relative; height: 190px; margin-bottom: 8px; }
+        .pe-orbita { position: absolute; left: 50%; top: 50%; width: 260px; height: 150px; margin: -75px 0 0 -130px;
+                     border: 2px dashed rgba(255,179,194,.28); border-radius: 50%; animation: peGiro 14s linear infinite; }
+        .pe-avion { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite; }
+        .pe-avion svg { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; filter: drop-shadow(0 10px 22px rgba(233,66,98,.55)); }
+        .pe-estela { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: peVuelo 2.6s cubic-bezier(.45,.05,.55,.95) infinite backwards; }
+        .pe-estela::before { content: ""; position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #F06E87; }
+        .pe-estela.e1 { animation-delay: .09s; } .pe-estela.e2 { animation-delay: .18s; } .pe-estela.e3 { animation-delay: .27s; }
+        .pe-estela.e2::before { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: #FFB3C2; opacity: .8; }
+        .pe-estela.e3::before { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: #307ABE; opacity: .6; }
+        .pe-titulo { font-size: 1.25rem; font-weight: 800; margin: 0 0 4px; }
+        .pe-sub { font-size: .84rem; opacity: .75; margin-bottom: 18px; }
+        .pe-pasos { text-align: left; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; }
+        .pe-paso { display: flex; align-items: center; gap: 12px; padding: 7px 0; font-size: .9rem; color: rgba(255,255,255,.45); transition: color .3s; }
+        .pe-paso .ic { width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; font-size: .7rem; flex-shrink: 0; transition: all .35s var(--ease-spring); }
+        .pe-paso.activo { color: #fff; }
+        .pe-paso.activo .ic { border-color: #E94262; border-top-color: transparent; animation: pqSpin .8s linear infinite; }
+        .pe-paso.hecho { color: #fff; }
+        .pe-paso.hecho .ic { background: #E94262; border-color: #E94262; transform: scale(1.08); animation: none; }
+        .pe-barra { height: 5px; border-radius: 5px; background: rgba(255,255,255,.12); overflow: hidden; }
+        .pe-barra span { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, #E94262, #F06E87, #307ABE); transition: width 1.1s var(--ease-out); }
+        @keyframes peGiro { to { transform: rotate(360deg); } }
+        @keyframes peVuelo {
+            0%   { transform: translate(-120px, 40px) rotate(-12deg); }
+            25%  { transform: translate(0, 62px) rotate(8deg); }
+            50%  { transform: translate(120px, -10px) rotate(-28deg); }
+            75%  { transform: translate(0, -62px) rotate(-178deg) scaleY(-1); }
+            100% { transform: translate(-120px, 40px) rotate(-372deg) scaleY(-1); }
+        }
+        @media (prefers-reduced-motion: reduce) { .pe-avion, .pe-estela, .pe-orbita { animation: none !important; } }
+
         /* Modal gestion */
         .pq-modal .modal-content { border: none; border-radius: 20px; overflow: hidden; }
         .pq-modal.fade .modal-dialog { transform: scale(.85) translateY(30px); transition: transform .45s var(--ease-spring); }
@@ -358,7 +396,7 @@
         .pq-modal .mh .x:hover { transform: rotate(90deg); }
         .pq-modal .mb { padding: 22px 24px; }
         .pq-modal .mf { padding: 14px 24px; background: #f8fafc; display: flex; justify-content: flex-end; gap: 10px; }
-        .pq-detail { background: #f8fafc; border-radius: 12px; padding: 12px 14px; font-size: .84rem; color: #334155; margin-bottom: 16px; white-space: pre-line; max-height: 180px; overflow: auto; }
+        .pq-detail { background: #f8fafc; border-radius: 12px; padding: 12px 14px; font-size: .84rem; color: #334155; margin-bottom: 16px; white-space: pre-line; max-height: 180px; overflow: auto; overflow-wrap: anywhere; }
 
         .pq-alert { border: none; border-radius: 14px; padding: 14px 18px; display: flex; gap: 10px; align-items: center; animation: pqFadeDown .5s ease; font-size: .88rem; }
 
@@ -559,6 +597,12 @@
 
                 @if(session('success'))
                     <div class="pq-alert mb-4" style="background:#eaf7e6; color:#2f7a25;"><i class="fas fa-check-circle"></i>{{ session('success') }}</div>
+                @endif
+                @if(session('aviso_correo'))
+                    <div class="pq-alert mb-4" style="background:#fff6e0; color:#8a5a00; align-items:flex-start;">
+                        <i class="fas fa-envelope" style="margin-top:3px"></i>
+                        <div><b>La PQRS quedó guardada, pero hubo un problema con los correos.</b><br><span style="word-break:break-word">{{ session('aviso_correo') }}</span></div>
+                    </div>
                 @endif
                 @if(session('error'))
                     <div class="pq-alert mb-4" style="background:#fdecec; color:#c0392b;"><i class="fas fa-exclamation-circle"></i>{{ session('error') }}</div>
@@ -883,7 +927,7 @@
                                                 <div class="small" style="color:#A8284A;" title="Radicada desde Silogtran"><i class="fas fa-building"></i> Cliente NIT {{ $p->nit_cliente }}</div>
                                             @endif
                                         </td>
-                                        <td style="max-width:240px;">{{ \Illuminate\Support\Str::limit($p->asunto, 60) }}</td>
+                                        <td style="max-width:240px;"><div class="pq-asunto" title="{{ $p->asunto }}">{{ \Illuminate\Support\Str::limit($p->asunto, 90) }}</div></td>
                                         <td class="small">
                                             @if($p->producto_servicio)<div class="font-weight-bold" style="color:#1B1B1F;">{{ $p->producto_servicio }}</div>@endif
                                             {{ $p->categoria }}
@@ -995,6 +1039,31 @@
     </div>
 </div>
 
+{{-- ================= ANIMACIÓN DE ENVÍO ================= --}}
+<div id="pqEnvio" role="status" aria-live="polite">
+    <div class="pe-card">
+        <div class="pe-cielo" aria-hidden="true">
+            <div class="pe-orbita"></div>
+            <div class="pe-estela e3"></div><div class="pe-estela e2"></div><div class="pe-estela e1"></div>
+            <div class="pe-avion">
+                <svg viewBox="0 0 64 64">
+                    <path d="M4 30 L60 6 L46 58 L33 41 Z" fill="#ffffff"/>
+                    <path d="M60 6 L33 41 L29 56 L25 38 Z" fill="#FFB3C2"/>
+                    <path d="M60 6 L25 38 L4 30 Z" fill="#E94262"/>
+                </svg>
+            </div>
+        </div>
+        <h4 class="pe-titulo">Enviando tu solicitud…</h4>
+        <div class="pe-sub">No cierres esta ventana, solo toma unos segundos.</div>
+        <div class="pe-pasos">
+            <div class="pe-paso" data-paso="1"><span class="ic"></span> Guardando tu solicitud</div>
+            <div class="pe-paso" data-paso="2"><span class="ic"></span> Generando el número de radicado</div>
+            <div class="pe-paso" data-paso="3"><span class="ic"></span> Notificando por correo</div>
+        </div>
+        <div class="pe-barra"><span id="peBarra"></span></div>
+    </div>
+</div>
+
 {{-- ================= ÉXITO ================= --}}
 @if($exitoRadicado)
     <canvas id="pqConfetti"></canvas>
@@ -1009,6 +1078,11 @@
                 <code id="pqRadNum">{{ $exitoRadicado }}</code>
                 <button type="button" id="pqCopy" title="Copiar"><i class="fas fa-copy"></i></button>
             </div>
+            @if(($embed && request('correo') === '0') || (!$embed && session('aviso_correo')))
+                <p style="font-size:.8rem; color:#8a5a00; background:#fff6e0; border-radius:10px; padding:8px 12px;">
+                    <i class="fas fa-envelope"></i> No pudimos enviar el correo de confirmación en este momento. Tu solicitud sí quedó radicada: guarda este número.
+                </p>
+            @endif
             <button type="button" class="pq-btn pq-btn-primary" id="pqSuccessClose">Entendido <i class="fas fa-check"></i></button>
         </div>
     </div>
@@ -1059,8 +1133,8 @@
         if (raw === '' || raw.startsWith('#') || raw.startsWith('javascript:')) return;
         let url;
         try { url = new URL(a.href, location.href); } catch (err) { return; }
-        if (url.origin !== location.origin) return;                // enlaces externos / mailto
-        if (url.pathname === location.pathname) return;            // paginación o filtros del mismo PQRS
+        if (url.origin !== location.origin) return;                
+        if (url.pathname === location.pathname) return;            
         e.preventDefault();
         saliendo = true;
         outro.classList.add('go');
@@ -1321,6 +1395,35 @@
         }
         btnSubmit.classList.add('loading');
         btnSubmit.disabled = true;
+        mostrarEnvio();
+    });
+
+    /* ---------- Animación mientras se radica (el servidor guarda y envía los correos) ---------- */
+    const envio = document.getElementById('pqEnvio');
+    let envioTimers = [];
+    function marcarPaso(n, estado) {
+        const el = envio.querySelector('[data-paso="' + n + '"]');
+        el.classList.remove('activo', 'hecho'); el.classList.add(estado);
+        el.querySelector('.ic').innerHTML = estado === 'hecho' ? '<i class="fas fa-check"></i>' : '';
+    }
+    function mostrarEnvio() {
+        envio.classList.add('on');
+        const barra = document.getElementById('peBarra');
+        const plan = [
+            [0,    () => { marcarPaso(1, 'activo'); barra.style.width = '18%'; }],
+            [750,  () => { marcarPaso(1, 'hecho'); marcarPaso(2, 'activo'); barra.style.width = '48%'; }],
+            [1500, () => { marcarPaso(2, 'hecho'); marcarPaso(3, 'activo'); barra.style.width = '78%'; }],
+            [4000, () => { barra.style.width = '92%'; }],
+        ];
+        envioTimers = plan.map(([ms, fn]) => setTimeout(fn, ms));
+    }
+    // Si el usuario vuelve con "atrás", ocultar la animación
+    window.addEventListener('pageshow', ev => {
+        if (!ev.persisted) return;
+        envioTimers.forEach(clearTimeout);
+        envio.classList.remove('on');
+        envio.querySelectorAll('.pe-paso').forEach(p => { p.classList.remove('activo', 'hecho'); p.querySelector('.ic').innerHTML = ''; });
+        btnSubmit.classList.remove('loading'); btnSubmit.disabled = false;
     });
     form.addEventListener('keydown', e => {
         if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && current < total) { e.preventDefault(); btnNext.click(); }

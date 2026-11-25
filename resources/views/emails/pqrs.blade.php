@@ -158,7 +158,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding:0 20px 14px; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:22px; color:#16283c; font-weight:bold;">
+                                <td style="padding:0 20px 14px; font-family:Arial,Helvetica,sans-serif; font-size:16px; line-height:22px; color:#16283c; font-weight:bold; word-break:break-word; overflow-wrap:anywhere;">
                                     {{ $p->asunto }}
                                 </td>
                             </tr>
@@ -166,7 +166,7 @@
                                 <td style="padding:0 20px;"><div style="border-top:1px solid #eef1f5; font-size:0; line-height:0;">&nbsp;</div></td>
                             </tr>
                             <tr>
-                                <td style="padding:14px 20px 18px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:22px; color:#475569;">
+                                <td style="padding:14px 20px 18px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:22px; color:#475569; word-break:break-word; overflow-wrap:anywhere;">
                                     {!! nl2br(e($p->descripcion)) !!}
                                 </td>
                             </tr>

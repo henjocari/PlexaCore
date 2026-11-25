@@ -38,7 +38,7 @@
         .brand .silog { height: 54px; }
         .brand .plexa { height: 44px; margin-left: auto; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
         .kicker { font-size: .72rem; letter-spacing: 1.6px; text-transform: uppercase; color: #FFB3C2; font-weight: 800; margin: 18px 0 4px; position: relative; z-index: 1; }
-        h1 { margin: 0; font-size: 1.5rem; font-weight: 800; position: relative; z-index: 1; }
+        h1 { margin: 0; font-size: 1.5rem; font-weight: 800; position: relative; z-index: 1; overflow-wrap: anywhere; }
         .rad { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; background: #fff; border-radius: 12px; padding: 10px 14px; position: relative; z-index: 1; }
         .rad small { display: block; font-size: .62rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 800; }
         .rad code { font: 800 1.05rem ui-monospace, Menlo, Consolas, monospace; color: var(--pink-deep); }
@@ -62,14 +62,14 @@
         .step .lbl { font-size: .72rem; font-weight: 800; color: var(--muted); }
         .step.on .lbl { color: var(--navy); }
 
-        .answer { border-left: 4px solid var(--ok); background: var(--ok-soft); border-radius: 0 14px 14px 0; padding: 14px 16px; color: #16283c; white-space: pre-line; line-height: 1.55; }
+        .answer { border-left: 4px solid var(--ok); background: var(--ok-soft); border-radius: 0 14px 14px 0; padding: 14px 16px; color: #16283c; white-space: pre-line; line-height: 1.55; overflow-wrap: anywhere; }
         .pending { border-left: 4px solid var(--pink); background: var(--pink-soft); border-radius: 0 14px 14px 0; padding: 14px 16px; color: #5a2a37; line-height: 1.55; }
 
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         .kv { background: #f8fafc; border-radius: 12px; padding: 10px 12px; }
         .kv.full { grid-column: 1 / -1; }
         .kv small { display: block; font-size: .62rem; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); font-weight: 800; }
-        .kv div { font-size: .9rem; color: var(--navy); font-weight: 700; margin-top: 2px; word-break: break-word; white-space: pre-line; }
+        .kv div { font-size: .9rem; color: var(--navy); font-weight: 700; margin-top: 2px; word-break: break-word; overflow-wrap: anywhere; white-space: pre-line; }
 
         .foot { text-align: center; font-size: .78rem; color: var(--muted); margin-top: 22px; line-height: 1.6; }
         @media (max-width: 560px) {

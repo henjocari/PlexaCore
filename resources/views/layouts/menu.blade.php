@@ -229,11 +229,6 @@
                             <i class="fas fa-headset mr-2 text-success"></i> PQRS
                         </a>
                     @endif
-                    @if(in_array('Cotizaciones', $misModulos))
-                        <a class="collapse-item {{ request()->routeIs('silogtran.cotizaciones') ? 'active' : '' }}" href="{{ route('silogtran.cotizaciones') }}">
-                            <i class="fas fa-file-invoice-dollar mr-2 text-success"></i> Cotizar tarifas
-                        </a>
-                    @endif
                 </div>
             </div>
         </li>
