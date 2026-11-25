@@ -67,20 +67,40 @@ class SyncLogitracsGps extends Command
 
         $placasActivas = $manifiestos->pluck('placa')->filter()->toArray();
 
-        gps_VehiculoTemporal::whereIn('placa', $placasActivas)->delete();
+        // 1. Eliminar de seguimiento temporal SOLO si tiene manifiesto ACTIVO de NORTE SANTANDEREANA DE GAS
+        $manifiestosNorte = DB::table('silog_manifiestos')
+            ->where('estado', 'ACTIVO')
+            ->where('cliente', 'LIKE', '%NORTE SANTANDEREANA DE GAS%')
+            ->get(['placa', 'trailer']);
 
-        // 2. Obtener los vehículos temporales restantes y unirlos al pool de consultas
+        $placasNorte = $manifiestosNorte->pluck('placa')->filter()->unique()->toArray();
+        $cisternasNorte = $manifiestosNorte->pluck('trailer')->filter()->unique()->toArray();
+
+        if (!empty($placasNorte) || !empty($cisternasNorte)) {
+            gps_VehiculoTemporal::where(function ($q) use ($placasNorte, $cisternasNorte) {
+                if (!empty($placasNorte)) {
+                    $q->whereIn('placa', $placasNorte);
+                }
+                if (!empty($cisternasNorte)) {
+                    $q->orWhereIn('cisterna', $cisternasNorte);
+                }
+            })->delete();
+        }
+
+        // 2. Obtener los vehículos temporales restantes y unirlos al pool de consultas sin duplicar
         $vehiculosTemporales = gps_VehiculoTemporal::all();
 
         foreach ($vehiculosTemporales as $temp) {
-            $manifiestos->push((object)[
-                'placa' => $temp->placa,
-                'trailer' => $temp->cisterna,
-                'fecha' => null,
-                'hora' => null
-            ]);
-            
-            $placasActivas[] = $temp->placa;
+            if (!$manifiestos->contains('placa', $temp->placa)) {
+                $manifiestos->push((object)[
+                    'placa' => $temp->placa,
+                    'trailer' => $temp->cisterna,
+                    'fecha' => null,
+                    'hora' => null
+                ]);
+                
+                $placasActivas[] = $temp->placa;
+            }
         }
         
         $this->info("Total de placas a procesar tras filtros dinámicos: " . count($placasActivas));

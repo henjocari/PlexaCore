@@ -13,40 +13,39 @@ class QanalyticsController extends Controller
 {
     public function index(Request $request)
     {
+        $clienteRestringido = 'NORTE SANTANDEREANA DE GAS';
         $filtros = GpsFiltro::all();
         $temporales = gps_VehiculoTemporal::orderBy('created_at', 'desc')->get();
 
-        // Lógica de Logs con Filtro por Placa
         $queryLogs = LogQanalytics::query();
-        
         if ($request->filled('buscar_placa')) {
             $queryLogs->where('placa', 'like', '%' . strtoupper(trim($request->buscar_placa)) . '%');
         }
-        
-        // Paginación manteniendo los parámetros de la URL (importante para que el filtro no se pierda al cambiar de página)
         $logs = $queryLogs->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
-        // 1. Consultar el historial de Placas EXCLUYENDO mediante subconsulta las que están ACTIVAS
+        // 1. Placas EXCLUYENDO solo las ACTIVAS en NORTE SANTANDEREANA DE GAS
         $placas = DB::table('silog_manifiestos')
             ->whereNotNull('placa')
             ->where('placa', '!=', '')
-            ->whereNotIn('placa', function($query) {
+            ->whereNotIn('placa', function($query) use ($clienteRestringido) {
                 $query->select('placa')
                       ->from('silog_manifiestos')
                       ->where('estado', 'ACTIVO')
+                      ->where('cliente', 'LIKE', '%' . $clienteRestringido . '%')
                       ->whereNotNull('placa');
             })
             ->distinct()
             ->pluck('placa');
 
-        // 2. Consultar el historial de Cisternas EXCLUYENDO mediante subconsulta las que están ACTIVAS
+        // 2. Cisternas EXCLUYENDO solo las ACTIVAS en NORTE SANTANDEREANA DE GAS
         $cisternas = DB::table('silog_manifiestos')
             ->whereNotNull('trailer')
             ->where('trailer', '!=', '')
-            ->whereNotIn('trailer', function($query) {
+            ->whereNotIn('trailer', function($query) use ($clienteRestringido) {
                 $query->select('trailer')
                       ->from('silog_manifiestos')
                       ->where('estado', 'ACTIVO')
+                      ->where('cliente', 'LIKE', '%' . $clienteRestringido . '%')
                       ->whereNotNull('trailer');
             })
             ->distinct()
@@ -107,29 +106,39 @@ class QanalyticsController extends Controller
 
         $placa = strtoupper(trim($request->placa));
         $cisterna = strtoupper(trim($request->cisterna));
+        $clienteRestringido = 'NORTE SANTANDEREANA DE GAS';
 
-        // 1. Validar si ya están ACTIVOS en manifiestos (Esto SÍ bloquea)
-        $estaActivaPlaca = DB::table('silog_manifiestos')->where('placa', $placa)->where('estado', 'ACTIVO')->exists();
+        // 1. Bloquear SOLO si ya están ACTIVOS en NORTE SANTANDEREANA DE GAS
+        $estaActivaPlaca = DB::table('silog_manifiestos')
+            ->where('placa', $placa)
+            ->where('estado', 'ACTIVO')
+            ->where('cliente', 'LIKE', '%' . $clienteRestringido . '%')
+            ->exists();
+
         if ($estaActivaPlaca) {
-            return back()->with('error_swal', "La placa {$placa} ya tiene un manifiesto ACTIVO.");
+            return back()->with('error_swal', "La placa {$placa} ya tiene un manifiesto ACTIVO en {$clienteRestringido}.");
         }
 
-        $estaActivaCisterna = DB::table('silog_manifiestos')->where('trailer', $cisterna)->where('estado', 'ACTIVO')->exists();
+        $estaActivaCisterna = DB::table('silog_manifiestos')
+            ->where('trailer', $cisterna)
+            ->where('estado', 'ACTIVO')
+            ->where('cliente', 'LIKE', '%' . $clienteRestringido . '%')
+            ->exists();
+
         if ($estaActivaCisterna) {
-            return back()->with('error_swal', "La cisterna {$cisterna} ya tiene un manifiesto ACTIVO.");
+            return back()->with('error_swal', "La cisterna {$cisterna} ya tiene un manifiesto ACTIVO en {$clienteRestringido}.");
         }
 
-        // 2. Comprobar si existen en el historial (Para lanzar la alerta, pero NO bloquea)
+        // 2. Comprobar historial (solo advertencia)
         $existePlaca = DB::table('silog_manifiestos')->where('placa', $placa)->exists();
         $existeCisterna = DB::table('silog_manifiestos')->where('trailer', $cisterna)->exists();
 
-        // 3. Guardar el registro temporal de todos modos
+        // 3. Guardar registro temporal
         gps_VehiculoTemporal::updateOrCreate(
             ['placa' => $placa],
             ['cisterna' => $cisterna]
         );
 
-        // 4. Retornar el mensaje dependiendo de si existían o no
         if (!$existePlaca || !$existeCisterna) {
             $msg = "Guardado con éxito, pero VERIFIQUE la información: ";
             if (!$existePlaca && !$existeCisterna) $msg .= "Ni la placa {$placa} ni la cisterna {$cisterna} existen en el historial de Manifiestos.";

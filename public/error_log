@@ -1,0 +1,18 @@
+[24-Aug-2026 11:31:08 America/Boise] PHP Warning:  require(/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php): Failed to open stream: No such file or directory in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41
+[24-Aug-2026 11:31:08 America/Boise] PHP Warning:  require(/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php): Failed to open stream: No such file or directory in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41
+[24-Aug-2026 11:31:08 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php:41
+Stack trace:
+#0 /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php(45): {closure}('6124b4c8570aa39...', '/home1/plexaco/...')
+#1 /home1/plexaco/intranet.plexa.co/plexa_core/vendor/autoload.php(22): ComposerAutoloaderInitaa1defb55445b86cf2cd96c365de4abd::getLoader()
+#2 /home1/plexaco/intranet.plexa.co/plexa_core/public/index.php(8): require('/home1/plexaco/...')
+#3 {main}
+  thrown in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41
+[24-Aug-2026 11:31:09 America/Boise] PHP Warning:  require(/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php): Failed to open stream: No such file or directory in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41
+[24-Aug-2026 11:31:09 America/Boise] PHP Warning:  require(/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php): Failed to open stream: No such file or directory in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41
+[24-Aug-2026 11:31:09 America/Boise] PHP Fatal error:  Uncaught Error: Failed opening required '/home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/../myclabs/deep-copy/src/DeepCopy/deep_copy.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php:41
+Stack trace:
+#0 /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php(45): {closure}('6124b4c8570aa39...', '/home1/plexaco/...')
+#1 /home1/plexaco/intranet.plexa.co/plexa_core/vendor/autoload.php(22): ComposerAutoloaderInitaa1defb55445b86cf2cd96c365de4abd::getLoader()
+#2 /home1/plexaco/intranet.plexa.co/plexa_core/public/index.php(8): require('/home1/plexaco/...')
+#3 {main}
+  thrown in /home1/plexaco/intranet.plexa.co/plexa_core/vendor/composer/autoload_real.php on line 41

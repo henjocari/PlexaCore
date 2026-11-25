@@ -1,0 +1,4 @@
+[29-Dec-2025 09:17:26 America/Boise] PHP Fatal error:  Uncaught Error: Call to undefined function dd() in /home1/plexaco/intranet.plexa.co/plexa_core/resources/views/index.blade.php:1
+Stack trace:
+#0 {main}
+  thrown in /home1/plexaco/intranet.plexa.co/plexa_core/resources/views/index.blade.php on line 1
